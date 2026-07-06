@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Summary & Interview Preparation â€” Gradients ML LMS</title>
+    
+        <!-- KaTeX CSS and JS for mathematical equations -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    <script defer src="../../js/katex.js"></script>
+
+    <!-- CSS sheets -->
+    <link rel="stylesheet" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../css/layout.css" />
+    <link rel="stylesheet" href="../../css/responsive.css" />
+    <link rel="stylesheet" href="../../css/lesson.css" />
+    <link rel="stylesheet" href="../../css/sidebar.css" />
+</head>
+<body>
+    <!-- Top Header Navigation Injector -->
+    <header id="header-container" class="main-header glass"></header>
+
+    <main class="container fade-in" style="padding-bottom: 6rem;">
+      
+      <!-- 1. Breadcrumb Navigation -->
+      <div class="breadcrumb-container">
+        <div class="lesson-breadcrumb">
+          <a href="../../index.html">Home</a> &gt; 
+          <a href="../../course-overview.html">Course Overview</a> &gt; 
+          <a href="../../curriculum.html">Curriculum</a> &gt; 
+          <span>04-Feature_Engineering: Feature Engineering</span> &gt; 
+          <span class="active-node">Lesson 4.7</span>
+        </div>
+      </div>
+
+      <!-- 2. Two-Column Layout (Main Content + Right Sidebar) -->
+      <div class="lesson-grid-layout">
+        
+        <!-- Center-Left Content Area -->
+        <div class="lesson-content-area">
+          <div class="content-connector-line"></div>
+
+          <!-- 3. Lesson Header -->
+          <header class="lesson-template-header">
+            <div class="lesson-header-meta-row">
+              <span class="lesson-header-badge track">Machine Learning Fundamentals</span>
+              <span class="lesson-header-badge">04-Feature_Engineering</span>
+              <span class="lesson-header-badge">Lesson 4.7</span>
+              <span class="lesson-header-badge diff">Beginner</span>
+              <span class="lesson-header-badge">15 mins</span>
+            </div>
+            <h1>Summary & Interview Preparation</h1>
+          </header>
+
+          <!-- 4. Learning Objectives Card -->
+          <div class="objectives-box-card glass">
+            <h3>Lesson Objectives</h3>
+            <div class="objectives-box-grid">
+              <div class="objectives-box-col">
+                <h4>What you will learn</h4>
+                <p>Review all key concepts from Module 04: Feature Engineering intuition, encoding, scaling, polynomial features, feature selection, and pipeline best practices.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Prerequisites</h4>
+                <p>Completion of all previous lessons (4.1 through 4.6) in this module.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Expected Outcome</h4>
+                <p>Answer common interview questions about Feature Engineering vs. Feature Selection, data leakage, scaling requirements, and polynomial feature trade-offs.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. Main Lesson Content Area -->
+          <div class="markdown-content">
+            
+                    <div class="lesson-content-block">
+                        <p># Overview</p>
+                        <p># Machine Learning Fundamentals: Feature Engineering</p>
+
+<blockquote><strong>"Data is the fuel, but Feature Engineering is the refining process that turns raw ore into high-octane combustion."</strong></blockquote>
+
+<hr>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h2>Lesson 4.6: Placement & Interview Q&A</h2>
+                        <p><strong>Q1. What is the difference between Feature Engineering and Feature Selection?</strong>
+<ul>
+<li><strong>Answer:</strong> Feature Engineering creates new features or transforms existing ones to improve model performance (expands feature space). Feature Selection selects the most predictive subset of existing features and discards redundant columns (compresses feature space).</li>
+</ul></p>
+
+<p><strong>Q2. Why is feature scaling necessary for distance-based algorithms like KNN or SVM?</strong>
+<ul>
+<li><strong>Answer:</strong> Distance-based algorithms calculate Euclidean distance between points. Without scaling, features with larger numerical ranges dominate the distance calculation, making the model ignore smaller features regardless of their predictive power.</li>
+</ul></p>
+
+<p><strong>Q3. How does adding polynomial features affect model bias and variance?</strong>
+<ul>
+<li><strong>Answer:</strong> Polynomial features increase the complexity of the model, allowing it to capture non-linear relationships. This reduces model bias (prevents underfitting) but increases variance, making it more prone to overfitting.</li>
+</ul></p>
+
+<p><strong>Q4. What is data leakage and how do Pipelines prevent it?</strong>
+<ul>
+<li><strong>Answer:</strong> Data leakage occurs when information from outside the training dataset (such as test set statistics) is used to train the model. Scikit-learn Pipelines prevent this by ensuring that transformers (like scalers) are fit *only* on the training split, then applied to the test split.</li>
+</ul></p>
+
+<p><strong>Q5. When is feature scaling NOT required?</strong>
+<ul>
+<li><strong>Answer:</strong> Scale-invariant algorithms do not require feature scaling. This includes tree-based models like Decision Trees, Random Forests, and gradient-boosted trees (e.g., XGBoost), as splits are determined threshold-by-threshold on individual features.</li>
+</ul></p>
+
+<hr>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h2>Module 04 â€” Key Takeaways</h2>
+                        <ul>
+                            <li><strong>Feature Engineering</strong> is the process of transforming raw variables into informative features using domain knowledge and mathematical transformations â€” it expands the feature space.</li>
+                            <li><strong>Encoding</strong> converts categorical variables into numerical form. One-Hot Encoding creates $k$ binary columns (no ordinal bias), Label Encoding assigns integers (risk of false order), and Ordinal Encoding preserves natural order.</li>
+                            <li><strong>Feature Scaling</strong> (Z-score or Min-Max) is mandatory for gradient-based and distance-based algorithms. Tree-based models are scale-invariant.</li>
+                            <li><strong>Polynomial & Interaction Features</strong> capture non-linear relationships. The Feature Count Formula is $N_{\text{out}} = \binom{n+d}{d} - 1$ â€” higher degrees increase overfitting risk.</li>
+                            <li><strong>Feature Selection</strong> compresses the feature space. Use filter methods (variance, correlation, mutual information), wrapper methods (RFE), or embedded methods (Lasso, tree importance).</li>
+                            <li><strong>Scikit-learn Pipelines</strong> prevent data leakage by fitting transformers only on training data and applying fitted parameters to test data.</li>
+                        </ul>
+                        <hr>
+                    </div>
+
+                    <div class="lesson-content-block">
+                        <h2>Further Reading</h2>
+                        <p>1. <strong>GÃ©ron, A. (2022).</strong> *Hands-On Machine Learning* (3rd ed.). O'Reilly. â€” Chapter 2 covers end-to-end ML project data pipelines.
+2. <strong>Kuhn, M., & Johnson, K. (2013).</strong> *Applied Predictive Modeling*. Springer. â€” Comprehensive reference on data preprocessing.
+3. <strong>Scikit-learn User Guide:</strong> *Dataset transformations* [https://scikit-learn.org/stable/data_transforms.html](https://scikit-learn.org/stable/data_transforms.html).</p>
+
+<hr>
+*Gradients Â· Advanced AI Engineering Program Â· 2026 Â· Educational Content Â· Beginner Friendly*
+                    </div>
+                    
+          </div>
+
+          <!-- 6. Bottom Navigation Cards -->
+          <div class="bottom-navigation-cards-row">
+            
+                <a href="4.6-pipelines.html" class="bottom-nav-card glass">
+                  <span class="nav-direction">&larr; Previous Lesson</span>
+                  <span class="nav-title">4.6 Pipelines and Best Practices</span>
+                </a>
+                
+            
+                <a href="4.8-notebook.html" class="bottom-nav-card next glass">
+                  <span class="nav-direction">Next Lesson &rarr;</span>
+                  <span class="nav-title">4.8 Notebook Practice</span>
+                </a>
+                
+          </div>
+
+          <div class="bottom-return-curriculum-row">
+            <a href="../../curriculum.html" class="btn btn-secondary">&larr; Return to Curriculum</a>
+          </div>
+
+        </div>
+
+        <!-- 7. Right Sidebar Panel (Sticky Accordion Mount) -->
+        <aside id="sidebar-container" class="lesson-right-sidebar glass"></aside>
+
+      </div>
+    </main>
+
+    <!-- Footer Injector Mount -->
+    <footer id="footer-container" class="main-footer"></footer>
+
+    <!-- Shared Static LMS Scripts -->
+    <script src="../../js/app.js"></script>
+    <script src="../../js/navigation.js"></script>
+    <script src="../../js/sidebar.js"></script>
+    <script src="../../js/progress.js"></script>
+</body>
+</html>

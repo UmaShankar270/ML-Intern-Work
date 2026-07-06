@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explained Variance & Scree Plots â€” Gradients ML LMS</title>
+    
+        <!-- KaTeX CSS and JS for mathematical equations -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    <script defer src="../../js/katex.js"></script>
+
+    <!-- CSS sheets -->
+    <link rel="stylesheet" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../css/layout.css" />
+    <link rel="stylesheet" href="../../css/responsive.css" />
+    <link rel="stylesheet" href="../../css/lesson.css" />
+    <link rel="stylesheet" href="../../css/sidebar.css" />
+</head>
+<body>
+    <!-- Top Header Navigation Injector -->
+    <header id="header-container" class="main-header glass"></header>
+
+    <main class="container fade-in" style="padding-bottom: 6rem;">
+      
+      <!-- 1. Breadcrumb Navigation -->
+      <div class="breadcrumb-container">
+        <div class="lesson-breadcrumb">
+          <a href="../../index.html">Home</a> &gt; 
+          <a href="../../course-overview.html">Course Overview</a> &gt; 
+          <a href="../../curriculum.html">Curriculum</a> &gt; 
+          <span>07-PCA: Principal Component Analysis (PCA)</span> &gt; 
+          <span class="active-node">Lesson 7.5</span>
+        </div>
+      </div>
+
+      <!-- 2. Two-Column Layout (Main Content + Right Sidebar) -->
+      <div class="lesson-grid-layout">
+        
+        <!-- Center-Left Content Area -->
+        <div class="lesson-content-area">
+          <div class="content-connector-line"></div>
+
+          <!-- 3. Lesson Header -->
+          <header class="lesson-template-header">
+            <div class="lesson-header-meta-row">
+              <span class="lesson-header-badge track">Dimensionality Reduction</span>
+              <span class="lesson-header-badge">07-PCA</span>
+              <span class="lesson-header-badge">Lesson 7.5</span>
+              <span class="lesson-header-badge diff">Advanced</span>
+              <span class="lesson-header-badge">12 mins</span>
+            </div>
+            <h1>Explained Variance & Scree Plots</h1>
+          </header>
+
+          <!-- 4. Learning Objectives Card -->
+          <div class="objectives-box-card glass">
+            <h3>Lesson Objectives</h3>
+            <div class="objectives-box-grid">
+              <div class="objectives-box-col">
+                <h4>What you will learn</h4>
+                <p>Understand how to interpret scree plots, explained variance ratios, and the elbow method to select the optimal number of principal components.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Prerequisites</h4>
+                <p>Understanding of eigenvalues as variance captured per component from Lesson 7.2.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Expected Outcome</h4>
+                <p>Read a scree plot, apply the elbow method, and choose $k$ using the 95% explained variance threshold for any PCA pipeline.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. Main Lesson Content Area -->
+          <div class="markdown-content">
+            
+                    <div class="lesson-content-block">
+                        <h3>What is a Scree Plot?</h3>
+                        <p>A <strong>scree plot</strong> is a line plot that shows the explained variance (eigenvalue) of each principal component, sorted from largest to smallest. It visually communicates how much information each component contributes and helps you decide how many components to retain.</p>
+                    </div>
+
+                    <div class="lesson-content-block">
+                        <h3>Explained Variance Ratio (EVR)</h3>
+                        <p>After eigendecomposition, each component $i$ captures a fraction of the total dataset variance:</p>
+                        <div class="math-card glass"><div class="math-eq">\text{EVR}_i = \frac{\lambda_i}{\sum_{j=1}^{d} \lambda_j}</div></div>
+                        <p>The <strong>cumulative explained variance</strong> is the running sum: $\sum_{j=1}^{k} \text{EVR}_j$. This tells you how much total variance is retained when keeping the top $k$ components.</p>
+                    </div>
+
+                    <div class="lesson-content-block">
+                        <h3>Reading the Scree Plot</h3>
+                        <pre class="output-console-mock"><code>Explained
+Variance (%)
+  â–²
+40â”‚  â— (PC1: 36%)
+  â”‚  â”‚
+30â”‚  â”‚
+  â”‚  â”‚
+20â”‚  â”‚    â— (PC2: 19%)
+  â”‚  â”‚    â”‚
+10â”‚  â”‚    â”‚    â— (PC3: 11%)
+  â”‚  â”‚    â”‚    â”‚    â— (PC4: 7%)
+ 0â””â”€â”€â”´â”€â”€â”€â”€â”´â”€â”€â”€â”€â”´â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â–º
+     PC1  PC2  PC3  PC4  PC5</code></pre>
+                        <p>Each bar/point represents one principal component. The first component (PC1) always captures the most variance, with diminishing returns for each subsequent component.</p>
+                    </div>
+
+                    <div class="lesson-content-block">
+                        <h3>Method 1: The Elbow Method</h3>
+                        <p>Look for the point where the curve flattens out â€” this is the "elbow." Components after the elbow contribute relatively little additional variance.</p>
+                        <ul>
+                            <li>In the diagram above, the elbow is at PC2: PC1 contributes 36%, PC2 adds 19%, but PC3 through PC5 each add under 11%.</li>
+                            <li>Choose $k$ at the elbow for maximum compression with minimal information loss.</li>
+                        </ul>
+                    </div>
+
+                    <div class="lesson-content-block">
+                        <h3>Method 2: Cumulative Variance Threshold</h3>
+                        <p>Select $k$ such that the cumulative explained variance exceeds a target threshold:</p>
+                        <ul>
+                            <li><strong>95% threshold</strong> â€” standard for most modeling tasks (retain 95% of signal).</li>
+                            <li><strong>99% threshold</strong> â€” used when reconstruction fidelity is critical.</li>
+                            <li><strong>70-90%</strong> â€” acceptable for exploratory analysis and visualization.</li>
+                        </ul>
+                        <div class="alert-box tip" style="border-left-color: var(--accent-blue);">
+                            <span class="alert-icon">ðŸ’¡</span>
+                            <div class="alert-content">
+                                There is no universal "right" $k$. The choice depends on your downstream task: visualization typically uses $k=2$ or $k=3$, while preprocessing for modeling often uses the 95% threshold.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="lesson-content-block">
+                        <h3>Choosing $k$ in Practice</h3>
+                        <p>The table below shows a typical scree analysis for a dataset with 13 features:</p>
+                        <table class="variable-table">
+                            <thead>
+                                <tr><th>Components</th><th>Individual EVR</th><th>Cumulative EVR</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>PC1</td><td>36.2%</td><td>36.2%</td></tr>
+                                <tr><td>PC2</td><td>19.2%</td><td>55.4%</td></tr>
+                                <tr><td>PC3</td><td>11.1%</td><td>66.5%</td></tr>
+                                <tr><td>PC4</td><td>7.3%</td><td>73.8%</td></tr>
+                                <tr><td>PC5</td><td>5.5%</td><td>79.3%</td></tr>
+                                <tr><td>...</td><td>...</td><td>...</td></tr>
+                                <tr><td>PC13</td><td>0.3%</td><td>100%</td></tr>
+                            </tbody>
+                        </table>
+                        <p>To reach 95% cumulative variance, you would need approximately 8-10 components in this example. For visualization (k=2), you retain ~55% of the variance â€” a trade-off between compression and information preservation.</p>
+
+<hr>
+                    </div>
+                    
+          </div>
+
+          <!-- 6. Bottom Navigation Cards -->
+          <div class="bottom-navigation-cards-row">
+            
+                <a href="7.4-svd-link.html" class="bottom-nav-card glass">
+                  <span class="nav-direction">&larr; Previous Lesson</span>
+                  <span class="nav-title">7.4 Singular Value Decomposition (SVD) Link</span>
+                </a>
+                
+            
+                <a href="7.6-limitations.html" class="bottom-nav-card next glass">
+                  <span class="nav-direction">Next Lesson &rarr;</span>
+                  <span class="nav-title">7.6 Assumptions & Limitations of PCA</span>
+                </a>
+                
+          </div>
+
+          <div class="bottom-return-curriculum-row">
+            <a href="../../curriculum.html" class="btn btn-secondary">&larr; Return to Curriculum</a>
+          </div>
+
+        </div>
+
+        <!-- 7. Right Sidebar Panel (Sticky Accordion Mount) -->
+        <aside id="sidebar-container" class="lesson-right-sidebar glass"></aside>
+
+      </div>
+    </main>
+
+    <!-- Footer Injector Mount -->
+    <footer id="footer-container" class="main-footer"></footer>
+
+    <!-- Shared Static LMS Scripts -->
+    <script src="../../js/app.js"></script>
+    <script src="../../js/navigation.js"></script>
+    <script src="../../js/sidebar.js"></script>
+    <script src="../../js/progress.js"></script>
+</body>
+</html>

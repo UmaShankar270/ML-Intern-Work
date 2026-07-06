@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notebook Practice â€” Gradients ML LMS</title>
+    
+        <!-- KaTeX CSS and JS for mathematical equations -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    <script defer src="../../js/katex.js"></script>
+
+    <!-- CSS sheets -->
+    <link rel="stylesheet" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../css/layout.css" />
+    <link rel="stylesheet" href="../../css/responsive.css" />
+    <link rel="stylesheet" href="../../css/lesson.css" />
+    <link rel="stylesheet" href="../../css/sidebar.css" />
+</head>
+<body>
+    <!-- Top Header Navigation Injector -->
+    <header id="header-container" class="main-header glass"></header>
+
+    <main class="container fade-in" style="padding-bottom: 6rem;">
+      
+      <!-- 1. Breadcrumb Navigation -->
+      <div class="breadcrumb-container">
+        <div class="lesson-breadcrumb">
+          <a href="../../index.html">Home</a> &gt; 
+          <a href="../../course-overview.html">Course Overview</a> &gt; 
+          <a href="../../curriculum.html">Curriculum</a> &gt; 
+          <span>06-LDA: Linear Discriminant Analysis (LDA)</span> &gt; 
+          <span class="active-node">Lesson 6.8</span>
+        </div>
+      </div>
+
+      <!-- 2. Two-Column Layout (Main Content + Right Sidebar) -->
+      <div class="lesson-grid-layout">
+        
+        <!-- Center-Left Content Area -->
+        <div class="lesson-content-area">
+          <div class="content-connector-line"></div>
+
+          <!-- 3. Lesson Header -->
+          <header class="lesson-template-header">
+            <div class="lesson-header-meta-row">
+              <span class="lesson-header-badge track">Dimensionality Reduction</span>
+              <span class="lesson-header-badge">06-LDA</span>
+              <span class="lesson-header-badge">Lesson 6.8</span>
+              <span class="lesson-header-badge diff">Advanced</span>
+              <span class="lesson-header-badge">25 mins</span>
+            </div>
+            <h1>Notebook Practice</h1>
+          </header>
+
+          <!-- 4. Learning Objectives Card -->
+          <div class="objectives-box-card glass">
+            <h3>Lesson Objectives</h3>
+            <div class="objectives-box-grid">
+              <div class="objectives-box-col">
+                <h4>What you will learn</h4>
+                <p>Implement LDA from scratch using NumPy, apply scikit-learn's LinearDiscriminantAnalysis, and compare classification performance.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Prerequisites</h4>
+                <p>Python programming basics, familiarity with NumPy and scikit-learn. Completion of Lessons 6.1â€“6.7 recommended.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Expected Outcome</h4>
+                <p>Write custom LDA code with scatter matrix computations, use production-grade LDA pipelines, and measure accuracy improvements.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. Main Lesson Content Area -->
+          <div class="markdown-content">
+            
+                    <div class="lesson-content-block">
+                        <h2>Jupyter Notebook Practice Lab</h2>
+                        <p class="hero-lead">Run, modify, and analyze python execution outputs. Verify mathematical claims against dataset projections.</p>
+                        <div class="notebook-markdown"><p># Linear Discriminant Analysis (LDA) for Dimensionality Reduction</p>
+
+<h2>What This Notebook Covers</h2>
+This notebook is the practical, code-driven counterpart to the <strong>Linear Discriminant Analysis (LDA) README</strong>. We will explore how high-dimensional numeric features can be compressed while actively maximizing the separation between classes. You will learn to calculate within-class and between-class scatter matrices from scratch using NumPy, solve the generalized eigenvalue problem, and implement regularized, production-grade LDA pipelines using Scikit-learn.
+
+<h2>What You Will Accomplish</h2>
+<ul>
+<li>Describe the conceptual difference between PCA (unsupervised variance maximization) and LDA (supervised class separation).</li>
+<li>Calculate Class Mean ($\mu_i$) and Global Mean ($\mu$) vectors for multi-class matrices.</li>
+<li>Construct Within-Class ($S_W$) and Between-Class ($S_B$) scatter matrices manually using NumPy dot products.</li>
+<li>Compute projection directions by solving the generalized eigenvalue problem $S_W^{-1}S_B$ using pseudoinverses.</li>
+<li>Apply Scikit-learn's `LinearDiscriminantAnalysis` to reduce 13 chemical features of wine to 2 dimensions for 2D cluster visualization.</li>
+<li>Compare the classification accuracy of classifiers trained on raw features vs. LDA-compressed features.</li>
+</ul>
+
+<h2>Before You Start (Prerequisites)</h2>
+<ul>
+<li>Comfort manipulating Python lists, loops, and NumPy matrix multiplication (`@`).</li>
+<li>Familiarity with standard scaling concepts and train-test splits.</li>
+<li>Zero prior dimensionality reduction experience is assumed.</li>
+</ul>
+
+<h2>About the Dataset</h2>
+We use the benchmark <strong>Wine Recognition dataset</strong>, containing 178 instances of Italian wines grown in the same region but derived from three different cultivars: *class_0*, *class_1*, and *class_2*. For every wine sample, we have 13 chemical constituents (features):
+<ul>
+<li>Alcohol, Malic acid, Ash, Alcalinity of ash, Magnesium, Total phenols, Flavanoids, Nonflavanoid phenols, Proanthocyanins, Color intensity, Hue, OD280/OD315 of diluted wines, Proline.</li>
+</ul>
+
+<p>We load it directly using `sklearn.datasets.load_wine`.
+<hr></p></div>
+<div class="notebook-markdown"><h2>1. Setup & Workspace Preparation</h2>
+
+<h3>WHY?</h3>
+Setting up imports at the start of our session avoids path errors and fixes seeds to ensure all stochastic shuffling steps are reproducible.
+
+<h3>HOW?</h3>
+We import NumPy, Pandas, Matplotlib, Seaborn, and the necessary Scikit-learn classification models, then set seaborn style configurations.</div>
+
+            <div class="notebook-block glass">
+                <div class="notebook-header">
+                    <span class="file-name">Python Code Block</span>
+                </div>
+                <div class="notebook-body">
+                    <div class="code-cell">
+                        <div class="cell-label">In [1]:</div>
+                        <pre class="code-editor-mock"><code># Import NumPy for manual matrix operations and scatter updates
+import numpy as np
+
+# Import Pandas to display dataframes and stats tables
+import pandas as pd
+
+# Import Matplotlib and Seaborn for plotting performance charts
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Import Wine dataset tools and models from sklearn
+from sklearn.datasets import load_wine
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+
+# Set seaborn style for clean grids
+sns.set_theme(style="whitegrid")
+plt.rcParams["figure.figsize"] = (10, 6)
+
+# Fix numpy seed for reproducibility
+np.random.seed(42)
+
+print("Libraries imported and workspace seed initialized.")</code></pre>
+                    </div>
+                    
+                </div>
+            </div>
+            
+<div class="notebook-markdown"><h2>2. Dataset Loading & Exploration</h2>
+
+<h3>WHY?</h3>
+Checking class balance and measurement distributions before splitting is essential to verify if standard random splits are safe, or if stratification is required.
+
+<h3>HOW?</h3>
+We load the Wine dataset, wrap it in a Pandas DataFrame, and print descriptive statistics.</div>
+
+            <div class="notebook-block glass">
+                <div class="notebook-header">
+                    <span class="file-name">Python Code Block</span>
+                </div>
+                <div class="notebook-body">
+                    <div class="code-cell">
+                        <div class="cell-label">In [2]:</div>
+                        <pre class="code-editor-mock"><code># Load wine dataset dictionary from sklearn
+wine = load_wine()
+
+# Convert to a pandas DataFrame
+df = pd.DataFrame(data=wine.data, columns=wine.feature_names)
+
+# Append target codes (0, 1, 2) and target names
+df['target'] = wine.target
+df['target_name'] = df['target'].map({i: name for i, name in enumerate(wine.target_names)})
+
+print("â•" * 60)
+print(f"Dataset Shape : {df.shape[0]} samples Ã— {df.shape[1] - 2} features")
+print(f"Features      : {wine.feature_names.tolist()[:5]}... (13 total)")
+print(f"Target Classes: {wine.target_names.tolist()}")
+print(f"Samples/Class : {dict(df['target_name'].value_counts())}")
+print("â•" * 60)
+
+print("\nFirst 3 rows:")
+display(df.head(3))
+
+print("\nStatistical Summary:")
+display(df.describe().iloc[:, :5])</code></pre>
+                    </div>
+                    
+                </div>
+            </div>
+            
+<div class="notebook-markdown"><h2>3. Preprocessing and Data Verification</h2>
+
+<h3>WHY?</h3>
+LDA is highly sensitive to variance scaling. If one feature has values in the thousands (e.g. Proline) and another is around one (e.g. Hue), the scatter matrices will be dominated by the larger range. We must standard scale features to zero mean and unit variance.
+
+<h3>HOW?</h3>
+We split the dataset into $70\%$ train / $30\%$ test (stratified by class label to keep class ratios consistent), and apply `StandardScaler` to $X$.</div>
+
+            <div class="notebook-block glass">
+                <div class="notebook-header">
+                    <span class="file-name">Python Code Block</span>
+                </div>
+                <div class="notebook-body">
+                    <div class="code-cell">
+                        <div class="cell-label">In [3]:</div>
+                        <pre class="code-editor-mock"><code>X = wine.data
+y = wine.target
+
+# Split into training (70%) and testing (30%) sets
+# stratify=y ensures the class proportions are identical in train and test splits
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.3, random_state=42, stratify=y
+)
+
+print(f"Training samples: {X_train.shape[0]}")
+print(f"Test samples: {X_test.shape[0]}\n")
+
+# Fit scaler on training set and transform both training and testing sets
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+
+print(f"Scaled train mean (first 5 features): {X_train_scaled.mean(axis=0)[:5].round(4)}")
+print(f"Scaled train std  (first 5 features): {X_train_scaled.std(axis=0)[:5].round(4)}")</code></pre>
+                    </div>
+                    
+                </div>
+            </div>
+            
+<div class="notebook-markdown"><h2>4. Manual Linear Discriminant Analysis (LDA) Implementation</h2>
+
+<h3>WHY?</h3>
+Calculating class means, within-class scatter, and between-class scatter manually is highly educational. It shows that dimensionality reduction is just linear algebra optimization.
+
+<h3>HOW?</h3>
+We implement the LDA optimization steps manually using pure NumPy:
+1. Calculate class means ($\mu_i$) and global mean ($\mu$).
+2. Construct the within-class scatter matrix ($S_W = \sum_{i=1}^C \sum_{j=1}^{N_i} (x_j^{(i)} - \mu_i)(x_j^{(i)} - \mu_i)^T$).
+3. Construct the between-class scatter matrix ($S_B = \sum_{i=1}^C N_i (\mu_i - \mu)(\mu_i - \mu)^T$).
+4. Solve the generalized eigenvalue problem $S_W^{-1}S_B$ using pseudoinverses to handle potential singularity issues.</div>
+
+            <div class="notebook-block glass">
+                <div class="notebook-header">
+                    <span class="file-name">Python Code Block</span>
+                </div>
+                <div class="notebook-body">
+                    <div class="code-cell">
+                        <div class="cell-label">In [4]:</div>
+                        <pre class="code-editor-mock"><code>def lda_from_scratch(X, y, n_components=2):
+    n_features = X.shape[1]
+    classes = np.unique(y)
+    
+    # Step 1: Compute global mean (origin reference)
+    global_mean = np.mean(X, axis=0)
+    
+    # Step 2: Compute within-class scatter matrix S_W
+    S_W = np.zeros((n_features, n_features))
+    for c in classes:
+        X_c = X[y == c]
+        mean_c = np.mean(X_c, axis=0)
+        # sum up outer products of deviations inside class c
+        S_W += (X_c - mean_c).T @ (X_c - mean_c)
+        
+    # Step 3: Compute between-class scatter matrix S_B
+    S_B = np.zeros((n_features, n_features))
+    for c in classes:
+        X_c = X[y == c]
+        n_c = X_c.shape[0]
+        mean_c = np.mean(X_c, axis=0)
+        diff = (mean_c - global_mean).reshape(-1, 1)
+        S_B += n_c * (diff @ diff.T)
+        
+    # Step 4: Solve the generalized eigenvalue problem S_W^-1 S_B
+    # np.linalg.pinv calculates the pseudoinverse to avoid non-invertibility issues
+    eigvals, eigvecs = np.linalg.eig(np.linalg.pinv(S_W) @ S_B)
+    
+    # Sort eigenvectors by eigenvalues descending
+    sorted_idx = np.argsort(eigvals)[::-1]
+    eigvecs = eigvecs[:, sorted_idx]
+    
+    # Keep real components
+    W = eigvecs[:, :n_components].real
+    
+    # Project data into lower-dimensional space
+    X_proj = X @ W
+    
+    return X_proj, W
+
+# Apply manual LDA to training set to obtain 2 components
+X_train_lda_scratch, W_scratch = lda_from_scratch(X_train_scaled, y_train, n_components=2)
+
+print(f"Original dimensions: {X_train_scaled.shape[1]} features")
+print(f"Reduced dimensions : {X_train_lda_scratch.shape[1]} components")
+print(f"Projection matrix W shape: {W_scratch.shape}")</code></pre>
+                    </div>
+                    
+                </div>
+            </div>
+            
+<div class="notebook-markdown"><h2>5. Visualizing the Manual LDA Projections</h2>
+
+<h3>WHY?</h3>
+Dimensionality reduction simplifies the classification task. Visualizing the 2D projection helps evaluate whether the classes have been separated cleanly.
+
+<h3>HOW?</h3>
+We construct a Seaborn scatter plot of the two LDA components, coloring points by target wine species.</div>
+
+            <div class="notebook-block glass">
+                <div class="notebook-header">
+                    <span class="file-name">Python Code Block</span>
+                </div>
+                <div class="notebook-body">
+                    <div class="code-cell">
+                        <div class="cell-label">In [5]:</div>
+                        <pre class="code-editor-mock"><code>plt.figure(figsize=(8, 6))
+colors = ['#2196F3', '#FF9800', '#4CAF50']
+classes = np.unique(y_train)
+
+for idx, c in enumerate(classes):
+    plt.scatter(
+        X_train_lda_scratch[y_train == c, 0],
+        X_train_lda_scratch[y_train == c, 1],
+        label=f"{wine.target_names[c]}",
+        color=colors[idx],
+        alpha=0.8,
+        edgecolors='black',
+        s=70
+    )
+
+plt.title('Plot 1: Manual LDA Projection on Wine Dataset (2 Components)', fontsize=13, fontweight='bold')
+plt.xlabel('LDA Component 1', fontsize=11)
+plt.ylabel('LDA Component 2', fontsize=11)
+plt.legend(title='Wine Classes', fontsize=10)
+plt.grid(True, linestyle='--', alpha=0.6)
+plt.show()
+
+print("\n--- Analysis ---")
+print("Observe how the three cultivars are separated into distinct clusters.")
+print("A linear classifier trained in this 2D space will achieve high accuracy.")</code></pre>
+                    </div>
+                    
+                </div>
+            </div>
+            
+<div class="notebook-markdown"><h2>6. Scikit-learn Production-Grade LDA</h2>
+
+<h3>WHY?</h3>
+While implementing LDA from scratch builds understanding, our custom function lacks regularizations (shrinkage) and does not handle high-dimensional singular matrices efficiently. In production, we use Scikit-learn's optimized `LinearDiscriminantAnalysis`.
+
+<h3>HOW?</h3>
+We import `LinearDiscriminantAnalysis`, initialize it with `n_components=2`, fit and transform the data, and plot the projections.</div>
+
+            <div class="notebook-block glass">
+                <div class="notebook-header">
+                    <span class="file-name">Python Code Block</span>
+                </div>
+                <div class="notebook-body">
+                    <div class="code-cell">
+                        <div class="cell-label">In [6]:</div>
+                        <pre class="code-editor-mock"><code># Initialize and fit the Scikit-learn LDA solver
+# Note: Fit requires the label array 'y_train' because LDA is supervised!
+lda = LinearDiscriminantAnalysis(n_components=2)
+X_train_lda_sklearn = lda.fit_transform(X_train_scaled, y_train)
+X_test_lda_sklearn = lda.transform(X_test_scaled)
+
+print("â•" * 60)
+print(" SCIKIT-LEARN LDA TRANSLATION RESULTS")
+print("â•" * 60)
+print(f"Train Projected dimensions: {X_train_lda_sklearn.shape}")
+print(f"Test Projected dimensions : {X_test_lda_sklearn.shape}")
+print(f"Explained Variance Ratios : {lda.explained_variance_ratio_.round(4)}")
+print(f"Sum of Explained Variance  : {sum(lda.explained_variance_ratio_)*100:.2f}%")
+print("â•" * 60)</code></pre>
+                    </div>
+                    
+                </div>
+            </div>
+            
+<div class="notebook-markdown"><h2>7. Visualizing the Production-Grade LDA Projections</h2>
+
+<h3>WHY?</h3>
+We must verify that Scikit-learn's LDA output separates our test set cleanly. If it does, our projection generalizes well and is ready for production.
+
+<h3>HOW?</h3>
+We plot two side-by-side scatter plots: Plot 1 shows training set projections, and Plot 2 shows test set projections.</div>
+
+            <div class="notebook-block glass">
+                <div class="notebook-header">
+                    <span class="file-name">Python Code Block</span>
+                </div>
+                <div class="notebook-body">
+                    <div class="code-cell">
+                        <div class="cell-label">In [7]:</div>
+                        <pre class="code-editor-mock"><code>fig, axes = plt.subplots(1, 2, figsize=(14, 6))
+
+# Plot 1: Training Set Projections
+for idx, c in enumerate(classes):
+    axes[0].scatter(
+        X_train_lda_sklearn[y_train == c, 0],
+        X_train_lda_sklearn[y_train == c, 1],
+        label=f"{wine.target_names[c]}",
+        color=colors[idx],
+        alpha=0.75,
+        edgecolors='black',
+        s=70
+    )
+axes[0].set_title('Training Set LDA Projections\n(124 samples)', fontsize=12, fontweight='bold')
+axes[0].set_xlabel('LDA Component 1', fontsize=11)
+axes[0].set_ylabel('LDA Component 2', fontsize=11)
+axes[0].legend(title='Wine Classes')
+
+# Plot 2: Test Set Projections
+for idx, c in enumerate(classes):
+    axes[1].scatter(
+        X_test_lda_sklearn[y_test == c, 0],
+        X_test_lda_sklearn[y_test == c, 1],
+        label=f"{wine.target_names[c]}",
+        color=colors[idx],
+        alpha=0.75,
+        edgecolors='black',
+        s=70
+    )
+axes[1].set_title('Test Set LDA Projections\n(54 samples)', fontsize=12, fontweight='bold')
+axes[1].set_xlabel('LDA Component 1', fontsize=11)
+axes[1].set_ylabel('LDA Component 2', fontsize=11)
+axes[1].legend(title='Wine Classes')
+
+plt.suptitle('Scikit-learn LDA Projections (Generalizability Audit)', fontsize=14, fontweight='bold', y=1.01)
+plt.tight_layout()
+plt.show()
+
+print("\n--- Analysis ---")
+print("Both train and test sets show clear class separation, confirming that")
+print("our LDA projection generalizes well to new, unseen data.")</code></pre>
+                    </div>
+                    
+                </div>
+            </div>
+            
+<div class="notebook-markdown"><h2>8. Classification Performance: Raw vs. LDA-Reduced Space</h2>
+
+<h3>WHY?</h3>
+To quantify the benefit of LDA, we compare a classifier trained on the raw 13 features against one trained on the 2 LDA features. Ideally, we achieve similar or better classification accuracy using fewer features.
+
+<h3>HOW?</h3>
+We train a standard `LogisticRegression` classifier on both datasets and evaluate test accuracy.</div>
+
+            <div class="notebook-block glass">
+                <div class="notebook-header">
+                    <span class="file-name">Python Code Block</span>
+                </div>
+                <div class="notebook-body">
+                    <div class="code-cell">
+                        <div class="cell-label">In [8]:</div>
+                        <pre class="code-editor-mock"><code># ----------------------------------------------------------------
+# Model A: Trained on raw 13 features
+# ----------------------------------------------------------------
+clf_raw = LogisticRegression(random_state=42)
+clf_raw.fit(X_train_scaled, y_train)
+preds_raw = clf_raw.predict(X_test_scaled)
+acc_raw = accuracy_score(y_test, preds_raw)
+
+# ----------------------------------------------------------------
+# Model B: Trained on 2 LDA features
+# ----------------------------------------------------------------
+clf_lda = LogisticRegression(random_state=42)
+clf_lda.fit(X_train_lda_sklearn, y_train)
+preds_lda = clf_lda.predict(X_test_lda_sklearn)
+acc_lda = accuracy_score(y_test, preds_lda)
+
+print("â•" * 60)
+print(" CLASSIFICATION ACCURACY COMPARISON")
+print("â•" * 60)
+print(f"  Accuracy (Raw 13 features) : {acc_raw * 100:.2f}%")
+print(f"  Accuracy (LDA 2 features)  : {acc_lda * 100:.2f}%")
+print(f"  Feature compression ratio  : {((13-2)/13)*100:.1f}% reduction")
+print("â•" * 60)
+
+print("\n--- Classification Report (LDA Reduced Model) ---")
+print(classification_report(y_test, preds_lda, target_names=wine.target_names))</code></pre>
+                    </div>
+                    
+                </div>
+            </div>
+            
+<div class="notebook-markdown"><p># Part 9: Placement & Interview Q&A</p>
+
+<p><strong>Q1. How does LDA differ from PCA?</strong>  
+<strong>Answer:</strong> Both are linear dimensionality reduction techniques, but they optimize different objectives. PCA is unsupervised and finds directions that maximize the variance of the entire dataset, ignoring class labels. LDA is supervised and finds directions that maximize the ratio of between-class scatter to within-class scatter, using class labels to find axes that best separate categories.</p>
+
+<p><strong>Q2. What is the upper bound on the number of components LDA can produce?</strong>  
+<strong>Answer:</strong> LDA can produce at most $C - 1$ components, where $C$ is the total number of classes. This is because the between-class scatter matrix $S_B$ is formed by the sum of $C$ rank-1 matrices, resulting in a maximum rank of $C-1$. For binary classification ($C=2$), LDA yields exactly one component.</p>
+
+<p><strong>Q3. When would LDA fail?</strong>  
+<strong>Answer:</strong> LDA assumes that classes are normally distributed, share equal covariance matrices, and are linearly separable. It fails when:
+<ul>
+<li>Class boundaries are highly non-linear (e.g. concentric circles).</li>
+<li>Covariance matrices differ significantly across classes.</li>
+<li>The number of features exceeds the number of training samples (the "small $N$, large $p$" problem), which makes the within-class scatter matrix $S_W$ singular and non-invertible.</li>
+</ul></p>
+
+<p><strong>Q4. What is the difference between Feature Selection and Feature Extraction?</strong>  
+<strong>Answer:</strong> Feature Selection selects a subset of the original features without altering them (e.g., keeping 5 out of 13 columns). Feature Extraction projects the original high-dimensional space into a new, lower-dimensional space (e.g. PCA or LDA), creating entirely new features that are combinations of the original ones.</p>
+
+<p><strong>Q5. Why is equal covariance a crucial assumption for LDA?</strong>  
+<strong>Answer:</strong> LDA assumes all classes share the same covariance matrix, meaning all class clusters have similar shapes and orientations. This assumption allows the decision boundary to be linear. If this assumption is violated, the optimal boundary is quadratic, and Quadratic Discriminant Analysis (QDA) should be used instead.</p>
+
+<hr></div>
+<div class="notebook-markdown"><p># Key Takeaways</p>
+
+<ul>
+<li><strong>PCA ignores labels; LDA uses them.</strong> When your goal is classification, LDA is preferred for dimensionality reduction because it optimizes for class separation, whereas PCA only projects along the directions of maximum variance.</li>
+<li><strong>LDA is constrained by the number of classes.</strong> You can project data into at most $C-1$ components. For 3 classes (such as the Wine dataset), you get a maximum of 2 dimensions.</li>
+<li><strong>Equal covariance shapes the linear boundary.</strong> If classes have very different variances or orientations, the linear boundary assumption fails. In those cases, use Quadratic Discriminant Analysis (QDA).</li>
+<li><strong>Scaling features is mandatory.</strong> Like most distance-based and gradient-based estimators, LDA is sensitive to variance scaling. Always apply standardization (Z-score normalization) before computing scatter matrices.</li>
+</ul></div>
+                    </div>
+                    
+          </div>
+
+          <!-- 6. Bottom Navigation Cards -->
+          <div class="bottom-navigation-cards-row">
+            
+                <a href="6.7-summary.html" class="bottom-nav-card glass">
+                  <span class="nav-direction">&larr; Previous Lesson</span>
+                  <span class="nav-title">6.7 Summary & Interview Preparation</span>
+                </a>
+                
+            
+                <a href="../../curriculum.html" class="bottom-nav-card next glass">
+                  <span class="nav-direction">Finish Module &rarr;</span>
+                  <span class="nav-title">Back to Curriculum</span>
+                </a>
+                
+          </div>
+
+          <div class="bottom-return-curriculum-row">
+            <a href="../../curriculum.html" class="btn btn-secondary">&larr; Return to Curriculum</a>
+          </div>
+
+        </div>
+
+        <!-- 7. Right Sidebar Panel (Sticky Accordion Mount) -->
+        <aside id="sidebar-container" class="lesson-right-sidebar glass"></aside>
+
+      </div>
+    </main>
+
+    <!-- Footer Injector Mount -->
+    <footer id="footer-container" class="main-footer"></footer>
+
+    <!-- Shared Static LMS Scripts -->
+    <script src="../../js/app.js"></script>
+    <script src="../../js/navigation.js"></script>
+    <script src="../../js/sidebar.js"></script>
+    <script src="../../js/progress.js"></script>
+</body>
+</html>

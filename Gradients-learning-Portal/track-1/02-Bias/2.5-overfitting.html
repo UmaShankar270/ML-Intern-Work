@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Overfitting Diagnostics â€” Gradients ML LMS</title>
+    
+        <!-- KaTeX CSS and JS for mathematical equations -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    <script defer src="../../js/katex.js"></script>
+
+    <!-- CSS sheets -->
+    <link rel="stylesheet" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../css/layout.css" />
+    <link rel="stylesheet" href="../../css/responsive.css" />
+    <link rel="stylesheet" href="../../css/lesson.css" />
+    <link rel="stylesheet" href="../../css/sidebar.css" />
+</head>
+<body>
+    <!-- Top Header Navigation Injector -->
+    <header id="header-container" class="main-header glass"></header>
+
+    <main class="container fade-in" style="padding-bottom: 6rem;">
+      
+      <!-- 1. Breadcrumb Navigation -->
+      <div class="breadcrumb-container">
+        <div class="lesson-breadcrumb">
+          <a href="../../index.html">Home</a> &gt; 
+          <a href="../../course-overview.html">Course Overview</a> &gt; 
+          <a href="../../curriculum.html">Curriculum</a> &gt; 
+          <span>02-Bias: Bias-Variance Dilemma</span> &gt; 
+          <span class="active-node">Lesson 2.5</span>
+        </div>
+      </div>
+
+      <!-- 2. Two-Column Layout (Main Content + Right Sidebar) -->
+      <div class="lesson-grid-layout">
+        
+        <!-- Center-Left Content Area -->
+        <div class="lesson-content-area">
+          <div class="content-connector-line"></div>
+
+          <!-- 3. Lesson Header -->
+          <header class="lesson-template-header">
+            <div class="lesson-header-meta-row">
+              <span class="lesson-header-badge track">Machine Learning Fundamentals</span>
+              <span class="lesson-header-badge">02-Bias</span>
+              <span class="lesson-header-badge">Lesson 2.5</span>
+              <span class="lesson-header-badge diff">Intermediate</span>
+              <span class="lesson-header-badge">12 mins</span>
+            </div>
+            <h1>Overfitting Diagnostics</h1>
+          </header>
+
+          <!-- 4. Learning Objectives Card -->
+          <div class="objectives-box-card glass">
+            <h3>Lesson Objectives</h3>
+            <div class="objectives-box-grid">
+              <div class="objectives-box-col">
+                <h4>What you will learn</h4>
+                <p>Evaluate the four core assumptions (functional alignment, feature signal, representativeness, label accuracy) and decide when high bias is acceptable vs. when more complexity is needed.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Prerequisites</h4>
+                <p>Understanding of bias-variance decomposition (Lesson 2.3).</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Expected Outcome</h4>
+                <p>Apply the Accept/Reject decision framework for bias to real-world modeling projects.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. Main Lesson Content Area -->
+          <div class="markdown-content">
+            
+                    <div class="lesson-content-block">
+                        <h2>Lesson 2.4: Core Assumptions & Acceptability</h2>
+                        
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h3>1. Key Assumptions</h3>
+                        <table class="variable-table">
+        <thead>
+            <tr><th>Assumption</th><th>Conceptual Goal</th><th>Consequence of Violation</th></tr>
+        </thead>
+        <tbody>
+            <tr><td><strong>Functional Alignment</strong></td><td>The model's shape matches the true physical relationship.</td><td>If the true pattern is non-linear but a linear model is used, bias is permanent.</td></tr><tr><td><strong>Feature Signal</strong></td><td>The features $X$ contain predictive information for target $y$.</td><td>If features lack predictive signal, the model cannot learn a mapping and defaults to predicting the mean.</td></tr><tr><td><strong>Representativeness</strong></td><td>The training sample matches the target population distribution.</td><td>If training data is unrepresentative, the model learns a biased relationship.</td></tr><tr><td><strong>Label Accuracy</strong></td><td>Target labels are correct and free from systematic errors.</td><td>Systematic errors in the labels shift the target function, introducing data-level bias.</td></tr>
+        </tbody>
+    </table>
+
+<hr>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h3>2. Decision Guide: When to Accept Higher Bias</h3>
+                        <h4>Accept Higher Bias (Simple Models) When:</h4>
+<ul>
+<li><strong>The dataset is small:</strong> Complex models quickly overfit small datasets. Simpler models with higher bias generalize better here.</li>
+<li><strong>High interpretability is required:</strong> Linear models are easy to audit and explain (e.g., credit risk or medical triage).</li>
+<li><strong>Controlled regularization is applied:</strong> Adding L1/L2 penalties intentionally introduces small bias to reduce high variance.</li>
+<li><strong>Production latency is tight:</strong> Simple models make predictions in microseconds.</li>
+</ul>
+
+<h4>Reject High Bias (Need More Complexity) When:</h4>
+<ul>
+<li><strong>The dataset is large and feature-rich:</strong> There is enough data to support complex patterns without overfitting.</li>
+<li><strong>The problem is non-linear:</strong> Tasks like image classification or natural language processing cannot be solved with simple linear cuts.</li>
+<li><strong>Prediction accuracy is critical:</strong> The cost of systematic prediction errors is high (e.g., credit card fraud detection).</li>
+</ul>
+
+<hr>
+                    </div>
+                    
+          </div>
+
+          <!-- 6. Bottom Navigation Cards -->
+          <div class="bottom-navigation-cards-row">
+            
+                <a href="2.4-underfitting.html" class="bottom-nav-card glass">
+                  <span class="nav-direction">&larr; Previous Lesson</span>
+                  <span class="nav-title">2.4 Underfitting Diagnostics</span>
+                </a>
+                
+            
+                <a href="2.6-tradeoff.html" class="bottom-nav-card next glass">
+                  <span class="nav-direction">Next Lesson &rarr;</span>
+                  <span class="nav-title">2.6 Bias-Variance Tradeoff Mathematics</span>
+                </a>
+                
+          </div>
+
+          <div class="bottom-return-curriculum-row">
+            <a href="../../curriculum.html" class="btn btn-secondary">&larr; Return to Curriculum</a>
+          </div>
+
+        </div>
+
+        <!-- 7. Right Sidebar Panel (Sticky Accordion Mount) -->
+        <aside id="sidebar-container" class="lesson-right-sidebar glass"></aside>
+
+      </div>
+    </main>
+
+    <!-- Footer Injector Mount -->
+    <footer id="footer-container" class="main-footer"></footer>
+
+    <!-- Shared Static LMS Scripts -->
+    <script src="../../js/app.js"></script>
+    <script src="../../js/navigation.js"></script>
+    <script src="../../js/sidebar.js"></script>
+    <script src="../../js/progress.js"></script>
+</body>
+</html>

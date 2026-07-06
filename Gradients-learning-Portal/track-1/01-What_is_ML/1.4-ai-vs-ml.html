@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI vs ML vs DL vs Data Science â€” Gradients ML LMS</title>
+    
+        <!-- KaTeX CSS and JS for mathematical equations -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    <script defer src="../../js/katex.js"></script>
+
+    <!-- CSS sheets -->
+    <link rel="stylesheet" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../css/layout.css" />
+    <link rel="stylesheet" href="../../css/responsive.css" />
+    <link rel="stylesheet" href="../../css/lesson.css" />
+    <link rel="stylesheet" href="../../css/sidebar.css" />
+</head>
+<body>
+    <!-- Top Header Navigation Injector -->
+    <header id="header-container" class="main-header glass"></header>
+
+    <main class="container fade-in" style="padding-bottom: 6rem;">
+      
+      <!-- 1. Breadcrumb Navigation -->
+      <div class="breadcrumb-container">
+        <div class="lesson-breadcrumb">
+          <a href="../../index.html">Home</a> &gt; 
+          <a href="../../course-overview.html">Course Overview</a> &gt; 
+          <a href="../../curriculum.html">Curriculum</a> &gt; 
+          <span>01-What_is_ML: Introduction to Machine Learning</span> &gt; 
+          <span class="active-node">Lesson 1.4</span>
+        </div>
+      </div>
+
+      <!-- 2. Two-Column Layout (Main Content + Right Sidebar) -->
+      <div class="lesson-grid-layout">
+        
+        <!-- Center-Left Content Area -->
+        <div class="lesson-content-area">
+          <div class="content-connector-line"></div>
+
+          <!-- 3. Lesson Header -->
+          <header class="lesson-template-header">
+            <div class="lesson-header-meta-row">
+              <span class="lesson-header-badge track">Machine Learning Fundamentals</span>
+              <span class="lesson-header-badge">01-What_is_ML</span>
+              <span class="lesson-header-badge">Lesson 1.4</span>
+              <span class="lesson-header-badge diff">Beginner</span>
+              <span class="lesson-header-badge">10 mins</span>
+            </div>
+            <h1>AI vs ML vs DL vs Data Science</h1>
+          </header>
+
+          <!-- 4. Learning Objectives Card -->
+          <div class="objectives-box-card glass">
+            <h3>Lesson Objectives</h3>
+            <div class="objectives-box-grid">
+              <div class="objectives-box-col">
+                <h4>What you will learn</h4>
+                <p>Understand the hierarchical relationship between Artificial Intelligence, Machine Learning, Deep Learning, and Data Science.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Prerequisites</h4>
+                <p>Basic familiarity with the term "Artificial Intelligence" from general knowledge.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Expected Outcome</h4>
+                <p>Clearly distinguish between AI, ML, DL, and Data Science, and place each field in its proper context within the broader landscape.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. Main Lesson Content Area -->
+          <div class="markdown-content">
+            
+                    <div class="lesson-content-block">
+                        <h2>AI vs ML vs Deep Learning vs Data Science</h2>
+                        <p>These four terms are often used interchangeably in casual conversation, but they represent distinct (though overlapping) fields. Understanding the hierarchy is essential for navigating the ML landscape.</p>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h3>The Hierarchy</h3>
+                        <pre class="output-console-mock"><code>â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚               Artificial Intelligence (AI)         â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚
+â”‚  â”‚         Machine Learning (ML)                â”‚  â”‚
+â”‚  â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”‚  â”‚
+â”‚  â”‚  â”‚      Deep Learning (DL)               â”‚   â”‚  â”‚
+â”‚  â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â”‚  â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚
+â”‚                      â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”      â”‚
+â”‚                      â”‚   Data Science (DS)  â”‚      â”‚
+â”‚                      â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜      â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜</code></pre>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h3>Definitions</h3>
+
+                        <h4>Artificial Intelligence (AI) â€” Broadest</h4>
+                        <p>AI is the overarching field of creating intelligent systems that can perceive, reason, learn, and act. It includes everything from symbolic logic and expert systems to modern neural networks. AI is not limited to learning â€” it also encompasses planning, knowledge representation, and natural language understanding.</p>
+
+                        <h4>Machine Learning (ML) â€” Subset of AI</h4>
+                        <p>ML is a subfield of AI focused specifically on systems that learn from data. Instead of hard-coding rules, ML algorithms discover patterns automatically. ML is what powers most modern AI applications, from spam filters to recommendation engines.</p>
+
+                        <h4>Deep Learning (DL) â€” Subset of ML</h4>
+                        <p>Deep Learning uses multi-layered neural networks (deep architectures) to model complex, hierarchical patterns. It excels at unstructured data like images, audio, and text. While all deep learning is machine learning, not all machine learning is deep learning â€” traditional ML includes linear models, decision trees, and SVMs.</p>
+
+                        <h4>Data Science (DS) â€” Overlapping Field</h4>
+                        <p>Data Science is a broader discipline that encompasses the entire lifecycle of extracting insights from data. It includes statistics, data wrangling, visualization, and domain expertise. ML is one of the tools data scientists use, but Data Science also includes non-ML analysis, A/B testing, and business intelligence.</p>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h3>Comparison Table</h3>
+                        <table class="variable-table">
+                            <thead>
+                                <tr><th>Dimension</th><th>AI</th><th>ML</th><th>DL</th><th>Data Science</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td><strong>Scope</strong></td><td>Broadest â€” any intelligent behavior</td><td>Learning from data</td><td>Deep neural networks</td><td>End-to-end data insights</td></tr>
+                                <tr><td><strong>Examples</strong></td><td>Chess engines, expert systems, robotics</td><td>Spam filters, regression models</td><td>Image recognition, GPT, AlphaGo</td><td>Dashboards, statistical analysis, ML pipelines</td></tr>
+                                <tr><td><strong>Requires Data?</strong></td><td>Not necessarily (expert systems use rules)</td><td>Yes â€” labeled or unlabeled</td><td>Yes â€” large volumes typically</td><td>Yes â€” exploratory and confirmatory</td></tr>
+                                <tr><td><strong>Key Tools</strong></td><td>Logic programming, search algorithms</td><td>Scikit-learn, XGBoost, libsvm</td><td>PyTorch, TensorFlow, JAX</td><td>Pandas, SQL, visualization, stats</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h3>Overlap in Practice</h3>
+                        <p>In the real world, these fields overlap heavily. A data scientist might use ML models that are deep neural networks to solve an AI problem like autonomous driving. What matters is understanding which tools and techniques are appropriate for your specific problem.</p>
+
+                        <div class="alert-box tip">
+                            <span class="alert-icon">ðŸ’¡</span>
+                            <div class="alert-content">
+                                <strong>Key Insight:</strong> When someone says they work in "AI," ask whether they mean ML, DL, or Data Science. Most production AI systems today are powered by Machine Learning.
+                            </div>
+                        </div>
+                    </div>
+                    
+          </div>
+
+          <!-- 6. Bottom Navigation Cards -->
+          <div class="bottom-navigation-cards-row">
+            
+                <a href="1.3-traditional-vs-ml.html" class="bottom-nav-card glass">
+                  <span class="nav-direction">&larr; Previous Lesson</span>
+                  <span class="nav-title">1.3 Traditional Programming vs Machine Learning</span>
+                </a>
+                
+            
+                <a href="1.5-types.html" class="bottom-nav-card next glass">
+                  <span class="nav-direction">Next Lesson &rarr;</span>
+                  <span class="nav-title">1.5 Types of Machine Learning</span>
+                </a>
+                
+          </div>
+
+          <div class="bottom-return-curriculum-row">
+            <a href="../../curriculum.html" class="btn btn-secondary">&larr; Return to Curriculum</a>
+          </div>
+
+        </div>
+
+        <!-- 7. Right Sidebar Panel (Sticky Accordion Mount) -->
+        <aside id="sidebar-container" class="lesson-right-sidebar glass"></aside>
+
+      </div>
+    </main>
+
+    <!-- Footer Injector Mount -->
+    <footer id="footer-container" class="main-footer"></footer>
+
+    <!-- Shared Static LMS Scripts -->
+    <script src="../../js/app.js"></script>
+    <script src="../../js/navigation.js"></script>
+    <script src="../../js/sidebar.js"></script>
+    <script src="../../js/progress.js"></script>
+</body>
+</html>

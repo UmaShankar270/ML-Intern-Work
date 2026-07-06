@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Limitations & Global Structure Trade-offs â€” Gradients ML LMS</title>
+    
+        <!-- KaTeX CSS and JS for mathematical equations -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    <script defer src="../../js/katex.js"></script>
+
+    <!-- CSS sheets -->
+    <link rel="stylesheet" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../css/layout.css" />
+    <link rel="stylesheet" href="../../css/responsive.css" />
+    <link rel="stylesheet" href="../../css/lesson.css" />
+    <link rel="stylesheet" href="../../css/sidebar.css" />
+</head>
+<body>
+    <!-- Top Header Navigation Injector -->
+    <header id="header-container" class="main-header glass"></header>
+
+    <main class="container fade-in" style="padding-bottom: 6rem;">
+      
+      <!-- 1. Breadcrumb Navigation -->
+      <div class="breadcrumb-container">
+        <div class="lesson-breadcrumb">
+          <a href="../../index.html">Home</a> &gt; 
+          <a href="../../course-overview.html">Course Overview</a> &gt; 
+          <a href="../../curriculum.html">Curriculum</a> &gt; 
+          <span>08-t-SNE: t-Distributed Stochastic Neighbor Embedding (t-SNE)</span> &gt; 
+          <span class="active-node">Lesson 8.6</span>
+        </div>
+      </div>
+
+      <!-- 2. Two-Column Layout (Main Content + Right Sidebar) -->
+      <div class="lesson-grid-layout">
+        
+        <!-- Center-Left Content Area -->
+        <div class="lesson-content-area">
+          <div class="content-connector-line"></div>
+
+          <!-- 3. Lesson Header -->
+          <header class="lesson-template-header">
+            <div class="lesson-header-meta-row">
+              <span class="lesson-header-badge track">Dimensionality Reduction</span>
+              <span class="lesson-header-badge">08-t-SNE</span>
+              <span class="lesson-header-badge">Lesson 8.6</span>
+              <span class="lesson-header-badge diff">Intermediate</span>
+              <span class="lesson-header-badge">15 mins</span>
+            </div>
+            <h1>Limitations & Global Structure Trade-offs</h1>
+          </header>
+
+          <!-- 4. Learning Objectives Card -->
+          <div class="objectives-box-card glass">
+            <h3>Lesson Objectives</h3>
+            <div class="objectives-box-grid">
+              <div class="objectives-box-col">
+                <h4>What you will learn</h4>
+                <p>Compare PCA, LDA, t-SNE, and UMAP across type, supervision, objective, solver, out-of-sample support, complexity, and stochasticity. Explain cross-topic connections to feature engineering, bias-variance, and overfitting.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Prerequisites</h4>
+                <p>Lessons 8.1-8.5. Familiarity with PCA and basic supervised learning concepts (bias-variance, overfitting).</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Expected Outcome</h4>
+                <p>Choose the appropriate dimensionality reduction technique for a given problem. Recognize that t-SNE distances and cluster sizes are not interpretable as absolute measures.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. Main Lesson Content Area -->
+          <div class="markdown-content">
+            
+                    <div class="lesson-content-block">
+                        <h2>Lesson 8.6: Limitations, Connections & Comparisons</h2>
+                        <div class="alert-box tip">
+                            <span class="alert-icon">ðŸ’¡</span>
+                            <div class="alert-content">
+                                t-SNE is strictly a <strong>visualization tool</strong>. Because it distorts global distances and does not provide a simple, reusable projection matrix (like PCA), you should <strong>never</strong> use t-SNE as a feature extractor/preprocessing step before training a downstream classifier (e.g., Logistic Regression or SVM). Additionally, t-SNE cannot project new unseen data points, has quadratic complexity $O(N^2)$ without approximations, and its stochastic nature produces different layouts across runs.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    
+                    <div class="lesson-content-block">
+                        <h3>Comparison of Dimensionality Reduction Techniques</h3>
+                        <table class="variable-table">
+        <thead>
+            <tr><th>Feature</th><th>PCA</th><th>LDA</th><th>t-SNE</th><th>UMAP</th></tr>
+        </thead>
+        <tbody>
+            <tr><td><strong>Type</strong></td><td>Linear</td><td>Linear</td><td>Non-linear</td><td>Non-linear</td></tr><tr><td><strong>Supervision</strong></td><td>Unsupervised</td><td>Supervised</td><td>Unsupervised</td><td>Unsupervised</td></tr><tr><td><strong>Objective</strong></td><td>Maximize global variance</td><td>Maximize class separation</td><td>Preserve local neighborhoods</td><td>Preserve local + global structure</td></tr><tr><td><strong>Solver</strong></td><td>SVD / Eigen-decomposition</td><td>Scatter Matrix ratio</td><td>Gradient Descent (KL loss)</td><td>Stochastic Gradient Descent</td></tr><tr><td><strong>Out-of-Sample</strong></td><td>Yes (`transform`)</td><td>Yes (`transform`)</td><td>No (must re-run)</td><td>Yes (`transform`)</td></tr><tr><td><strong>Complexity</strong></td><td>$O(d^3) + O(d^2 N)$</td><td>$O(d^3) + O(d^2 N)$</td><td>$O(N^2)$ (Exact) / $O(N \log N)$</td><td>$O(N \log N)$ (Highly scalable)</td></tr><tr><td><strong>Stochastic?</strong></td><td>No (Deterministic)</td><td>No (Deterministic)</td><td>Yes (Stochastic)</td><td>Yes (Stochastic)</td></tr>
+        </tbody>
+    </table>
+
+<hr>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h3>Intertopic Connections</h3>
+                        <ul>
+<li><strong>Feature Engineering:</strong> t-SNE is highly sensitive to input feature representation. Raw pixel distances are rarely ideal for complex images; running a CNN feature extractor or PCA beforehand significantly improves the quality of the neighbor map.</li>
+<li><strong>Bias-Variance:</strong> Because t-SNE is stochastic, it exhibits high variance across random seeds. Running it multiple times is recommended to ensure cluster assignments are stable and not random artifacts of initialization.</li>
+<li><strong>Overfitting:</strong> If the perplexity is set too low relative to the sample size, t-SNE can "overfit" to noise, showing beautiful clusters in completely random data. Always validate cluster reality using PCA or downstream classification metrics.</li>
+</ul>
+
+<hr>
+                    </div>
+                    
+          </div>
+
+          <!-- 6. Bottom Navigation Cards -->
+          <div class="bottom-navigation-cards-row">
+            
+                <a href="8.5-hyperparameters.html" class="bottom-nav-card glass">
+                  <span class="nav-direction">&larr; Previous Lesson</span>
+                  <span class="nav-title">8.5 Hyperparameter Tuning: Perplexity & Learning Rate</span>
+                </a>
+                
+            
+                <a href="8.7-summary.html" class="bottom-nav-card next glass">
+                  <span class="nav-direction">Next Lesson &rarr;</span>
+                  <span class="nav-title">8.7 Summary & Interview Preparation</span>
+                </a>
+                
+          </div>
+
+          <div class="bottom-return-curriculum-row">
+            <a href="../../curriculum.html" class="btn btn-secondary">&larr; Return to Curriculum</a>
+          </div>
+
+        </div>
+
+        <!-- 7. Right Sidebar Panel (Sticky Accordion Mount) -->
+        <aside id="sidebar-container" class="lesson-right-sidebar glass"></aside>
+
+      </div>
+    </main>
+
+    <!-- Footer Injector Mount -->
+    <footer id="footer-container" class="main-footer"></footer>
+
+    <!-- Shared Static LMS Scripts -->
+    <script src="../../js/app.js"></script>
+    <script src="../../js/navigation.js"></script>
+    <script src="../../js/sidebar.js"></script>
+    <script src="../../js/progress.js"></script>
+</body>
+</html>

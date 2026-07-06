@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-world Diagnostic Examples â€” Gradients ML LMS</title>
+    
+        <!-- KaTeX CSS and JS for mathematical equations -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    <script defer src="../../js/katex.js"></script>
+
+    <!-- CSS sheets -->
+    <link rel="stylesheet" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../css/layout.css" />
+    <link rel="stylesheet" href="../../css/responsive.css" />
+    <link rel="stylesheet" href="../../css/lesson.css" />
+    <link rel="stylesheet" href="../../css/sidebar.css" />
+</head>
+<body>
+    <!-- Top Header Navigation Injector -->
+    <header id="header-container" class="main-header glass"></header>
+
+    <main class="container fade-in" style="padding-bottom: 6rem;">
+      
+      <!-- 1. Breadcrumb Navigation -->
+      <div class="breadcrumb-container">
+        <div class="lesson-breadcrumb">
+          <a href="../../index.html">Home</a> &gt; 
+          <a href="../../course-overview.html">Course Overview</a> &gt; 
+          <a href="../../curriculum.html">Curriculum</a> &gt; 
+          <span>02-Bias: Bias-Variance Dilemma</span> &gt; 
+          <span class="active-node">Lesson 2.7</span>
+        </div>
+      </div>
+
+      <!-- 2. Two-Column Layout (Main Content + Right Sidebar) -->
+      <div class="lesson-grid-layout">
+        
+        <!-- Center-Left Content Area -->
+        <div class="lesson-content-area">
+          <div class="content-connector-line"></div>
+
+          <!-- 3. Lesson Header -->
+          <header class="lesson-template-header">
+            <div class="lesson-header-meta-row">
+              <span class="lesson-header-badge track">Machine Learning Fundamentals</span>
+              <span class="lesson-header-badge">02-Bias</span>
+              <span class="lesson-header-badge">Lesson 2.7</span>
+              <span class="lesson-header-badge diff">Intermediate</span>
+              <span class="lesson-header-badge">15 mins</span>
+            </div>
+            <h1>Real-world Diagnostic Examples</h1>
+          </header>
+
+          <!-- 4. Learning Objectives Card -->
+          <div class="objectives-box-card glass">
+            <h3>Lesson Objectives</h3>
+            <div class="objectives-box-grid">
+              <div class="objectives-box-col">
+                <h4>What you will learn</h4>
+                <p>Analyze learning curves to diagnose high bias and apply practical strategies (increase complexity, add features, reduce regularization) to reduce bias.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Prerequisites</h4>
+                <p>Understanding of training/validation loss curves and diagnostic metrics.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Expected Outcome</h4>
+                <p>Read high-bias patterns in loss curves and implement targeted fixes to reduce underfitting in production models.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. Main Lesson Content Area -->
+          <div class="markdown-content">
+            
+                    
+                    <div class="lesson-content-block">
+                        <h2>Lesson 2.5: Reducing Bias & Developer Diagnostics</h2>
+                        
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h3>1. Diagnostic Indicators</h3>
+                        <p>A developer can diagnose high bias by analyzing learning curves:</p>
+
+<pre class="output-console-mock"><code>Loss
+ â”‚   
+ â”‚  â–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆ  Validation Loss (High Plateau)
+ â”‚  â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€  Training Loss (High Plateau)
+ â”‚
+ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+                        Epochs</code></pre>
+
+<ul>
+<li><strong>The High Plateau:</strong> If both training loss and validation loss level off at a high value, the model is underfitting.</li>
+<li><strong>More Data Won't Help:</strong> If a model has high bias, adding more training examples will not reduce the loss. The model's capacity, not data volume, is the bottleneck.</li>
+</ul>
+
+<hr>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h3>2. How to Reduce Bias</h3>
+                        <p>To reduce bias and improve model fit:
+1. <strong>Increase Model Complexity:</strong> Use a model with more parameters (e.g., increase tree depth or add polynomial features).
+2. <strong>Add Informative Features:</strong> Perform feature engineering to provide the model with better predictive signals.
+3. <strong>Decrease Regularization:</strong> Reduce penalties (e.g., increase parameter <code>C</code> in Logistic Regression or decrease <code>alpha</code> in Ridge/Lasso).
+4. <strong>Remove Constraints:</strong> Loosen artificial limits on the model's structure.</p>
+
+<hr>
+                    </div>
+                    
+          </div>
+
+          <!-- 6. Bottom Navigation Cards -->
+          <div class="bottom-navigation-cards-row">
+            
+                <a href="2.6-tradeoff.html" class="bottom-nav-card glass">
+                  <span class="nav-direction">&larr; Previous Lesson</span>
+                  <span class="nav-title">2.6 Bias-Variance Tradeoff Mathematics</span>
+                </a>
+                
+            
+                <a href="2.8-summary.html" class="bottom-nav-card next glass">
+                  <span class="nav-direction">Next Lesson &rarr;</span>
+                  <span class="nav-title">2.8 Summary & Interview Preparation</span>
+                </a>
+                
+          </div>
+
+          <div class="bottom-return-curriculum-row">
+            <a href="../../curriculum.html" class="btn btn-secondary">&larr; Return to Curriculum</a>
+          </div>
+
+        </div>
+
+        <!-- 7. Right Sidebar Panel (Sticky Accordion Mount) -->
+        <aside id="sidebar-container" class="lesson-right-sidebar glass"></aside>
+
+      </div>
+    </main>
+
+    <!-- Footer Injector Mount -->
+    <footer id="footer-container" class="main-footer"></footer>
+
+    <!-- Shared Static LMS Scripts -->
+    <script src="../../js/app.js"></script>
+    <script src="../../js/navigation.js"></script>
+    <script src="../../js/sidebar.js"></script>
+    <script src="../../js/progress.js"></script>
+</body>
+</html>

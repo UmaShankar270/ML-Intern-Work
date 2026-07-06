@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Summary & t-SNE vs PCA Notebook — Gradients ML LMS</title>
+    
+    <!-- KaTeX CSS and JS for mathematical equations -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
+
+    <!-- CSS sheets -->
+    <link rel="stylesheet" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../css/layout.css" />
+    <link rel="stylesheet" href="../../css/responsive.css" />
+    <link rel="stylesheet" href="../../css/lesson.css" />
+    <link rel="stylesheet" href="../../css/sidebar.css" />
+</head>
+<body>
+    <!-- Top Header Navigation Injector -->
+    <header id="header-container" class="main-header glass"></header>
+
+    <main class="container fade-in" style="padding-bottom: 6rem;">
+      
+      <!-- 1. Breadcrumb Navigation -->
+      <div class="breadcrumb-container">
+        <div class="lesson-breadcrumb">
+          <a href="../../index.html">Home</a> &gt; 
+          <a href="../../course-overview.html">Course Overview</a> &gt; 
+          <a href="../../curriculum.html">Curriculum</a> &gt; 
+          <span>08-t-SNE: t-Distributed Stochastic Neighbor Embedding (t-SNE)</span> &gt; 
+          <span class="active-node">Lesson 8.4</span>
+        </div>
+      </div>
+
+      <!-- 2. Two-Column Layout (Main Content + Right Sidebar) -->
+      <div class="lesson-grid-layout">
+        
+        <!-- Center-Left Content Area -->
+        <div class="lesson-content-area">
+          <div class="content-connector-line"></div>
+
+          <!-- 3. Lesson Header -->
+          <header class="lesson-template-header">
+            <div class="lesson-header-meta-row">
+              <span class="lesson-header-badge track">Dimensionality Reduction</span>
+              <span class="lesson-header-badge">08-t-SNE</span>
+              <span class="lesson-header-badge">Lesson 8.4</span>
+              <span class="lesson-header-badge diff">Advanced</span>
+              <span class="lesson-header-badge">30 mins</span>
+            </div>
+            <h1>Summary & t-SNE vs PCA Notebook</h1>
+          </header>
+
+          <!-- 4. Learning Objectives Card -->
+          <div class="objectives-box-card glass">
+            <h3>Lesson Objectives</h3>
+            <div class="objectives-box-grid">
+              <div class="objectives-box-col">
+                <h4>What you will learn</h4>
+                <p>Master the details of Summary & t-SNE vs PCA Notebook to build complete technical intuition.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Prerequisites</h4>
+                <p>Completion of previous conceptual lessons in this track.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Expected Outcome</h4>
+                <p>Apply Summary & t-SNE vs PCA Notebook diagnostics to prevent training loops leakage or parameters decay.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. Main Lesson Content Area -->
+          <div class="markdown-content">
+            
+                    <div class="lesson-content-block">
+                        <p># Module 08: t-Distributed Stochastic Neighbor Embedding (t-SNE)</p>
+                        
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h2>Lesson 8.5: Step-by-Step t-SNE Algorithm</h2>
+                        <p>![t-SNE Workflow](images/tsne_workflow.png)</p>
+
+<h3>1. Data Preprocessing & Standardization</h3>
+Before feeding data to t-SNE, the features must be standardized (mean=0, variance=1) or normalized to $[0, 1]$. Because t-SNE relies on Euclidean distances, scale mismatches will distort neighbor computations.
+
+<h3>2. Dimensionality Reduction (PCA Pre-processing)</h3>
+For high-dimensional inputs (e.g., MNIST with 784 pixels), it is standard practice to run <strong>PCA</strong> first to reduce the dimensionality to $50$. This:
+<ul>
+<li>Filters out high-frequency noise.</li>
+<li>Speeds up the pairwise distance computations.</li>
+<li>Prevents the t-SNE optimization from getting stuck in local minima.</li>
+</ul>
+
+<h3>3. Compute High-Dimensional Probabilities</h3>
+For each point $x_i$, the algorithm performs a <strong>binary search</strong> to find a unique Gaussian variance $\sigma_i^2$ that matches a user-defined target <strong>perplexity</strong>:
+<div class="math-card glass"><div class="math-eq">\text{Perplexity}(P_i) = 2^{H(P_i)}</div></div>
+where $H(P_i)$ is the Shannon entropy:
+<div class="math-card glass"><div class="math-eq">H(P_i) = -\sum_{j} p_{j|i} \log_2 p_{j|i}</div></div>
+Once the $\sigma_i$ values are found, the conditional probabilities are computed, symmetrized, and normalized to obtain the joint probabilities $p_{ij}$.
+
+<h3>4. Initialize Low-Dimensional Map</h3>
+Create a starting map $Y^{(0)}$ by placing each point at a random 2D coordinate drawn from a normal distribution with small variance:
+<div class="math-card glass"><div class="math-eq">y_i \sim \mathcal{N}(0, 10^{-4} I)</div></div>
+Alternatively, initializing $Y^{(0)}$ using the first 2 principal components of the dataset provides a deterministic and more stable starting layout.
+
+<h3>5. Optimization Loop (Gradient Descent)</h3>
+For each iteration $t$ up to a maximum (e.g., 1000):
+<ul>
+<li>Calculate the low-dimensional Cauchy joint probabilities $q_{ij}^{(t)}$.</li>
+<li>Calculate the gradient of the KL Divergence with respect to each 2D point $y_i$:</li>
+</ul>
+  <div class="math-card glass"><div class="math-eq">\frac{\partial C}{\partial y_i} = 4 \sum_{j} (p_{ij} - q_{ij})(y_i - y_j)\left(1 + \lVert y_i - y_j \rVert^2\right)^{-1}</div></div>
+<ul>
+<li>Update the coordinates using gradient descent with <strong>momentum</strong>:</li>
+</ul>
+  <div class="math-card glass"><div class="math-eq">Y^{(t)} = Y^{(t-1)} - \eta \frac{\partial C}{\partial Y} + \alpha \left(Y^{(t-1)} - Y^{(t-2)}\right)</div></div>
+  where $\eta$ is the learning rate and $\alpha$ is the momentum coefficient.
+
+<div class="alert-box tip">
+                <span class="alert-icon">💡</span>
+                <div class="alert-content">
+                    <strong>Early Exaggeration:</strong> During the first 100–250 iterations, the high-dimensional probabilities $p_{ij}$ are multiplied by a factor of 4. This force-multiplies the attraction between close points, creating highly concentrated, tight clusters early on and leaving empty space on the map for the clusters to drift and arrange themselves.
+                </div>
+            </div>
+
+<hr>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h2>Lesson 8.6: Hyperparameter Tuning, Connections & Comparisons</h2>
+                        <h3>Hyperparameter Tuning Guide</h3>
+
+<h4>1. Perplexity</h4>
+<ul>
+<li><strong>What it is:</strong> The zoom level of the neighborhood. It is the target effective number of neighbors each point considers when finding $\sigma_i$.</li>
+<li><strong>Typical Range:</strong> 5 to 50.</li>
+<li><strong>Tuning Behavior:</strong></li>
+<li>*Too Low (e.g., 2):* Fragments a single cluster into many tiny, disconnected blobs (local noise artifacts).</li>
+<li>*Too High (e.g., 100):* Merges distinct clusters into a single large, uninformative blob (ignores local details).</li>
+</ul>
+
+<h4>2. Learning Rate ($\eta$)</h4>
+<ul>
+<li><strong>What it is:</strong> The step size used for coordinate updates.</li>
+<li><strong>Typical Range:</strong> 100 to 1000.</li>
+<li><strong>Tuning Behavior:</strong></li>
+<li>*Too Low:* The optimization gets stuck in a crowded, unseparated layout (looks like a dense ball).</li>
+<li>*Too High:* Points fly away from the origin, creating scattered, chaotic arrangements that do not converge.</li>
+</ul>
+
+<h4>3. Max Iterations</h4>
+<ul>
+<li><strong>What it is:</strong> The number of gradient descent updates.</li>
+<li><strong>Typical Range:</strong> 500 to 1000.</li>
+<li><strong>Tuning Behavior:</strong> If the iterations are too low, the optimization terminates before the clusters have drifted to their stable locations, leaving them partially overlapped.</li>
+</ul>
+
+<hr>
+
+<h3>Comparison of Dimensionality Reduction Techniques</h3>
+
+<table class="variable-table">
+        <thead>
+            <tr><th>Feature</th><th>PCA</th><th>LDA</th><th>t-SNE</th><th>UMAP</th></tr>
+        </thead>
+        <tbody>
+            <tr><td><strong>Type</strong></td><td>Linear</td><td>Linear</td><td>Non-linear</td><td>Non-linear</td></tr><tr><td><strong>Supervision</strong></td><td>Unsupervised</td><td>Supervised</td><td>Unsupervised</td><td>Unsupervised</td></tr><tr><td><strong>Objective</strong></td><td>Maximize global variance</td><td>Maximize class separation</td><td>Preserve local neighborhoods</td><td>Preserve local + global structure</td></tr><tr><td><strong>Solver</strong></td><td>SVD / Eigen-decomposition</td><td>Scatter Matrix ratio</td><td>Gradient Descent (KL loss)</td><td>Stochastic Gradient Descent</td></tr><tr><td><strong>Out-of-Sample</strong></td><td>Yes (`transform`)</td><td>Yes (`transform`)</td><td>No (must re-run)</td><td>Yes (`transform`)</td></tr><tr><td><strong>Complexity</strong></td><td>$O(d^3) + O(d^2 N)$</td><td>$O(d^3) + O(d^2 N)$</td><td>$O(N^2)$ (Exact) / $O(N \log N)$</td><td>$O(N \log N)$ (Highly scalable)</td></tr><tr><td><strong>Stochastic?</strong></td><td>No (Deterministic)</td><td>No (Deterministic)</td><td>Yes (Stochastic)</td><td>Yes (Stochastic)</td></tr>
+        </tbody>
+    </table>
+
+<hr>
+
+<h3>Intertopic Connections</h3>
+
+<ul>
+<li><strong>Feature Engineering:</strong> t-SNE is highly sensitive to input feature representation. Raw pixel distances are rarely ideal for complex images; running a CNN feature extractor or PCA beforehand significantly improves the quality of the neighbor map.</li>
+<li><strong>Bias-Variance:</strong> Because t-SNE is stochastic, it exhibits high variance across random seeds. Running it multiple times is recommended to ensure cluster assignments are stable and not random artifacts of initialization.</li>
+<li><strong>Overfitting:</strong> If the perplexity is set too low relative to the sample size, t-SNE can "overfit" to noise, showing beautiful clusters in completely random data. Always validate cluster reality using PCA or downstream classification metrics.</li>
+</ul>
+
+<hr>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h2>Jupyter Notebook Practice Lab</h2>
+                        <p class="hero-lead">Run, modify, and analyze python execution outputs. Verify mathematical claims against dataset projections.</p>
+                        <div class="notebook-markdown"><p># t-Distributed Stochastic Neighbor Embedding (t-SNE) — From Theory to Practice</p>
+
+<h2>What This Notebook Covers</h2>
+This notebook is the practical, interactive companion to the <strong>t-SNE README</strong>. We will explore how high-dimensional, non-linear manifolds can be compressed and visualized in a 2D space. You will learn to load high-dimensional digit image datasets, standard-scale and normalize inputs, apply PCA as an initial noise-filtering step, implement t-SNE from scratch using only NumPy, run optimized production-grade scikit-learn SVD/Barnes-Hut pipelines, tune critical hyperparameters like perplexity, and quantitatively evaluate embedding quality using the Trustworthiness metric and downstream KNN accuracy sweeps.
+
+<h2>What You Will Accomplish</h2>
+<ul>
+<li>Describe the crowding problem in dimensionality reduction and how the Student t-distribution resolves it.</li>
+<li>Prepare high-dimensional image data (Standardization and PCA preprocessing) before neighbor embedding.</li>
+<li>Build a basic t-SNE solver from scratch using pure NumPy matrix multiplication to compute conditional and joint probability distributions.</li>
+<li>Apply Scikit-learn's optimized Barnes-Hut `TSNE` estimator to compress 5,000 samples of handwritten digit images from 784 dimensions to 2 dimensions.</li>
+<li>Visualize the resulting embeddings using scatter plots and contour density distributions to assess cluster separation.</li>
+<li>Run hyperparameter sweeps over perplexity values to observe the transition from fragmented local structures to merged global blobs.</li>
+<li>Evaluate embedding quality quantitatively using Scikit-learn's `trustworthiness` score and cross-validated KNN classifier accuracy.</li>
+</ul>
+
+<h2>Before You Start (Prerequisites)</h2>
+<ul>
+<li>Comfort manipulating Python loops, dictionaries, and NumPy array slices.</li>
+<li>Familiarity with basic linear algebra concepts (vectors, dot products, matrix multiplication `@`).</li>
+<li>Basic familiarity with PCA (dimensionality reduction) is helpful but not required.</li>
+</ul>
+
+<h2>About the Dataset</h2>
+We use the benchmark <strong>MNIST Handwritten Digits dataset</strong>, containing 70,000 grayscale images of handwritten digits (0–9), each of size 28×28 pixels. Each image is represented as a flat vector of <strong>784 numbers</strong> (pixel brightness values from 0 to 255). Our goal is to compress these 784 dimensions down to just 2 dimensions, keeping similar digits close together.
+
+<p>We load it using `sklearn.datasets.fetch_openml`.
+<hr></p></div>
+<div class="notebook-markdown"><h2>1. Setup & Workspace Preparation</h2>
+
+<h3>WHY?</h3>
+Importing all scientific computing, visualization, and validation libraries at the beginning of the notebook prevents path resolution errors and ensures all seeds are fixed for reproducibility.
+
+<h3>HOW?</h3>
+We import NumPy, Pandas, Matplotlib, Seaborn, and key Scikit-learn modules, set formatting options, and fix numpy seed to 42.</div>
+
+            <div class="notebook-block glass">
+                <div class="notebook-header">
+                    <span class="file-name">Python Code Block</span>
+                </div>
+                <div class="notebook-body">
+                    <div class="code-cell">
+                        <div class="cell-label">In [1]:</div>
+                        <pre class="code-editor-mock"><code># Import NumPy for manual matrix operations and distance computations
+import numpy as np
+
+# Import Pandas for displaying dataframes and statistical summaries
+import pandas as pd
+
+# Import visualization libraries for plotting scatter and contour charts
+import matplotlib.pyplot as plt
+import seaborn as sns
+from matplotlib.offsetbox import OffsetImage, AnnotationBbox
+
+# Import dataset loader, preprocessors, and dimensionality reduction tools from sklearn
+from sklearn.datasets import fetch_openml
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+from sklearn.manifold import TSNE, trustworthiness
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import cross_val_score
+from sklearn.metrics import confusion_matrix, classification_report
+
+# Set utilities for timing code execution and suppressing warnings
+import time
+import warnings
+warnings.filterwarnings('ignore')
+
+# Set seaborn style for clean grids
+sns.set_theme(style="whitegrid")
+plt.rcParams["figure.figsize"] = (12, 8)
+
+# Fix numpy seed for reproducibility
+np.random.seed(42)
+
+print("All libraries imported and seed fixed to 42.")</code></pre>
+                    </div>
+                    
+                </div>
+            </div>
+            
+<div class="notebook-markdown"><h2>2. Dataset Loading & Stratified Subsampling</h2>
+
+<h3>WHY?</h3>
+Exact t-SNE has a time complexity of $O(N^2)$, meaning that running the algorithm on the full 70,000 samples of MNIST would be computationally prohibitive. We will take a stratified subsample of 5,000 samples (500 per digit class) to ensure balanced representation while keeping runtimes manageable.
+
+<h3>HOW?</h3>
+We load MNIST using `fetch_openml`, select the subset proportionally using index slicing, and verify the class distribution using value counts.</div>
+
+            <div class="notebook-block glass">
+                <div class="notebook-header">
+                    <span class="file-name">Python Code Block</span>
+                </div>
+                <div class="notebook-body">
+                    <div class="code-cell">
+                        <div class="cell-label">In [2]:</div>
+                        <pre class="code-editor-mock"><code>print("📥 Loading MNIST dataset from OpenML (this may take up to 60 seconds)...\n")
+
+# Fetch MNIST dataset (as_frame=False to return numpy arrays directly)
+mnist = fetch_openml('mnist_784', version=1, as_frame=False, parser='auto')
+X_raw = mnist.data.astype(np.float32)
+y_raw = mnist.target.astype(int)
+
+print(f"✅ Full dataset loaded! Shape: {X_raw.shape[0]} samples × {X_raw.shape[1]} features")
+
+# Take a stratified subsample of 5,000 samples (500 per digit class)
+samples_per_class = 500
+selected_indices = []
+
+for digit in range(10):
+    digit_indices = np.where(y_raw == digit)[0]
+    chosen_indices = np.random.choice(digit_indices, size=samples_per_class, replace=False)
+    selected_indices.extend(chosen_indices)
+
+selected_indices = np.array(selected_indices)
+# Shuffle selected indices to remove ordering bias
+np.random.shuffle(selected_indices)
+
+X = X_raw[selected_indices]
+y = y_raw[selected_indices]
+
+print(f"\n📊 Subsampled dataset created! Target shape: {X.shape[0]} samples × {X.shape[1]} features")
+print(f"   Class distribution: {dict(zip(*np.unique(y, return_counts=True)))}")</code></pre>
+                    </div>
+                    
+                </div>
+            </div>
+            
+<div class="notebook-markdown"><h2>3. Exploratory Data Analysis (EDA)</h2>
+
+<h3>WHY?</h3>
+Before performing dimensionality reduction, it is crucial to visually inspect sample images to understand their raw features and make sure the data loaded correctly.
+
+<h3>HOW?</h3>
+We plot a grid of 25 random handwritten digit images from our subset, with each image labeled and colored according to its true digit class.</div>
+
+            <div class="notebook-block glass">
+                <div class="notebook-header">
+                    <span class="file-name">Python Code Block</span>
+                </div>
+                <div class="notebook-body">
+                    <div class="code-cell">
+                        <div class="cell-label">In [3]:</div>
+                        <pre class="code-editor-mock"><code># Set up the figure grid
+fig, axes = plt.subplots(5, 5, figsize=(10, 10))
+fig.suptitle("Sample MNIST Handwritten Digits from Our Subsample", fontsize=16, fontweight='bold', y=0.95)
+
+colors = plt.cm.tab10(np.linspace(0, 1, 10))
+
+for i, ax in enumerate(axes.flat):
+    # Reshape the flat 784-D vector back into a 28x28 grayscale image grid
+    digit_img = X[i].reshape(28, 28)
+    true_label = y[i]
+    
+    # Plot image with coordinates off
+    ax.imshow(digit_img, cmap='gray_r')
+    ax.axis('off')
+    
+    # Add colored boundary box representing the digit class
+    rect = plt.Rectangle((0,0), 27, 27, fill=False, color=colors[true_label], linewidth=3)
+    ax.add_patch(rect)
+    ax.set_title(f"Digit: {true_label}", color=colors[true_label], fontsize=10, fontweight='bold')
+
+plt.tight_layout()
+plt.show()</code></pre>
+                    </div>
+                    
+                </div>
+            </div>
+            
+<div class="notebook-markdown"><h2>4. Preprocessing: Standardization and PCA Pre-processing</h2>
+
+<h3>WHY?</h3>
+Dimensionality reduction models are highly sensitive to variable scales. Because pixel values range from 0 to 255, dividing by 255.0 normalizes them to $[0, 1]$, making distance calculations scale-invariant.
+
+<p>We then run <strong>PCA</strong> to reduce the dimensionality from 784 dimensions to 50 dimensions. This pre-processing step filters out high-frequency noise, speeds up subsequent t-SNE distance computations, and prevents local optimization traps.</p>
+
+<h3>HOW?</h3>
+We divide the data by 255.0, fit `PCA(n_components=50)` on the normalized features, and plot a Scree plot showing cumulative variance.</div>
+
+            <div class="notebook-block glass">
+                <div class="notebook-header">
+                    <span class="file-name">Python Code Block</span>
+                </div>
+                <div class="notebook-body">
+                    <div class="code-cell">
+                        <div class="cell-label">In [4]:</div>
+                        <pre class="code-editor-mock"><code># Step 4a: Normalize pixel features to [0, 1] range
+X_normalized = X / 255.0
+
+# Step 4b: Apply PCA to reduce dimensionality to 50 components
+pca = PCA(n_components=50, random_state=42)
+X_pca = pca.fit_transform(X_normalized)
+
+print(f"Original feature space dimension: {X_normalized.shape[1]} (pixels)")
+print(f"Reduced feature space dimension : {X_pca.shape[1]} (principal components)")
+print(f"Total variance retained in 50 components: {pca.explained_variance_ratio_.sum()*100:.2f}%")
+
+# Step 4c: Plot PCA Scree plot diagnostic dashboard
+fig, ax = plt.subplots(figsize=(10, 5))
+components = np.arange(1, 51)
+ax.bar(components, pca.explained_variance_ratio_, alpha=0.7, color='#2196F3', label='Individual Variance')
+ax.step(components, np.cumsum(pca.explained_variance_ratio_), where='mid', color='#FF9800', label='Cumulative Variance')
+ax.axhline(y=0.85, color='r', linestyle='--', label='85% Variance Threshold')
+ax.set_xlabel('Principal Component Index', fontsize=11)
+ax.set_ylabel('Variance Explained Ratio', fontsize=11)
+ax.set_title('PCA Scree Plot: Filtering Image Noise', fontsize=13, fontweight='bold')
+ax.legend(loc='best')
+plt.tight_layout()
+plt.show()</code></pre>
+                    </div>
+                    
+                </div>
+            </div>
+            
+<div class="notebook-markdown"><h2>5. Mathematical Blueprint of t-SNE (Review)</h2>
+
+<p>t-SNE models similarity in the original high-dimensional space ($p_{j|i}$) using a <strong>Gaussian distribution</strong>:</p>
+
+<div class="math-card glass"><div class="math-eq">p_{j|i} = \frac{\exp(-\lVert x_i - x_j \rVert^2 / 2\sigma_i^2)}{\sum_{k \neq i} \exp(-\lVert x_i - x_k \rVert^2 / 2\sigma_i^2)}</div></div>
+
+<p>To make the metrics robust to outliers, we calculate the symmetric joint probability:</p>
+
+<div class="math-card glass"><div class="math-eq">p_{ij} = \frac{p_{j|i} + p_{i|j}}{2N}</div></div>
+
+<p>In the low-dimensional map, we compute Cauchy similarity $q_{ij}$ using a <strong>Student t-distribution (1 DOF)</strong> to resolve the crowding problem:</p>
+
+<div class="math-card glass"><div class="math-eq">q_{ij} = \frac{(1 + \lVert y_i - y_j \rVert^2)^{-1}}{\sum_{k \neq l} (1 + \lVert y_k - y_l \rVert^2)^{-1}}</div></div>
+
+<p>We minimize the difference between these two distributions using the <strong>KL Divergence cost function</strong>:</p>
+
+<div class="math-card glass"><div class="math-eq">C = KL(P \parallel Q) = \sum_{i \neq j} p_{ij} \log\frac{p_{ij}}{q_{ij}}</div></div>
+
+<hr></div>
+<div class="notebook-markdown"><h2>6. Manual t-SNE Implementation (From Scratch using NumPy)</h2>
+
+<h3>WHY?</h3>
+Implementing t-SNE from scratch using only NumPy helps you understand how high-dimensional similarities are calculated, how binary searches match perplexities, and how gradients minimize the cost function.
+
+<h3>HOW?</h3>
+We implement the `SimpleTSNE` class containing functions for pairwise squared distances, Gaussian bandwidth binary search matching target perplexity, Cauchy joint probability calculation, KL divergence gradient calculation, and a gradient descent loop with momentum and early exaggeration.</div>
+
+            <div class="notebook-block glass">
+                <div class="notebook-header">
+                    <span class="file-name">Python Code Block</span>
+                </div>
+                <div class="notebook-body">
+                    <div class="code-cell">
+                        <div class="cell-label">In [5]:</div>
+                        <pre class="code-editor-mock"><code>class SimpleTSNE:
+    def __init__(self, n_components=2, perplexity=30.0, n_iter=300, learning_rate=100.0, random_state=42):
+        self.n_components = n_components
+        self.perplexity = perplexity
+        self.n_iter = n_iter
+        self.learning_rate = learning_rate
+        self.random_state = random_state
+        self.costs = []
+
+    def _pairwise_squared_distances(self, X):
+        # Compute squared Euclidean distances using the sum of squares trick
+        # ||a-b||^2 = ||a||^2 + ||b||^2 - 2*(a.b)
+        sum_sq = np.sum(X**2, axis=1)
+        D = sum_sq[:, np.newaxis] + sum_sq[np.newaxis, :] - 2 * np.dot(X, X.T)
+        D = np.maximum(D, 0.0) # Avoid negative floating point errors
+        np.fill_diagonal(D, 0.0) # Self-distance is zero
+        return D
+
+    def _compute_entropy_perplexity(self, D_i, sigma):
+        # Compute conditional probabilities and perplexity for a given row and standard deviation sigma
+        p_i = np.exp(-D_i / (2 * sigma**2))
+        p_i_sum = np.sum(p_i)
+        if p_i_sum == 0:
+            p_i_sum = 1e-12
+        p_i = p_i / p_i_sum
+        
+        # Avoid log of zero
+        entropy = -np.sum(p_i * np.log2(np.maximum(p_i, 1e-12)))
+        return entropy, 2**entropy, p_i
+
+    def _compute_P(self, X):
+        n = X.shape[0]
+        D = self._pairwise_squared_distances(X)
+        P = np.zeros((n, n))
+        
+        # Perform binary search to find optimal sigma for each row to match target perplexity
+        for i in range(n):
+            D_i = np.delete(D[i], i) # Exclude self-distance
+            
+            low_sigma, high_sigma = 1e-10, 1e10
+            sigma = 1.0
+            
+            # Max 50 iterations for binary search
+            for _ in range(50):
+                mid_sigma = (low_sigma + high_sigma) / 2.0
+                entropy, perp, p_i = self._compute_entropy_perplexity(D_i, mid_sigma)
+                
+                if perp &lt; self.perplexity:
+                    low_sigma = mid_sigma
+                else:
+                    high_sigma = mid_sigma
+                
+                sigma = mid_sigma
+                if np.abs(perp - self.perplexity) &lt; 1e-5:
+                    break
+            
+            # Insert neighbor probabilities back, setting self-probability to 0
+            p_i_full = np.insert(p_i, i, 0.0)
+            P[i] = p_i_full
+        
+        # Symmetrize the similarity matrix: P_ij = (P_j|i + P_i|j) / 2n
+        P = (P + P.T) / (2 * n)
+        # Set lower bound floor for numerical stability
+        P = np.maximum(P, 1e-12)
+        return P
+
+    def _compute_Q(self, Y):
+        # Compute joint probabilities Q_ij using Cauchy Student-t distribution (1 DOF)
+        D_y = self._pairwise_squared_distances(Y)
+        num = (1.0 + D_y) ** -1
+        np.fill_diagonal(num, 0.0) # Set self-probability to 0
+        
+        sum_num = np.sum(num)
+        Q = num / (sum_num if sum_num != 0 else 1e-12)
+        Q = np.maximum(Q, 1e-12) # Safeguard log zero
+        return Q, num
+
+    def _compute_gradients(self, P, Q, Y, num):
+        n = Y.shape[0]
+        grad = np.zeros_like(Y)
+        
+        # dC/dy_i = 4 * sum_j (p_ij - q_ij) * (y_i - y_j) * (1 + ||y_i - y_j||^2)^-1
+        # Vectorized implementation for speed
+        PQ_diff = P - Q
+        for i in range(n):
+            diff = Y[i] - Y
+            grad[i] = 4 * np.sum((PQ_diff[i] * num[i])[:, np.newaxis] * diff, axis=0)
+        return grad
+
+    def fit_transform(self, X):
+        np.random.seed(self.random_state)
+        n = X.shape[0]
+        
+        # Compute high-dimensional probabilities
+        P = self._compute_P(X)
+        
+        # Apply early exaggeration (multiplier of 4) during initial steps
+        P_exag = P * 4.0
+        
+        # Initialize low-dimensional coordinates Y using standard random normal distribution
+        Y = np.random.randn(n, self.n_components) * 1e-4
+        
+        # Initialize velocity matrices for gradient descent momentum
+        velocity = np.zeros_like(Y)
+        momentum_coeff = 0.5
+        
+        for it in range(self.n_iter):
+            P_active = P_exag if it &lt; 100 else P
+            if it == 100:
+                momentum_coeff = 0.8 # Increase momentum step after early exaggeration
+                
+            Q, num = self._compute_Q(Y)
+            grad = self._compute_gradients(P_active, Q, Y, num)
+            
+            # Update velocity and coordinate matrices
+            velocity = momentum_coeff * velocity - self.learning_rate * grad
+            Y = Y + velocity
+            
+            # Shift coordinates around origin to prevent drift
+            Y = Y - np.mean(Y, axis=0)
+            
+            # Compute KL Divergence cost every 50 iterations
+            if it % 50 == 0:
+                cost = np.sum(P * np.log(P / Q))
+                self.costs.append(cost)
+                print(f"Iteration {it:4d} | KL Divergence Loss: {cost:.4f}")
+                
+        return Y</code></pre>
+                    </div>
+                    
+                </div>
+            </div>
+            
+<div class="notebook-markdown"><h2>7. Running and Visualizing Our From-Scratch Solver</h2>
+
+<h3>WHY?</h3>
+We run our from-scratch NumPy solver on a small subset of 300 samples to verify that it functions correctly and converges to a reasonable layout.
+
+<h3>HOW?</h3>
+We slice the first 300 samples of our pre-processed dataset, run our `SimpleTSNE` solver, and plot the loss convergence curve side-by-side with the final 2D projection scatter plot.</div>
+
+            <div class="notebook-block glass">
+                <div class="notebook-header">
+                    <span class="file-name">Python Code Block</span>
+                </div>
+                <div class="notebook-body">
+                    <div class="code-cell">
+                        <div class="cell-label">In [6]:</div>
+                        <pre class="code-editor-mock"><code># Slice a small subset for scratch execution speed
+n_scratch = 300
+X_scratch = X_pca[:n_scratch]
+y_scratch = y[:n_scratch]
+
+print(f"🚀 Running From-Scratch SimpleTSNE on {n_scratch} samples...")
+scratch_tsne = SimpleTSNE(n_components=2, perplexity=30.0, n_iter=300, learning_rate=100.0, random_state=42)
+
+t0 = time.time()
+Y_scratch = scratch_tsne.fit_transform(X_scratch)
+t1 = time.time()
+
+print(f"✅ Scratch solver complete! Runtime: {t1 - t0:.2f} seconds.\n")
+
+# Plot the diagnostic dashboard side-by-side
+fig, axes = plt.subplots(1, 2, figsize=(16, 6))
+
+# Left: Loss convergence curve
+axes[0].plot(np.arange(0, 300, 50), scratch_tsne.costs, marker='o', color='#E91E63', linewidth=2)
+axes[0].set_xlabel('Iteration Index', fontsize=11)
+axes[0].set_ylabel('KL Divergence Cost', fontsize=11)
+axes[0].set_title('KL Divergence Loss Convergence (Scratch t-SNE)', fontsize=13, fontweight='bold')
+
+# Right: 2D Projected Space scatter plot
+scatter = axes[1].scatter(Y_scratch[:, 0], Y_scratch[:, 1], c=y_scratch, cmap='tab10', alpha=0.8, edgecolors='black', s=50)
+legend = axes[1].legend(*scatter.legend_elements(), title="Digits")
+axes[1].add_artist(legend)
+axes[1].set_xlabel('Component 1 (PC1)', fontsize=11)
+axes[1].set_ylabel('Component 2 (PC2)', fontsize=11)
+axes[1].set_title('Scratch 2D t-SNE Projection Space (300 Samples)', fontsize=13, fontweight='bold')
+
+plt.tight_layout()
+plt.show()</code></pre>
+                    </div>
+                    
+                </div>
+            </div>
+            
+<div class="notebook-markdown"><h2>8. Library-Grade t-SNE Using Scikit-learn</h2>
+
+<h3>WHY?</h3>
+While our manual solver is educational, scikit-learn uses the highly optimized <strong>Barnes-Hut approximation</strong>, which runs in $O(N \log N)$ time complexity rather than exact $O(N^2)$, making it much faster on large datasets.
+
+<h3>HOW?</h3>
+We import `TSNE` from `sklearn.manifold`, configure it to use Barnes-Hut approximation, set perplexity to 40, and run the pipeline on our 5,000 sample dataset.</div>
+
+            <div class="notebook-block glass">
+                <div class="notebook-header">
+                    <span class="file-name">Python Code Block</span>
+                </div>
+                <div class="notebook-body">
+                    <div class="code-cell">
+                        <div class="cell-label">In [7]:</div>
+                        <pre class="code-editor-mock"><code>print("🚀 Running Scikit-learn t-SNE (Barnes-Hut) on 5,000 samples...")
+t_start = time.time()
+
+# Configure and fit the production-grade TSNE estimator
+sklearn_tsne = TSNE(
+    n_components=2,
+    perplexity=40.0,
+    max_iter=1000,
+    init='pca',
+    learning_rate='auto',
+    random_state=42,
+    n_jobs=-1,
+    verbose=1
+)
+Y_lib = sklearn_tsne.fit_transform(X_pca)
+t_end = time.time()
+
+print(f"\n✅ Scikit-learn t-SNE complete!")
+print(f"   Total runtime     : {t_end - t_start:.2f} seconds")
+print(f"   Output shape      : {Y_lib.shape}")
+print(f"   Final KL loss     : {sklearn_tsne.kl_divergence_:.4f}")</code></pre>
+                    </div>
+                    
+                </div>
+            </div>
+            
+<div class="notebook-markdown"><h2>9. Visualizing t-SNE Embeddings</h2>
+
+<h3>WHY?</h3>
+Visualizing the 2D projection space helps evaluate whether the dataset's classes are separated cleanly. We will plot both a standard cluster scatter plot and a density contour plot to reveal the cluster density centers.
+
+<h3>HOW?</h3>
+We plot a 2D scatter plot colored by digit class, and a Seaborn KDE joint density contour plot showing cluster centers.</div>
+
+            <div class="notebook-block glass">
+                <div class="notebook-header">
+                    <span class="file-name">Python Code Block</span>
+                </div>
+                <div class="notebook-body">
+                    <div class="code-cell">
+                        <div class="cell-label">In [8]:</div>
+                        <pre class="code-editor-mock"><code>fig, axes = plt.subplots(1, 2, figsize=(18, 8))
+
+# Left: 2D Projected Space scatter plot colored by digit class
+scatter = axes[0].scatter(Y_lib[:, 0], Y_lib[:, 1], c=y, cmap='tab10', alpha=0.7, edgecolors='none', s=20)
+legend = axes[0].legend(*scatter.legend_elements(), title="Digits", loc='best')
+axes[0].add_artist(legend)
+axes[0].set_xlabel('t-SNE Component 1', fontsize=11)
+axes[0].set_ylabel('t-SNE Component 2', fontsize=11)
+axes[0].set_title('MNIST Digit Clusters in 2D t-SNE Projected Space', fontsize=13, fontweight='bold')
+
+# Right: Joint Density contour plot showing cluster centers
+sns.kdeplot(
+    x=Y_lib[:, 0], y=Y_lib[:, 1], hue=y, palette='tab10', fill=True,
+    alpha=0.4, levels=5, thresh=0.1, ax=axes[1]
+)
+axes[1].set_xlabel('t-SNE Component 1', fontsize=11)
+axes[1].set_ylabel('t-SNE Component 2', fontsize=11)
+axes[1].set_title('Cluster Density Contour Distribution (KDE)', fontsize=13, fontweight='bold')
+
+plt.suptitle('MNIST 2D Projection Space Diagnostic Dashboard', fontsize=16, fontweight='bold', y=0.98)
+plt.tight_layout()
+plt.show()</code></pre>
+                    </div>
+                    
+                </div>
+            </div>
+            
+<div class="notebook-markdown"><h2>10. Hyperparameter Sweeps: The Influence of Perplexity</h2>
+
+<h3>WHY?</h3>
+Perplexity controls the "zoom level" of neighbor selection. We sweep perplexity values of 5, 40, and 100 to observe how it changes the final layout.
+
+<h3>HOW?</h3>
+We loop through perplexity values of `[5, 40, 100]`, run `TSNE` on our PCA features, and plot the three resulting scatter plots side-by-side.</div>
+
+            <div class="notebook-block glass">
+                <div class="notebook-header">
+                    <span class="file-name">Python Code Block</span>
+                </div>
+                <div class="notebook-body">
+                    <div class="code-cell">
+                        <div class="cell-label">In [9]:</div>
+                        <pre class="code-editor-mock"><code>perplexities = [5, 40, 100]
+fig, axes = plt.subplots(1, 3, figsize=(20, 6))
+
+for idx, perp in enumerate(perplexities):
+    print(f"⚙️  Running t-SNE with perplexity={perp}...")
+    tsne_sweep = TSNE(n_components=2, perplexity=perp, max_iter=500, random_state=42, n_jobs=-1)
+    Y_sweep = tsne_sweep.fit_transform(X_pca)
+    
+    scatter = axes[idx].scatter(Y_sweep[:, 0], Y_sweep[:, 1], c=y, cmap='tab10', alpha=0.6, s=10)
+    axes[idx].set_title(f"Perplexity = {perp}", fontsize=14, fontweight='bold')
+    axes[idx].set_xlabel('t-SNE Component 1', fontsize=11)
+    axes[idx].set_ylabel('t-SNE Component 2', fontsize=11)
+
+plt.suptitle('Hyperparameter Sweep: Influence of Perplexity on Clustering', fontsize=16, fontweight='bold', y=1.02)
+plt.tight_layout()
+plt.show()</code></pre>
+                    </div>
+                    
+                </div>
+            </div>
+            
+<div class="notebook-markdown"><h2>11. Evaluating t-SNE Quality: Trustworthiness and KNN Classifiers</h2>
+
+<h3>WHY?</h3>
+Unlike classification models, t-SNE has no direct "correct label". We evaluate its quality using two quantitative metrics:
+1. <strong>Trustworthiness Score:</strong> Measures how well the original neighborhood structure is preserved (Score of 1.0 is perfect).
+2. <strong>Downstream KNN Classification Accuracy:</strong> Evaluates how cleanly separated the digit clusters are by measuring the classification accuracy of a simple 5-Nearest Neighbors classifier trained on the 2D embeddings.
+
+<h3>HOW?</h3>
+We calculate the `trustworthiness` score on a subset of the data, fit a 5-fold cross-validated KNN classifier on our 2D t-SNE features, and plot the confusion matrix.</div>
+
+            <div class="notebook-block glass">
+                <div class="notebook-header">
+                    <span class="file-name">Python Code Block</span>
+                </div>
+                <div class="notebook-body">
+                    <div class="code-cell">
+                        <div class="cell-label">In [10]:</div>
+                        <pre class="code-editor-mock"><code>print("📊 Evaluating t-SNE Embedding Quality...\n")
+
+# Step 11a: Calculate Trustworthiness Score (computed on 1000 samples for speed)
+score = trustworthiness(X_pca[:1000], Y_lib[:1000], n_neighbors=10)
+print(f"%s Neighborhood Trustworthiness Score (n_neighbors=10): {score:.4f}" % ('✅' if score &gt; 0.9 else '⚠️'))
+
+# Step 11b: Train a KNN classifier on the 2D t-SNE features
+knn = KNeighborsClassifier(n_neighbors=5)
+cv_scores = cross_val_score(knn, Y_lib, y, cv=5, scoring='accuracy')
+
+print(f"✅ KNN (k=5) Cross-Validation Accuracy on 2D Embeddings: {cv_scores.mean()*100:.2f}% ± {cv_scores.std()*100:.2f}%")
+
+# Step 11c: Fit KNN on split data to plot a Confusion Matrix
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(Y_lib, y, test_size=0.3, random_state=42, stratify=y)
+knn.fit(X_train, y_train)
+y_pred = knn.predict(X_test)
+
+# Plot Confusion Matrix
+cm = confusion_matrix(y_test, y_pred)
+plt.figure(figsize=(10, 8))
+sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=np.arange(10), yticklabels=np.arange(10))
+plt.title('Confusion Matrix: KNN Classifier on t-SNE Embeddings', fontsize=14, fontweight='bold')
+plt.xlabel('Predicted Label', fontsize=11)
+plt.ylabel('True Label', fontsize=11)
+plt.show()</code></pre>
+                    </div>
+                    
+                </div>
+            </div>
+            
+<div class="notebook-markdown"><p># Placement & Interview Q&A</p>
+
+<p><strong>Q1. What is the Crowding Problem?</strong>  
+<strong>Answer:</strong> In high dimensions, there is exponentially more "volume" around any data point than in low dimensions. Squeezing these neighbors into a 2D plane creates a space deficit, causing moderately-distant clusters to collapse into a single crowded blob.</p>
+
+<p><strong>Q2. How does the Student t-distribution solve crowding?</strong>  
+<strong>Answer:</strong> The Student-t distribution has much heavier (fatter) tails than a Gaussian. For a given similarity value, the low-dimensional distance must be much larger than the corresponding high-dimensional distance, naturally pushing separate clusters apart on the 2D map.</p>
+
+<p><strong>Q3. Why can we NOT trust global distances in a t-SNE plot?</strong>  
+<strong>Answer:</strong> t-SNE's KL Divergence cost function multiplies distance penalties by $p_{ij}$ (high-dimensional neighbor similarity). For far-apart points, $p_{ij} \to 0$, meaning the optimization ignores global distance relationships, making the space *between* clusters unreliable.</p>
+
+<p><strong>Q4. Can t-SNE project new, unseen test data?</strong>  
+<strong>Answer:</strong> No. Standard t-SNE is non-parametric and directly optimizes the low-dimensional coordinates $Y$. It does not learn a reusable mapping function (like a projection matrix in PCA). To project new data, the optimization must be re-run on the entire combined dataset.</p>
+
+<p><strong>Q5. Why do we typically run PCA before t-SNE?</strong>  
+<strong>Answer:</strong> PCA filters out high-frequency noise, speeds up pairwise distance computations, and prevents t-SNE's non-linear solver from getting trapped in poor local configurations.</p>
+
+<hr></div>
+<div class="notebook-markdown"><p># Key Takeaways</p>
+
+<ul>
+<li><strong>t-SNE preserves local neighborhoods.</strong> Points that are close neighbors in the original high-dimensional space are kept close together in the 2D projection space.</li>
+<li><strong>The Cauchy Student-t distribution resolves crowding.</strong> The fat tails of the t-distribution force separate clusters apart on the map, providing breathing room.</li>
+<li><strong>PCA pre-processing is mandatory in practice.</strong> For high-dimensional datasets, running PCA first filters out noise and reduces execution time.</li>
+<li><strong>Hyperparameters are highly sensitive.</strong> Perplexity acts as a neighborhood zoom level. Tuning perplexity, learning rate, and iterations is essential to avoid visual artifacts.</li>
+</ul></div>
+                    </div>
+                    
+          </div>
+
+          <!-- 6. Bottom Navigation Cards -->
+          <div class="bottom-navigation-cards-row">
+            
+                <a href="8.3-hyperparameters.html" class="bottom-nav-card glass">
+                  <span class="nav-direction">&larr; Previous Lesson</span>
+                  <span class="nav-title">8.3 Perplexity & Iterative Tuning</span>
+                </a>
+                
+            
+                <a href="../../curriculum.html" class="bottom-nav-card next glass">
+                  <span class="nav-direction">Finish Module &rarr;</span>
+                  <span class="nav-title">Back to Curriculum</span>
+                </a>
+                
+          </div>
+
+          <div class="bottom-return-curriculum-row">
+            <a href="../../curriculum.html" class="btn btn-secondary">&larr; Return to Curriculum</a>
+          </div>
+
+        </div>
+
+        <!-- 7. Right Sidebar Panel (Sticky Accordion Mount) -->
+        <aside id="sidebar-container" class="lesson-right-sidebar glass"></aside>
+
+      </div>
+    </main>
+
+    <!-- Footer Injector Mount -->
+    <footer id="footer-container" class="main-footer"></footer>
+
+    <!-- Shared Static LMS Scripts -->
+    <script src="../../js/app.js"></script>
+    <script src="../../js/navigation.js"></script>
+    <script src="../../js/sidebar.js"></script>
+    <script src="../../js/progress.js"></script>
+</body>
+</html>

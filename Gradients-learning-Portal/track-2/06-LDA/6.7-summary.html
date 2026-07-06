@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Summary & Interview Preparation â€” Gradients ML LMS</title>
+    
+        <!-- KaTeX CSS and JS for mathematical equations -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    <script defer src="../../js/katex.js"></script>
+
+    <!-- CSS sheets -->
+    <link rel="stylesheet" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../css/layout.css" />
+    <link rel="stylesheet" href="../../css/responsive.css" />
+    <link rel="stylesheet" href="../../css/lesson.css" />
+    <link rel="stylesheet" href="../../css/sidebar.css" />
+</head>
+<body>
+    <!-- Top Header Navigation Injector -->
+    <header id="header-container" class="main-header glass"></header>
+
+    <main class="container fade-in" style="padding-bottom: 6rem;">
+      
+      <!-- 1. Breadcrumb Navigation -->
+      <div class="breadcrumb-container">
+        <div class="lesson-breadcrumb">
+          <a href="../../index.html">Home</a> &gt; 
+          <a href="../../course-overview.html">Course Overview</a> &gt; 
+          <a href="../../curriculum.html">Curriculum</a> &gt; 
+          <span>06-LDA: Linear Discriminant Analysis (LDA)</span> &gt; 
+          <span class="active-node">Lesson 6.7</span>
+        </div>
+      </div>
+
+      <!-- 2. Two-Column Layout (Main Content + Right Sidebar) -->
+      <div class="lesson-grid-layout">
+        
+        <!-- Center-Left Content Area -->
+        <div class="lesson-content-area">
+          <div class="content-connector-line"></div>
+
+          <!-- 3. Lesson Header -->
+          <header class="lesson-template-header">
+            <div class="lesson-header-meta-row">
+              <span class="lesson-header-badge track">Dimensionality Reduction</span>
+              <span class="lesson-header-badge">06-LDA</span>
+              <span class="lesson-header-badge">Lesson 6.7</span>
+              <span class="lesson-header-badge diff">Intermediate</span>
+              <span class="lesson-header-badge">20 mins</span>
+            </div>
+            <h1>Summary & Interview Preparation</h1>
+          </header>
+
+          <!-- 4. Learning Objectives Card -->
+          <div class="objectives-box-card glass">
+            <h3>Lesson Objectives</h3>
+            <div class="objectives-box-grid">
+              <div class="objectives-box-col">
+                <h4>What you will learn</h4>
+                <p>Review the complete LDA workflow, practice top interview questions, and explore further reading resources.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Prerequisites</h4>
+                <p>Completion of all Lessons 6.1 through 6.6.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Expected Outcome</h4>
+                <p>Answer LDA interview questions confidently and navigate to additional learning materials and references.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. Main Lesson Content Area -->
+          <div class="markdown-content">
+            
+                    <div class="lesson-content-block">
+                        <h2>Key Takeaways</h2>
+                        <ul>
+<li><strong>LDA is supervised:</strong> It uses class labels to find directions that maximise separation, unlike PCA which ignores labels and maximises variance.</li>
+<li><strong>At most \( C-1 \) components:</strong> The between-class scatter matrix \( S_B \) has rank at most \( C-1 \), limiting the number of LDA directions.</li>
+<li><strong>Closed-form solution:</strong> LDA reduces to solving the eigenvalue problem \( S_W^{-1} S_B \) â€” no iterative training needed.</li>
+<li><strong>Strong assumptions:</strong> LDA assumes Gaussian distributions, equal covariances, independent observations, and linear separability.</li>
+<li><strong>Scaling matters:</strong> Always standardise features before applying LDA to prevent one feature from dominating the scatter matrices.</li>
+</ul>
+<hr>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h2>8. TOP 5 INTERVIEW QUESTIONS</h2>
+                        
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h3>Q1: How does LDA differ from PCA?</h3>
+                        <p><strong>Strong answer:</strong> Both are linear dimensionality reduction techniques, but they optimise different objectives. PCA finds directions that maximise the variance of the entire dataset, ignoring class labels. LDA finds directions that maximise the ratio of between-class scatter to within-class scatter, using class labels. PCA is unsupervised; LDA is supervised. As a result, LDA directions are better for classification tasks, while PCA directions preserve more of the original data variance.</p>
+
+<p><strong>Interviewer looks for:</strong> Mention of supervised vs. unsupervised, the objective (variance vs. separability), and a concrete example.</p>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h3>Q2: What is the upper bound on the number of components LDA can produce?</h3>
+                        <p><strong>Strong answer:</strong> LDA can produce at most \( C - 1 \) components, where \( C \) is the number of classes. This is because the between-class scatter matrix \( S_B \) has rank at most \( C - 1 \). For binary classification (C = 2), LDA yields exactly one direction. This is a fundamental limitation compared to PCA, which can produce up to \( d \) components.</p>
+
+<p><strong>Interviewer looks for:</strong> Correct bound (\( C - 1 \)), explanation of why (rank of \( S_B \)), and the practical implication â€” if you have 3 classes, you get at most 2 dimensions.</p>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h3>Q3: When would LDA fail?</h3>
+                        <p><strong>Strong answer:</strong> LDA fails when its assumptions are violated: (1) non-Gaussian class distributions, (2) unequal class covariances, (3) non-independent samples, or (4) classes that are not linearly separable. A classic failure case is when one class has a much larger spread than another â€” LDA will bias the boundary toward the tighter class. Another is the "small n, large p" problem: when the number of samples is smaller than the number of features, \( S_W \) becomes singular and cannot be inverted.</p>
+
+<p><strong>Interviewer looks for:</strong> Specific assumptions mentioned, awareness of curse of dimensionality, knowledge of regularised LDA as a fix for the singular \( S_W \) problem.</p>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h3>Q4: What is the relationship between LDA and logistic regression?</h3>
+                        <p><strong>Strong answer:</strong> Both are linear classifiers. LDA models the class-conditional densities as Gaussians with a shared covariance matrix, then uses Bayes' theorem to derive class probabilities. Logistic regression directly models the log-odds as a linear function without distributional assumptions. When LDA's assumptions hold (normal distributions, equal covariance), LDA is more efficient (lower variance) because it uses the data structure explicitly. When assumptions are violated, logistic regression is more robust. In practice, for two classes with normally distributed features, the decision boundaries of both are linear and often similar.</p>
+
+<p><strong>Interviewer looks for:</strong> Understanding that both produce linear boundaries, awareness of the generative vs. discriminative distinction, and the efficiency-robustness trade-off.</p>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h3>Q5: How do you handle the singularity problem in LDA when features exceed samples?</h3>
+                        <p><strong>Strong answer:</strong> When the number of features \( d \) exceeds the number of samples \( N \), the within-class scatter matrix \( S_W \) becomes singular (non-invertible). Solutions include: (1) <strong>Regularised LDA (RLDA)</strong> â€” add a small multiple of the identity matrix to \( S_W \) before inversion, (2) <strong>PCA + LDA</strong> â€” first reduce dimensions with PCA to \( N - C \) components, then apply LDA, (3) <strong>Pseudoinverse</strong> â€” use the Moore-Penrose pseudoinverse of \( S_W \) instead of the inverse. Scikit-learn's implementation automatically handles this via shrinkage.</p>
+
+<p><strong>Interviewer looks for:</strong> Practical knowledge of the \( d > N \) problem, familiarity with at least two solutions, awareness that scikit-learn handles this automatically.</p>
+
+<hr>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h2>9. QUICK REFERENCE TABLE</h2>
+                        <table class="variable-table">
+        <thead>
+            <tr><th>Property</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+            <tr><td><strong>Learning Type</strong></td><td>Supervised</td></tr><tr><td><strong>Algorithm Family</strong></td><td>Linear dimensionality reduction / Linear classifier</td></tr><tr><td><strong>Input</strong></td><td>\( X \) (feature matrix, shape \( N \times d \)), \( y \) (labels, shape \( N \))</td></tr><tr><td><strong>Output</strong></td><td>Projected data \( Y \) (shape \( N \times k \)), projection matrix \( W \) (shape \( d \times k \))</td></tr><tr><td><strong>Main Hyperparameters</strong></td><td>`n_components` (target dimensions, max \( C-1 \)), `solver` (svd, lsqr, eigen), shrinkage parameter for regularisation</td></tr><tr><td><strong>Advantages</strong></td><td>Supervised (uses labels), interpretable components, closed-form solution (no iterative training), built-in classifier option, maximises class separation</td></tr><tr><td><strong>Limitations</strong></td><td>Strong Gaussian + equal-covariance assumptions, at most \( C-1 \) components, fails when \( d > N \) without regularisation, linear boundary only</td></tr>
+        </tbody>
+    </table>
+
+<hr>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h2>10. REFERENCES & FURTHER READING</h2>
+                        
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h3>Original Paper</h3>
+                        <ul>
+<li>Fisher, R. A. (1936). *The Use of Multiple Measurements in Taxonomic Problems*. Annals of Eugenics, 7(2), 179â€“188. â€” The paper that started it all. Fisher used LDA to classify iris flowers, and the dataset is still a standard benchmark today.</li>
+</ul>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h3>Official Documentation</h3>
+                        <ul>
+<li><strong>scikit-learn LDA documentation:</strong> https://scikit-learn.org/stable/modules/lda_qda.html</li>
+<li><strong>scikit-learn `LinearDiscriminantAnalysis` API:</strong> https://scikit-learn.org/stable/modules/generated/sklearn.discriminant_analysis.LinearDiscriminantAnalysis.html</li>
+</ul>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h3>Academic References</h3>
+                        <ul>
+<li>Duda, R. O., Hart, P. E., & Stork, D. G. (2001). *Pattern Classification* (2nd ed.). Wiley. â€” The canonical textbook treatment of LDA, covering both the two-class and multi-class cases.</li>
+<li>Bishop, C. M. (2006). *Pattern Recognition and Machine Learning*. Springer. â€” Chapter 4 covers LDA in the context of linear models for classification, with a Bayesian perspective.</li>
+<li>James, G., Witten, D., Hastie, T., & Tibshirani, R. (2021). *An Introduction to Statistical Learning* (2nd ed.). Springer. â€” Chapter 4 provides an accessible, application-focused introduction to LDA and QDA.</li>
+</ul>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h3>Learning Resources</h3>
+                        <ul>
+<li><strong>StatQuest: Linear Discriminant Analysis (LDA)</strong> â€” YouTube video series by Josh Starmer. The most beginner-friendly visual explanation available.</li>
+<li><strong>Understanding LDA (Towards Data Science)</strong> â€” Medium article with worked examples and Python code.</li>
+<li><strong>Elements of Statistical Learning</strong> â€” Hastie, Tibshirani & Friedman (free PDF available online). Chapter 4 for the rigorous mathematical treatment.</li>
+</ul>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h3>Related Topics (for further study)</h3>
+                        <ul>
+<li><strong>QDA (Quadratic Discriminant Analysis):</strong> Relaxes the equal-covariance assumption, allowing each class its own covariance matrix at the cost of more parameters to estimate.</li>
+<li><strong>Regularised Discriminant Analysis (RDA):</strong> Shrinks class covariance matrices toward a common covariance â€” a middle ground between LDA and QDA.</li>
+<li><strong>Kernel Fisher Discriminant (KFD):</strong> Extends LDA to non-linear boundaries using the kernel trick (the same idea that powers SVMs).</li>
+<li><strong>PLS-DA (Partial Least Squares Discriminant Analysis):</strong> Alternative supervised dimensionality reduction popular in chemometrics and bioinformatics when features greatly outnumber samples.</li>
+</ul>
+
+<hr>
+
+<p>*LDA is rare among machine learning methods: invented in 1936, still regularly used in 2026. Its staying power comes from doing one thing well â€” taking labelled, high-dimensional data and returning a low-dimensional view where the categories are plainly visible. A neural network needs GPUs, epochs, and a mountain of data to learn class separation. LDA does it with a single matrix operation and delivers the answer in closed form. Understanding LDA means understanding the fundamental tension every classifier faces: ignore irrelevant differences, magnify meaningful ones.*</p>
+                    </div>
+                    
+          </div>
+
+          <!-- 6. Bottom Navigation Cards -->
+          <div class="bottom-navigation-cards-row">
+            
+                <a href="6.6-assumptions.html" class="bottom-nav-card glass">
+                  <span class="nav-direction">&larr; Previous Lesson</span>
+                  <span class="nav-title">6.6 Assumptions & Limitations</span>
+                </a>
+                
+            
+                <a href="6.8-notebook.html" class="bottom-nav-card next glass">
+                  <span class="nav-direction">Next Lesson &rarr;</span>
+                  <span class="nav-title">6.8 Notebook Practice</span>
+                </a>
+                
+          </div>
+
+          <div class="bottom-return-curriculum-row">
+            <a href="../../curriculum.html" class="btn btn-secondary">&larr; Return to Curriculum</a>
+          </div>
+
+        </div>
+
+        <!-- 7. Right Sidebar Panel (Sticky Accordion Mount) -->
+        <aside id="sidebar-container" class="lesson-right-sidebar glass"></aside>
+
+      </div>
+    </main>
+
+    <!-- Footer Injector Mount -->
+    <footer id="footer-container" class="main-footer"></footer>
+
+    <!-- Shared Static LMS Scripts -->
+    <script src="../../js/app.js"></script>
+    <script src="../../js/navigation.js"></script>
+    <script src="../../js/sidebar.js"></script>
+    <script src="../../js/progress.js"></script>
+</body>
+</html>

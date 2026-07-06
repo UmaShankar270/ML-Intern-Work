@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PCA Relationship â€” Gradients ML LMS</title>
+    
+        <!-- KaTeX CSS and JS for mathematical equations -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    <script defer src="../../js/katex.js"></script>
+
+    <!-- CSS sheets -->
+    <link rel="stylesheet" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../css/layout.css" />
+    <link rel="stylesheet" href="../../css/responsive.css" />
+    <link rel="stylesheet" href="../../css/lesson.css" />
+    <link rel="stylesheet" href="../../css/sidebar.css" />
+</head>
+<body>
+    <!-- Top Header Navigation Injector -->
+    <header id="header-container" class="main-header glass"></header>
+
+    <main class="container fade-in" style="padding-bottom: 6rem;">
+      
+      <!-- 1. Breadcrumb Navigation -->
+      <div class="breadcrumb-container">
+        <div class="lesson-breadcrumb">
+          <a href="../../index.html">Home</a> &gt; 
+          <a href="../../course-overview.html">Course Overview</a> &gt; 
+          <a href="../../curriculum.html">Curriculum</a> &gt; 
+          <span>10-Autoencoders-VAE: Autoencoders & VAEs</span> &gt; 
+          <span class="active-node">Lesson 10.2</span>
+        </div>
+      </div>
+
+      <!-- 2. Two-Column Layout (Main Content + Right Sidebar) -->
+      <div class="lesson-grid-layout">
+        
+        <!-- Center-Left Content Area -->
+        <div class="lesson-content-area">
+          <div class="content-connector-line"></div>
+
+          <!-- 3. Lesson Header -->
+          <header class="lesson-template-header">
+            <div class="lesson-header-meta-row">
+              <span class="lesson-header-badge track">Dimensionality Reduction</span>
+              <span class="lesson-header-badge">10-Autoencoders-VAE</span>
+              <span class="lesson-header-badge">Lesson 10.2</span>
+              <span class="lesson-header-badge diff">Intermediate</span>
+              <span class="lesson-header-badge">15 mins</span>
+            </div>
+            <h1>PCA Relationship</h1>
+          </header>
+
+          <!-- 4. Learning Objectives Card -->
+          <div class="objectives-box-card glass">
+            <h3>Lesson Objectives</h3>
+            <div class="objectives-box-grid">
+              <div class="objectives-box-col">
+                <h4>What you will learn</h4>
+                <p>Understand the mathematical relationship between PCA and linear autoencoders. Compare PCA, traditional autoencoders, and VAEs across key dimensions.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Prerequisites</h4>
+                <p>PCA from previous modules. Autoencoder architecture from Lesson 10.1.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Expected Outcome</h4>
+                <p>Explain when PCA is equivalent to a linear autoencoder, why non-linear activations enable manifold learning, and choose the right method for a given task.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. Main Lesson Content Area -->
+          <div class="markdown-content">
+            
+                    <div class="lesson-content-block">
+                        <h2>PCA vs. Autoencoders: The Linear-to-Non-Linear Continuum</h2>
+                        
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h3>Linear vs. Non-Linear Dimensionality Reduction</h3>
+                        <p>The fundamental difference between PCA and autoencoders lies in their ability to model curved manifolds:</p>
+
+<pre class="output-console-mock"><code>Linear vs. Non-Linear Dimensionality Reduction:
+  PCA (Linear):          Projects high-D space onto flat 2D planes.
+  Autoencoder (Manifold): Unrolls curved high-D sheets into flat 2D layouts.</code></pre>
+
+                        <p>PCA performs a linear projection by finding orthogonal axes that maximize variance. When data lies on a curved manifold (as most real-world data does), PCA tears or flattens the structure, losing information. Autoencoders, by contrast, use non-linear activation functions (ReLU, sigmoid) to unroll curved manifolds into flat latent spaces.</p>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h3>When Does an Autoencoder Recover PCA?</h3>
+                        <p>A <strong>linear autoencoder</strong>â€”one with no non-linear activations and a single hidden layerâ€”learns the same optimal solution as PCA. The encoder weights converge to the top principal components, and the reconstruction is equivalent to projecting onto the PCA subspace and back.</p>
+                        
+                        <p>However, there are key differences:</p>
+                        <ul>
+                            <li><strong>PCA finds orthogonal axes (eigenvectors)</strong> via closed-form SVD; autoencoder weights are not guaranteed to be orthogonal.</li>
+                            <li><strong>PCA is deterministic and globally optimal</strong> for linear reconstruction; autoencoders use iterative gradient descent and may reach local minima.</li>
+                            <li><strong>Adding non-linear activations</strong> breaks the PCA equivalence and enables the autoencoder to learn curved manifolds that PCA cannot capture.</li>
+                        </ul>
+
+                        <div class="alert-box tip">
+                            <span class="alert-icon">&#x1F4A1;</span>
+                            <div class="alert-content">
+                                <strong>Key Insight:</strong> A linear autoencoder with one hidden layer and MSE loss recovers the PCA solution. The key addition in deep autoencoders is <em>non-linearity</em>â€”activation functions allow the network to model complex, curved data manifolds.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h3>Comparison: PCA vs. Traditional Autoencoder vs. VAE</h3>
+                        <table class="variable-table">
+        <thead>
+            <tr><th>Feature</th><th>PCA</th><th>Traditional Autoencoder</th><th>Variational Autoencoder (VAE)</th></tr>
+        </thead>
+        <tbody>
+            <tr><td><strong>Type</strong></td><td>Linear Projection</td><td>Non-linear Compression</td><td>Probabilistic Non-linear Compression</td></tr><tr><td><strong>Generative Power</strong></td><td>No (cannot sample new values)</td><td>No (latent space contains gaps)</td><td>Yes (can sample from Gaussian prior)</td></tr><tr><td><strong>Optimization</strong></td><td>Analytical (Closed-form SVD)</td><td>Iterative (Stochastic Gradient Descent)</td><td>Iterative (SGD with Reparameterization)</td></tr><tr><td><strong>Latent Space</strong></td><td>Interpretable orthogonal axes</td><td>Disorganized, deterministic</td><td>Organized, continuous Gaussian prior</td></tr><tr><td><strong>Inference Speed</strong></td><td>Instant</td><td>Fast (Forward pass)</td><td>Fast (Forward pass)</td></tr>
+        </tbody>
+    </table>
+
+<hr>
+                    </div>
+                    
+          </div>
+
+          <!-- 6. Bottom Navigation Cards -->
+          <div class="bottom-navigation-cards-row">
+            
+                <a href="10.1-undercomplete.html" class="bottom-nav-card glass">
+                  <span class="nav-direction">&larr; Previous Lesson</span>
+                  <span class="nav-title">10.1 Undercomplete Autoencoders</span>
+                </a>
+                
+            
+                <a href="10.3-math-loss.html" class="bottom-nav-card next glass">
+                  <span class="nav-direction">Next Lesson &rarr;</span>
+                  <span class="nav-title">10.3 Autoencoder Math & Loss Functions</span>
+                </a>
+                
+          </div>
+
+          <div class="bottom-return-curriculum-row">
+            <a href="../../curriculum.html" class="btn btn-secondary">&larr; Return to Curriculum</a>
+          </div>
+
+        </div>
+
+        <!-- 7. Right Sidebar Panel (Sticky Accordion Mount) -->
+        <aside id="sidebar-container" class="lesson-right-sidebar glass"></aside>
+
+      </div>
+    </main>
+
+    <!-- Footer Injector Mount -->
+    <footer id="footer-container" class="main-footer"></footer>
+
+    <!-- Shared Static LMS Scripts -->
+    <script src="../../js/app.js"></script>
+    <script src="../../js/navigation.js"></script>
+    <script src="../../js/sidebar.js"></script>
+    <script src="../../js/progress.js"></script>
+</body>
+</html>

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-world Diagnostics — Gradients ML LMS</title>
+    
+    <!-- KaTeX CSS and JS for mathematical equations -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
+
+    <!-- CSS sheets -->
+    <link rel="stylesheet" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../css/layout.css" />
+    <link rel="stylesheet" href="../../css/responsive.css" />
+    <link rel="stylesheet" href="../../css/lesson.css" />
+    <link rel="stylesheet" href="../../css/sidebar.css" />
+</head>
+<body>
+    <!-- Top Header Navigation Injector -->
+    <header id="header-container" class="main-header glass"></header>
+
+    <main class="container fade-in" style="padding-bottom: 6rem;">
+      
+      <!-- 1. Breadcrumb Navigation -->
+      <div class="breadcrumb-container">
+        <div class="lesson-breadcrumb">
+          <a href="../../index.html">Home</a> &gt; 
+          <a href="../../course-overview.html">Course Overview</a> &gt; 
+          <a href="../../curriculum.html">Curriculum</a> &gt; 
+          <span>02-Bias: Bias-Variance Dilemma</span> &gt; 
+          <span class="active-node">Lesson 2.3</span>
+        </div>
+      </div>
+
+      <!-- 2. Two-Column Layout (Main Content + Right Sidebar) -->
+      <div class="lesson-grid-layout">
+        
+        <!-- Center-Left Content Area -->
+        <div class="lesson-content-area">
+          <div class="content-connector-line"></div>
+
+          <!-- 3. Lesson Header -->
+          <header class="lesson-template-header">
+            <div class="lesson-header-meta-row">
+              <span class="lesson-header-badge track">Machine Learning Fundamentals</span>
+              <span class="lesson-header-badge">02-Bias</span>
+              <span class="lesson-header-badge">Lesson 2.3</span>
+              <span class="lesson-header-badge diff">Intermediate</span>
+              <span class="lesson-header-badge">15 mins</span>
+            </div>
+            <h1>Real-world Diagnostics</h1>
+          </header>
+
+          <!-- 4. Learning Objectives Card -->
+          <div class="objectives-box-card glass">
+            <h3>Lesson Objectives</h3>
+            <div class="objectives-box-grid">
+              <div class="objectives-box-col">
+                <h4>What you will learn</h4>
+                <p>Master the details of Real-world Diagnostics to build complete technical intuition.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Prerequisites</h4>
+                <p>Completion of previous conceptual lessons in this track.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Expected Outcome</h4>
+                <p>Apply Real-world Diagnostics diagnostics to prevent training loops leakage or parameters decay.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. Main Lesson Content Area -->
+          <div class="markdown-content">
+            
+                    <div class="lesson-content-block">
+                        <h2>Lesson 2.2: The Mathematical Blueprint</h2>
+                        <pre class="output-console-mock"><code>┌──────────────────────────┐
+                     │ Total Expected Error(x)  │
+                     └────────────┬─────────────┘
+          ┌───────────────────────┼───────────────────────┐
+  ┌───────▼───────┐       ┌───────▼───────┐       ┌───────▼───────┐
+  │    Bias²(x)   │       │  Variance(x)  │       │  Irreducible  │
+  │  (Systematic) │       │ (Flucuation)  │       │  Noise (Data) │
+  └───────────────┘       └───────────────┘       └───────────────┘</code></pre>
+
+<h3>1. The Bias-Variance Decomposition</h3>
+Any prediction error made by an estimator can be mathematically decomposed into three distinct components:
+
+<div class="math-card glass"><div class="math-eq">\text{Expected Error}(x) = \text{Bias}^2(x) + \text{Variance}(x) + \sigma^2</div></div>
+
+<h4>Symbol Descriptions:</h4>
+
+<table class="variable-table">
+        <thead>
+            <tr><th>Term</th><th>Mathematical Representation</th><th>Conceptual Meaning</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>$\text{Expected Error}(x)$</td><td>$E\big[(y - \hat{f}(x))^2\big]$</td><td>The average squared prediction error at input point $x$ over many datasets.</td></tr><tr><td>$\text{Bias}^2(x)$</td><td>$\big(E[\hat{f}(x)] - f(x)\big)^2$</td><td>Squared systematic error—the gap between the model's average prediction and the truth.</td></tr><tr><td>$\text{Variance}(x)$</td><td>$E\big[(\hat{f}(x) - E[\hat{f}(x)])^2\big]$</td><td>The fluctuation of predictions when the model is trained on different data subsets.</td></tr><tr><td>$\sigma^2$</td><td>Real constant</td><td>Irreducible noise—random variance in the data itself that cannot be eliminated.</td></tr>
+        </tbody>
+    </table>
+
+<hr>
+
+<h3>2. Definition of Bias</h3>
+To compute the bias of a model at a specific input coordinate $x$, we calculate the difference between the expected value of our model predictions and the true data-generating function:
+
+<div class="math-card glass"><div class="math-eq">\text{Bias}(x) = E[\hat{f}(x)] - f(x)</div></div>
+
+<h4>📝 Worked Numerical Example:</h4>
+Let's evaluate the bias of a model at a single point $x$ where the true target value is $f(x) = 5.0$.
+Suppose we train three separate instances of our model on three different training subsets. The predictions at point $x$ are:
+<ul>
+<li>Model 1 prediction: $\hat{f}_1(x) = 3.5$</li>
+<li>Model 2 prediction: $\hat{f}_2(x) = 3.8$</li>
+<li>Model 3 prediction: $\hat{f}_3(x) = 3.7$</li>
+</ul>
+
+<p>1. <strong>Calculate the expected (average) prediction value:</strong>
+   <div class="math-card glass"><div class="math-eq">E[\hat{f}(x)] = \frac{3.5 + 3.8 + 3.7}{3} = 3.67</div></div>
+2. <strong>Calculate the Bias:</strong>
+   <div class="math-card glass"><div class="math-eq">\text{Bias}(x) = E[\hat{f}(x)] - f(x) = 3.67 - 5.0 = \mathbf{-1.33}</div></div>
+3. <strong>Calculate the Squared Bias contribution:</strong>
+   <div class="math-card glass"><div class="math-eq">\text{Bias}^2(x) = (-1.33)^2 = \mathbf{1.77}</div></div></p>
+
+<p>This negative bias value indicates that the model systematically underestimates the true value at this coordinate by $1.33$ units on average.</p>
+
+<hr>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h2>Lesson 2.3: How Bias Manifests (Step-by-Step Workflow)</h2>
+                        <p>The creation and detection of bias follows a predictable sequence:</p>
+
+<pre class="output-console-mock"><code>┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
+│ Data Collection │ ──> │ Pick Simple shape│ ──> │ Training Limits │
+└─────────────────┘     └─────────────────┘     └───────┬─────────┘
+                                                        │
+┌─────────────────┐     ┌─────────────────┐     ┌───────▼─────────┐
+│ Underfitting    │ <── │Oversimplify Rule│ <── │ Bias Gap Appears│
+└─────────────────┘     └─────────────────┘     └─────────────────┘</code></pre>
+
+<p>1. <strong>Data Collection:</strong> Real-world observations are gathered. The dataset contains a true underlying relationship along with random noise.
+2. <strong>Simple Shape Selection:</strong> A developer chooses a model family. If the chosen model is too simple, it introduces rigid mathematical constraints.
+<ul>
+<li>*Example:* Choosing a straight line ($y = mx + c$) to fit a relationship that curves.</li>
+</ul>
+3. <strong>Training Limits:</strong> The optimizer adjusts weights to fit the training data. However, the model cannot exceed its structural ceiling.
+4. <strong>Bias Gap Appears:</strong> The model fits the best straight line it can, but it systematically misses the curve. This mathematical gap is the bias.
+5. <strong>Underfitting:</strong> The model performs poorly on the training data. Training accuracy is low, and validation accuracy is similarly low.</p>
+
+<hr>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h2>Lesson 2.4: Core Assumptions & Acceptability</h2>
+                        <h3>1. Key Assumptions</h3>
+
+<table class="variable-table">
+        <thead>
+            <tr><th>Assumption</th><th>Conceptual Goal</th><th>Consequence of Violation</th></tr>
+        </thead>
+        <tbody>
+            <tr><td><strong>Functional Alignment</strong></td><td>The model's shape matches the true physical relationship.</td><td>If the true pattern is non-linear but a linear model is used, bias is permanent.</td></tr><tr><td><strong>Feature Signal</strong></td><td>The features $X$ contain predictive information for target $y$.</td><td>If features lack predictive signal, the model cannot learn a mapping and defaults to predicting the mean.</td></tr><tr><td><strong>Representativeness</strong></td><td>The training sample matches the target population distribution.</td><td>If training data is unrepresentative, the model learns a biased relationship.</td></tr><tr><td><strong>Label Accuracy</strong></td><td>Target labels are correct and free from systematic errors.</td><td>Systematic errors in the labels shift the target function, introducing data-level bias.</td></tr>
+        </tbody>
+    </table>
+
+<hr>
+
+<h3>2. Decision Guide: When to Accept Higher Bias</h3>
+
+<h4>✅ Accept Higher Bias (Simple Models) When:</h4>
+<ul>
+<li><strong>The dataset is small:</strong> Complex models quickly overfit small datasets. Simpler models with higher bias generalize better here.</li>
+<li><strong>High interpretability is required:</strong> Linear models are easy to audit and explain (e.g., credit risk or medical triage).</li>
+<li><strong>Controlled regularization is applied:</strong> Adding L1/L2 penalties intentionally introduces small bias to reduce high variance.</li>
+<li><strong>Production latency is tight:</strong> Simple models make predictions in microseconds.</li>
+</ul>
+
+<h4>❌ Reject High Bias (Need More Complexity) When:</h4>
+<ul>
+<li><strong>The dataset is large and feature-rich:</strong> There is enough data to support complex patterns without overfitting.</li>
+<li><strong>The problem is non-linear:</strong> Tasks like image classification or natural language processing cannot be solved with simple linear cuts.</li>
+<li><strong>Prediction accuracy is critical:</strong> The cost of systematic prediction errors is high (e.g., credit card fraud detection).</li>
+</ul>
+
+<hr>
+                    </div>
+                    
+          </div>
+
+          <!-- 6. Bottom Navigation Cards -->
+          <div class="bottom-navigation-cards-row">
+            
+                <a href="2.2-mathematics.html" class="bottom-nav-card glass">
+                  <span class="nav-direction">&larr; Previous Lesson</span>
+                  <span class="nav-title">2.2 Math of Bias & Variance</span>
+                </a>
+                
+            
+                <a href="2.4-summary.html" class="bottom-nav-card next glass">
+                  <span class="nav-direction">Next Lesson &rarr;</span>
+                  <span class="nav-title">2.4 Module Summary & Quiz</span>
+                </a>
+                
+          </div>
+
+          <div class="bottom-return-curriculum-row">
+            <a href="../../curriculum.html" class="btn btn-secondary">&larr; Return to Curriculum</a>
+          </div>
+
+        </div>
+
+        <!-- 7. Right Sidebar Panel (Sticky Accordion Mount) -->
+        <aside id="sidebar-container" class="lesson-right-sidebar glass"></aside>
+
+      </div>
+    </main>
+
+    <!-- Footer Injector Mount -->
+    <footer id="footer-container" class="main-footer"></footer>
+
+    <!-- Shared Static LMS Scripts -->
+    <script src="../../js/app.js"></script>
+    <script src="../../js/navigation.js"></script>
+    <script src="../../js/sidebar.js"></script>
+    <script src="../../js/progress.js"></script>
+</body>
+</html>

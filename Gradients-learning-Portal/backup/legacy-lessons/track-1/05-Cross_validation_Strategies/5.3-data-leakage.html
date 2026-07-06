@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Leakage Pitfalls — Gradients ML LMS</title>
+    
+    <!-- KaTeX CSS and JS for mathematical equations -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
+
+    <!-- CSS sheets -->
+    <link rel="stylesheet" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../css/layout.css" />
+    <link rel="stylesheet" href="../../css/responsive.css" />
+    <link rel="stylesheet" href="../../css/lesson.css" />
+    <link rel="stylesheet" href="../../css/sidebar.css" />
+</head>
+<body>
+    <!-- Top Header Navigation Injector -->
+    <header id="header-container" class="main-header glass"></header>
+
+    <main class="container fade-in" style="padding-bottom: 6rem;">
+      
+      <!-- 1. Breadcrumb Navigation -->
+      <div class="breadcrumb-container">
+        <div class="lesson-breadcrumb">
+          <a href="../../index.html">Home</a> &gt; 
+          <a href="../../course-overview.html">Course Overview</a> &gt; 
+          <a href="../../curriculum.html">Curriculum</a> &gt; 
+          <span>05-Cross_validation_Strategies: Cross-Validation Strategies</span> &gt; 
+          <span class="active-node">Lesson 5.3</span>
+        </div>
+      </div>
+
+      <!-- 2. Two-Column Layout (Main Content + Right Sidebar) -->
+      <div class="lesson-grid-layout">
+        
+        <!-- Center-Left Content Area -->
+        <div class="lesson-content-area">
+          <div class="content-connector-line"></div>
+
+          <!-- 3. Lesson Header -->
+          <header class="lesson-template-header">
+            <div class="lesson-header-meta-row">
+              <span class="lesson-header-badge track">Machine Learning Fundamentals</span>
+              <span class="lesson-header-badge">05-Cross_validation_Strategies</span>
+              <span class="lesson-header-badge">Lesson 5.3</span>
+              <span class="lesson-header-badge diff">Intermediate</span>
+              <span class="lesson-header-badge">12 mins</span>
+            </div>
+            <h1>Data Leakage Pitfalls</h1>
+          </header>
+
+          <!-- 4. Learning Objectives Card -->
+          <div class="objectives-box-card glass">
+            <h3>Lesson Objectives</h3>
+            <div class="objectives-box-grid">
+              <div class="objectives-box-col">
+                <h4>What you will learn</h4>
+                <p>Master the details of Data Leakage Pitfalls to build complete technical intuition.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Prerequisites</h4>
+                <p>Completion of previous conceptual lessons in this track.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Expected Outcome</h4>
+                <p>Apply Data Leakage Pitfalls diagnostics to prevent training loops leakage or parameters decay.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. Main Lesson Content Area -->
+          <div class="markdown-content">
+            
+                    <div class="lesson-content-block">
+                        <h2>Lesson 5.3: Types of Cross-Validation Strategies</h2>
+                        <h3>1. K-Fold Cross-Validation</h3>
+<ul>
+<li><strong>What it is:</strong> The dataset is split into $K$ equal-sized folds. The model is trained $K$ times, each time using $K-1$ folds for training and the remaining fold for validation.</li>
+<li><strong>When to use:</strong> On balanced datasets where class distributions are relatively even.</li>
+</ul>
+
+<hr>
+
+<h3>2. Stratified K-Fold</h3>
+<ul>
+<li><strong>What it is:</strong> A variation of K-Fold where each fold preserves the class proportions of the entire dataset.</li>
+<li><strong>When to use:</strong> Essential for <strong>imbalanced datasets</strong> (e.g., fraud detection with 99% negative and 1% positive cases), ensuring every fold has representative cases of the minority class.</li>
+</ul>
+
+<hr>
+
+<h3>3. Leave-One-Out Cross-Validation (LOOCV)</h3>
+<ul>
+<li><strong>What it is:</strong> An extreme case of K-Fold where $K = n$ (the number of data points). The model is trained $n$ times, validating on a single sample each time.</li>
+<li><strong>When to use:</strong> Useful for very small datasets where training data cannot be spared. It is computationally expensive for large datasets.</li>
+</ul>
+
+<hr>
+
+<h3>4. Time Series Cross-Validation</h3>
+<ul>
+<li><strong>What it is:</strong> Folds are split sequentially without shuffling to respect chronological order. The training set grows forward in time, validating only on future data points.</li>
+<li><strong>When to use:</strong> For sequential data (e.g., stock prices or weather metrics) to prevent future data from leaking into past predictions.</li>
+</ul>
+
+<hr>
+
+<h3>5. Strategy Comparisons</h3>
+
+<table class="variable-table">
+        <thead>
+            <tr><th>Strategy</th><th>Advantages</th><th>Limitations</th><th>Best Suited For</th></tr>
+        </thead>
+        <tbody>
+            <tr><td><strong>Hold-Out</strong></td><td>Extremely fast; requires only one model training step.</td><td>High validation variance; sensitive to data shuffling.</td><td>Large datasets where splits are representative.</td></tr><tr><td><strong>K-Fold</strong></td><td>Low variance; every data point is used for validation once.</td><td>$K$ times more expensive computationally.</td><td>Balanced, medium-sized datasets.</td></tr><tr><td><strong>Stratified K-Fold</strong></td><td>Preserves class distributions across folds.</td><td>$K$ times more expensive computationally.</td><td>Imbalanced datasets.</td></tr><tr><td><strong>LOOCV</strong></td><td>Maximizes training data per fold; deterministic.</td><td>High computational cost; high variance in fold scores.</td><td>Small datasets ($n < 100$).</td></tr><tr><td><strong>Time Series Split</strong></td><td>Prevents future data leakage.</td><td>Requires chronological sorting; cannot use random shuffling.</td><td>Sequential, time-dependent data.</td></tr>
+        </tbody>
+    </table>
+
+<hr>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h2>Lesson 5.4: Visual Learning & Diagram Guides</h2>
+                        <h3>Recommended Diagram Placeholders:</h3>
+
+<h4>1. `[Diagram: Train-Test Split]`</h4>
+<ul>
+<li>Shows a single partition of the dataset into training ($80\%$) and testing ($20\%$) subsets.</li>
+</ul>
+
+<h4>2. `[Diagram: K-Fold Cross Validation]`</h4>
+<ul>
+<li>Shows how a dataset is split into $K$ parts, with the validation block rotating from fold 1 to fold $K$ over $K$ iterations.</li>
+</ul>
+
+<h4>3. `[Diagram: Stratified K-Fold]`</h4>
+<ul>
+<li>Illustrates how class labels are distributed proportionally within each fold to match the overall target distribution.</li>
+</ul>
+
+<h4>4. `[Diagram: Leave-One-Out Cross Validation]`</h4>
+<ul>
+<li>Shows a dataset of size $n$, where each individual row serves as the validation set in turn while the remaining $n-1$ rows are used for training.</li>
+</ul>
+
+<h4>5. `[Diagram: Time Series Cross Validation]`</h4>
+<ul>
+<li>Shows a rolling validation block that always sits chronologically after the training block, preventing temporal leakage.</li>
+</ul>
+
+<hr>
+                    </div>
+                    
+          </div>
+
+          <!-- 6. Bottom Navigation Cards -->
+          <div class="bottom-navigation-cards-row">
+            
+                <a href="5.2-kfold-variations.html" class="bottom-nav-card glass">
+                  <span class="nav-direction">&larr; Previous Lesson</span>
+                  <span class="nav-title">5.2 K-Fold and Stratification</span>
+                </a>
+                
+            
+                <a href="5.4-summary.html" class="bottom-nav-card next glass">
+                  <span class="nav-direction">Next Lesson &rarr;</span>
+                  <span class="nav-title">5.4 Module Summary & Cross-Val Practice</span>
+                </a>
+                
+          </div>
+
+          <div class="bottom-return-curriculum-row">
+            <a href="../../curriculum.html" class="btn btn-secondary">&larr; Return to Curriculum</a>
+          </div>
+
+        </div>
+
+        <!-- 7. Right Sidebar Panel (Sticky Accordion Mount) -->
+        <aside id="sidebar-container" class="lesson-right-sidebar glass"></aside>
+
+      </div>
+    </main>
+
+    <!-- Footer Injector Mount -->
+    <footer id="footer-container" class="main-footer"></footer>
+
+    <!-- Shared Static LMS Scripts -->
+    <script src="../../js/app.js"></script>
+    <script src="../../js/navigation.js"></script>
+    <script src="../../js/sidebar.js"></script>
+    <script src="../../js/progress.js"></script>
+</body>
+</html>

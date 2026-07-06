@@ -1,0 +1,783 @@
+/* --- Lesson Main Area --- */
+.lesson-main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--bg-main);
+  position: relative;
+}
+
+.tab-navbar {
+  height: 60px;
+  border-bottom: 1px solid var(--border-light);
+  display: flex;
+  align-items: center;
+  padding: 0 2rem;
+  flex-shrink: 0;
+}
+
+.tab-group {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.tab-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  font-family: var(--font-heading);
+  color: var(--text-secondary);
+  font-weight: 500;
+  border-radius: var(--border-radius-sm);
+  transition: var(--transition-fast);
+}
+
+.tab-button:hover {
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text-primary);
+}
+
+.tab-button.active {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-primary);
+  border: 1px solid var(--border-light);
+}
+
+.lesson-body-scrollable {
+  flex: 1;
+  overflow-y: auto;
+  padding: 2.5rem 2.5rem 6.5rem 2.5rem; /* Space for footer overlay */
+}
+
+.lesson-body-container {
+  max-width: 820px;
+  margin: 0 auto;
+}
+
+/* --- Sticky Bottom navigation footer --- */
+.lesson-navigation-footer {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: calc(100vw - var(--sidebar-width) - var(--utility-width, 0px));
+  height: 75px;
+  border-top: 1px solid var(--border-light);
+  display: flex;
+  align-items: center;
+  padding: 0 3rem;
+  z-index: 10;
+  background: var(--bg-surface);
+  backdrop-filter: blur(8px);
+}
+.has-utility-panel {
+  --utility-width: 260px;
+}
+
+@media (max-width: 992px) {
+  .has-utility-panel {
+    --utility-width: 0px;
+  }
+}
+
+.nav-footer-content {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  align-items: center;
+}
+
+.nav-right {
+  display: flex;
+  gap: 1rem;
+}
+
+.btn-completed {
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--accent-green);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.btn-completed:hover {
+  background: rgba(16, 185, 129, 0.15);
+}
+
+/* --- Typography & Alerts inside Lesson --- */
+.lesson-header-section {
+  margin-bottom: 2.5rem;
+  border-bottom: 1px solid var(--border-light);
+  padding-bottom: 2rem;
+}
+
+.lesson-meta-tag {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--accent-cyan);
+  letter-spacing: 0.1em;
+  display: inline-block;
+  margin-bottom: 0.5rem;
+}
+
+.lesson-main-title {
+  font-size: 2.5rem;
+  line-height: 1.2;
+  margin-bottom: 1rem;
+  font-weight: 800;
+}
+
+.lesson-intro-paragraph {
+  font-size: 1.15rem;
+  color: var(--text-secondary);
+}
+
+.audience-scaffolding-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1.25rem;
+  border-radius: var(--border-radius-md);
+  margin-bottom: 2.5rem;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--border-light);
+}
+
+.scaffold-label {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.scaffold-buttons {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.scaffold-badge {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: default;
+  border: 1px solid transparent;
+}
+
+.scaffold-badge.beginner {
+  background: rgba(6, 182, 212, 0.1);
+  color: var(--accent-cyan);
+  border-color: rgba(6, 182, 212, 0.2);
+}
+
+.scaffold-badge.intermediate {
+  background: rgba(59, 130, 246, 0.1);
+  color: var(--accent-blue);
+  border-color: rgba(59, 130, 246, 0.2);
+}
+
+.scaffold-badge.advanced {
+  background: rgba(139, 92, 246, 0.1);
+  color: var(--accent-purple);
+  border-color: rgba(139, 92, 246, 0.2);
+}
+
+.lesson-section {
+  margin-bottom: 3.5rem;
+}
+
+.section-badge {
+  font-size: 0.7rem;
+  color: var(--accent-blue);
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.1em;
+}
+
+.lesson-section h2 {
+  font-size: 1.6rem;
+  margin-bottom: 1rem;
+}
+
+.alert-box {
+  display: flex;
+  gap: 1rem;
+  padding: 1.25rem;
+  border-radius: var(--border-radius-md);
+  margin: 1.5rem 0;
+}
+
+.alert-box.tip {
+  background: rgba(16, 185, 129, 0.03);
+  border: 1px solid rgba(16, 185, 129, 0.1);
+  border-left: 4px solid var(--accent-green);
+}
+
+.alert-box.info {
+  background: rgba(59, 130, 246, 0.03);
+  border: 1px solid rgba(59, 130, 246, 0.1);
+  border-left: 4px solid var(--accent-blue);
+}
+
+.alert-box.warning {
+  background: rgba(239, 68, 68, 0.03);
+  border: 1px solid rgba(239, 68, 68, 0.1);
+  border-left: 4px solid #ef4444;
+}
+
+.alert-icon {
+  font-size: 1.25rem;
+}
+
+/* Math layouts */
+.math-card {
+  padding: 2rem;
+  border-radius: var(--border-radius-md);
+  text-align: center;
+  margin: 2rem 0;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--border-light);
+}
+
+.math-eq {
+  font-size: 1.3rem;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.math-caption {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.variable-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  font-size: 0.9rem;
+}
+
+.variable-table th, .variable-table td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.variable-table th {
+  background: rgba(255,255,255,0.02);
+  color: var(--text-primary);
+  font-family: var(--font-heading);
+}
+
+.variable-table td {
+  color: var(--text-secondary);
+}
+
+/* Worked examples */
+.worked-example {
+  padding: 1.5rem;
+  border-radius: var(--border-radius-md);
+  margin: 1.5rem 0;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--border-light);
+}
+
+.worked-example ol {
+  padding-left: 1.25rem;
+}
+
+.worked-example li {
+  margin-bottom: 0.75rem;
+  color: var(--text-secondary);
+}
+
+/* Notebook mocks */
+.notebook-block {
+  border-radius: var(--border-radius-md);
+  overflow: hidden;
+  margin-bottom: 2rem;
+  border: 1px solid var(--border-light);
+}
+
+.notebook-header {
+  background: rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid var(--border-light);
+  padding: 0.75rem 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.notebook-header .file-name {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.notebook-body {
+  padding: 1.5rem;
+  background: #080b12;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.code-cell, .output-cell {
+  display: flex;
+  gap: 1rem;
+}
+
+.cell-label {
+  width: 60px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-align: right;
+  padding-top: 0.2rem;
+}
+
+.code-editor-mock {
+  flex: 1;
+  background: #0f1422;
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 6px;
+  padding: 0.85rem 1.25rem;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: #10b981;
+  overflow-x: auto;
+}
+
+.output-console-mock {
+  flex: 1;
+  background: transparent;
+  padding: 0.2rem 1.25rem;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  overflow-x: auto;
+}
+
+/* Quiz segments */
+.quiz-block {
+  padding: 2rem;
+  border-radius: var(--border-radius-lg);
+  margin-top: 2rem;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--border-light);
+}
+
+.quiz-block h3 {
+  margin-bottom: 0.5rem;
+}
+
+.quiz-question {
+  margin-top: 1rem;
+}
+
+.quiz-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.quiz-option {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-light);
+  border-radius: var(--border-radius-sm);
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: var(--transition-fast);
+}
+
+.quiz-option:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* ─── Lesson Page Breadcrumb ─── */
+.breadcrumb-container {
+  margin-bottom: 1.25rem;
+  padding: 0;
+}
+.lesson-breadcrumb {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  font-size: 0.8rem;
+  font-family: var(--font-heading);
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+.lesson-breadcrumb a {
+  color: var(--text-muted);
+  transition: var(--transition-fast);
+}
+.lesson-breadcrumb a:hover {
+  color: var(--text-primary);
+}
+.lesson-breadcrumb > span {
+  color: var(--text-secondary);
+}
+.lesson-breadcrumb .active-node {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+/* ─── Lesson Template Header ─── */
+.lesson-template-header {
+  margin-bottom: 2rem;
+}
+.lesson-header-meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+.lesson-header-badge {
+  font-size: 0.72rem;
+  padding: 0.25rem 0.7rem;
+  border-radius: 50px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border-light);
+  color: var(--text-secondary);
+  font-family: var(--font-heading);
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  white-space: nowrap;
+}
+.lesson-header-badge.track {
+  background: rgba(59,130,246,0.1);
+  border-color: rgba(59,130,246,0.2);
+  color: var(--accent-blue);
+}
+.lesson-header-badge.diff {
+  background: rgba(6,182,212,0.1);
+  border-color: rgba(6,182,212,0.2);
+  color: var(--accent-cyan);
+}
+.lesson-template-header h1 {
+  font-size: 2.2rem;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+  margin-bottom: 0;
+}
+
+/* ─── Objectives Box Card ─── */
+.objectives-box-card {
+  padding: 1.5rem 1.75rem;
+  border-radius: var(--border-radius-lg);
+  margin-bottom: 2rem;
+}
+.objectives-box-card h3 {
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+.objectives-box-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+}
+.objectives-box-col h4 {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--accent-cyan);
+  margin-bottom: 0.35rem;
+  font-weight: 600;
+}
+.objectives-box-col p {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  margin-bottom: 0;
+  line-height: 1.5;
+}
+
+/* ─── Content Connector Line ─── */
+.content-connector-line {
+  display: none;
+}
+
+/* ─── Lesson Content Blocks ─── */
+.markdown-content {
+  margin-bottom: 1rem;
+}
+.lesson-content-block {
+  margin-bottom: 3rem;
+}
+.lesson-content-block h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  margin-top: 2rem;
+  font-weight: 700;
+}
+.lesson-content-block h2:first-child {
+  margin-top: 0;
+}
+.lesson-content-block h3 {
+  font-size: 1.2rem;
+  margin-bottom: 0.75rem;
+  margin-top: 1.75rem;
+  font-weight: 600;
+}
+.lesson-content-block h4 {
+  font-size: 1.05rem;
+  margin-bottom: 0.5rem;
+  margin-top: 1.5rem;
+  font-weight: 600;
+}
+.lesson-content-block p {
+  font-size: 1rem;
+  line-height: 1.7;
+  margin-bottom: 1.25rem;
+  color: var(--text-secondary);
+}
+.lesson-content-block ul,
+.lesson-content-block ol {
+  margin-bottom: 1.25rem;
+  padding-left: 1.5rem;
+  color: var(--text-secondary);
+}
+.lesson-content-block li {
+  margin-bottom: 0.4rem;
+  line-height: 1.6;
+}
+.lesson-content-block hr {
+  border: none;
+  border-top: 1px solid var(--border-light);
+  margin: 2rem 0;
+}
+.lesson-content-block code {
+  font-family: var(--font-mono);
+  background: rgba(255,255,255,0.05);
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.85em;
+  color: var(--accent-cyan);
+}
+.lesson-content-block pre {
+  background: rgba(0,0,0,0.3);
+  border: 1px solid var(--border-light);
+  border-radius: var(--border-radius-md);
+  padding: 1.25rem;
+  overflow-x: auto;
+  margin-bottom: 1.5rem;
+}
+.lesson-content-block pre code {
+  background: none;
+  padding: 0;
+  color: var(--text-primary);
+  font-size: 0.85rem;
+}
+.lesson-content-block table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+}
+.lesson-content-block th,
+.lesson-content-block td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border-light);
+}
+.lesson-content-block th {
+  background: rgba(255,255,255,0.02);
+  color: var(--text-primary);
+  font-family: var(--font-heading);
+  font-weight: 600;
+}
+.lesson-content-block td {
+  color: var(--text-secondary);
+}
+.lesson-content-block blockquote {
+  border-left: 3px solid var(--accent-cyan);
+  padding: 0.75rem 1.25rem;
+  margin: 1.25rem 0;
+  background: rgba(6,182,212,0.03);
+  border-radius: 0 var(--border-radius-sm) var(--border-radius-sm) 0;
+}
+.lesson-content-block blockquote p {
+  margin-bottom: 0;
+  font-style: italic;
+}
+
+/* ─── Bottom Navigation ─── */
+.bottom-navigation-cards-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  margin: 2.5rem 0 1.25rem;
+}
+.bottom-nav-card {
+  padding: 1.25rem 1.5rem;
+  border-radius: var(--border-radius-md);
+  text-decoration: none;
+  transition: var(--transition-smooth);
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+.bottom-nav-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255,255,255,0.15);
+}
+.bottom-nav-card.next {
+  text-align: right;
+}
+.bottom-nav-card .nav-direction {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-family: var(--font-heading);
+  font-weight: 500;
+}
+.bottom-nav-card .nav-title {
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+.bottom-return-curriculum-row {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+/* ─── Math Cards ─── */
+.math-card {
+  padding: 2rem;
+  border-radius: var(--border-radius-md);
+  text-align: center;
+  margin: 2rem 0;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--border-light);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.math-eq {
+  display: block;
+  margin: 0;
+  font-size: inherit;
+  min-height: 1.5em;
+}
+
+/* ─── KaTeX Display Math ─── */
+.katex-display {
+  margin: 1.25rem 0 !important;
+  padding: 0.5rem 0;
+  text-align: center;
+  overflow-x: auto;
+  overflow-y: hidden;
+  max-width: 100%;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+.katex-display::-webkit-scrollbar {
+  height: 4px;
+}
+.katex-display::-webkit-scrollbar-thumb {
+  background: var(--border-light);
+  border-radius: 2px;
+}
+.katex-display > .katex {
+  white-space: nowrap;
+  display: inline-block;
+}
+.katex-display > .katex > .katex-html {
+  text-align: center;
+}
+
+/* ─── Inline KaTeX ─── */
+.katex {
+  font-size: 1.05em !important;
+  line-height: 1.4;
+  vertical-align: baseline;
+}
+p > .katex,
+li > .katex,
+td > .katex,
+th > .katex {
+  vertical-align: baseline;
+}
+p .katex,
+li .katex {
+  vertical-align: baseline;
+}
+
+/* ─── Variable tables with math content ─── */
+.variable-table td code,
+.variable-table td .katex {
+  font-size: 0.95em !important;
+  vertical-align: middle;
+}
+.variable-table td {
+  vertical-align: middle;
+}
+
+/* ─── Lesson content blocks with display math ─── */
+.lesson-content-block .katex-display {
+  margin: 1.5rem 0 !important;
+}
+
+/* ─── Worked examples math ─── */
+.worked-example .katex-display {
+  margin: 1rem 0 !important;
+}
+
+/* ─── Code blocks - prevent LaTeX inside code from rendering ─── */
+code .katex,
+pre .katex,
+.code-editor-mock .katex,
+.code-cell .katex,
+.notebook-body .katex {
+  all: unset !important;
+  font-family: var(--font-mono) !important;
+  font-size: 0.85rem !important;
+  color: #10b981 !important;
+  background: transparent !important;
+}
+code,
+pre,
+.code-editor-mock,
+.code-cell,
+.notebook-body {
+  counter-reset: katex-ignore;
+}
+
+/* ─── Responsive math ─── */
+@media (max-width: 768px) {
+  .math-card {
+    padding: 1.25rem;
+    margin: 1.5rem 0;
+  }
+  .katex-display {
+    margin: 0.75rem 0 !important;
+    padding: 0.35rem 0;
+    font-size: 0.95em;
+  }
+  .katex {
+    font-size: 1em !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .katex-display {
+    font-size: 0.85em;
+  }
+  .katex {
+    font-size: 0.95em !important;
+  }
+}
+
+/* ─── Smooth scroll for content ─── */
+.lesson-player-content {
+  scroll-behavior: smooth;
+}

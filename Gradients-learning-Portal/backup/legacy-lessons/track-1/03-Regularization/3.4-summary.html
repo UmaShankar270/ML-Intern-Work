@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module Summary & Practice — Gradients ML LMS</title>
+    
+    <!-- KaTeX CSS and JS for mathematical equations -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
+
+    <!-- CSS sheets -->
+    <link rel="stylesheet" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../css/layout.css" />
+    <link rel="stylesheet" href="../../css/responsive.css" />
+    <link rel="stylesheet" href="../../css/lesson.css" />
+    <link rel="stylesheet" href="../../css/sidebar.css" />
+</head>
+<body>
+    <!-- Top Header Navigation Injector -->
+    <header id="header-container" class="main-header glass"></header>
+
+    <main class="container fade-in" style="padding-bottom: 6rem;">
+      
+      <!-- 1. Breadcrumb Navigation -->
+      <div class="breadcrumb-container">
+        <div class="lesson-breadcrumb">
+          <a href="../../index.html">Home</a> &gt; 
+          <a href="../../course-overview.html">Course Overview</a> &gt; 
+          <a href="../../curriculum.html">Curriculum</a> &gt; 
+          <span>03-Regularization: Regularization</span> &gt; 
+          <span class="active-node">Lesson 3.4</span>
+        </div>
+      </div>
+
+      <!-- 2. Two-Column Layout (Main Content + Right Sidebar) -->
+      <div class="lesson-grid-layout">
+        
+        <!-- Center-Left Content Area -->
+        <div class="lesson-content-area">
+          <div class="content-connector-line"></div>
+
+          <!-- 3. Lesson Header -->
+          <header class="lesson-template-header">
+            <div class="lesson-header-meta-row">
+              <span class="lesson-header-badge track">Machine Learning Fundamentals</span>
+              <span class="lesson-header-badge">03-Regularization</span>
+              <span class="lesson-header-badge">Lesson 3.4</span>
+              <span class="lesson-header-badge diff">Intermediate</span>
+              <span class="lesson-header-badge">25 mins</span>
+            </div>
+            <h1>Module Summary & Practice</h1>
+          </header>
+
+          <!-- 4. Learning Objectives Card -->
+          <div class="objectives-box-card glass">
+            <h3>Lesson Objectives</h3>
+            <div class="objectives-box-grid">
+              <div class="objectives-box-col">
+                <h4>What you will learn</h4>
+                <p>Master the details of Module Summary & Practice to build complete technical intuition.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Prerequisites</h4>
+                <p>Completion of previous conceptual lessons in this track.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Expected Outcome</h4>
+                <p>Apply Module Summary & Practice diagnostics to prevent training loops leakage or parameters decay.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. Main Lesson Content Area -->
+          <div class="markdown-content">
+            
+                    <div class="lesson-content-block">
+                        <p># Machine Learning Fundamentals: Regularization</p>
+                        <blockquote><strong>"Teaching a model to stay humble even when the training data is tempting it to fit noise."</strong></blockquote>
+
+<hr>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h2>Lesson 3.5: Scaling & Pipeline Pitfalls</h2>
+                        <div class="alert-box tip" style="border-left-color: var(--accent-blue);">
+                <span class="alert-icon">ℹ️</span>
+                <div class="alert-content">
+                    <strong>Why Feature Scaling is Mandatory:</strong>
+Because the regularization penalty sums the magnitudes of the weights, features must be scaled to the same range (e.g., using <code>StandardScaler</code>). If one feature has values in the thousands and another between 0 and 1, the model will need a larger weight for the second feature to use it, which gets penalized unfairly.
+                </div>
+            </div>
+
+<h3>Regularization Strength in Scikit-Learn:</h3>
+In many Scikit-learn models (like `LogisticRegression`), the regularization hyperparameter is parameterized as `C`, the inverse of regularization strength:
+
+<div class="math-card glass"><div class="math-eq">C \propto \frac{1}{\lambda}</div></div>
+
+<ul>
+<li><strong>Small `C` (e.g., 0.01):</strong> Strong regularization (large penalty). Weights are pushed hard toward zero.</li>
+<li><strong>Large `C` (e.g., 100):</strong> Weak regularization (small penalty). The model is free to fit the training data closely.</li>
+</ul>
+
+<hr>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h2>Lesson 3.6: Placement & Interview Q&A</h2>
+                        <p><strong>Q1. What is regularization and why is it used?</strong>
+<ul>
+<li><strong>Answer:</strong> Regularization adds a penalty term based on the size of the weights to the loss function. It prevents overfitting by constraining the model's parameters, trading a small increase in training error for a decrease in test-time validation error.</li>
+</ul></p>
+
+<p><strong>Q2. Explain the difference between L1 (Lasso) and L2 (Ridge) regularization.</strong>
+<ul>
+<li><strong>Answer:</strong> L1 (Lasso) penalizes the sum of the absolute weights and can force weights to exactly zero, acting as a feature selector. L2 (Ridge) penalizes the sum of the squared weights, shrinking them toward zero but keeping all features active.</li>
+</ul></p>
+
+<p><strong>Q3. Why must we scale features before applying regularization?</strong>
+<ul>
+<li><strong>Answer:</strong> Regularization penalizes weight sizes without knowing the scale of the features. Unscaled features require weights of different magnitudes to achieve the same effect, causing the penalty to be applied unevenly.</li>
+</ul></p>
+
+<p><strong>Q4. What is Elastic Net and when should it be used?</strong>
+<ul>
+<li><strong>Answer:</strong> Elastic Net combines L1 and L2 penalties. It is useful when there are correlated features, as Lasso tends to select one feature from a group randomly, while Elastic Net maintains stability and groups them.</li>
+</ul></p>
+
+<p><strong>Q5. How does the parameter C in Scikit-learn's LogisticRegression relate to standard regularization strength?</strong>
+<ul>
+<li><strong>Answer:</strong> `C` is the inverse of regularization strength ($1/\lambda$). A smaller `C` specifies stronger regularization, while a larger `C` specifies weaker regularization.</li>
+</ul></p>
+
+<hr>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h2>Jupyter Notebook Practice Lab</h2>
+                        <p class="hero-lead">Run, modify, and analyze python execution outputs. Verify mathematical claims against dataset projections.</p>
+                        <div class="notebook-markdown"><p># Regularization in Machine Learning: Hands-on Implementation</p>
+
+<h2>What This Notebook Covers</h2>
+This notebook is the practical, code-driven counterpart to the <strong>Regularization in Machine Learning README</strong>. We will build an L2-regularized binary logistic regression model from scratch using NumPy, train it on a binary subset of the Iris dataset, and audit its loss components. Then, we will train Scikit-learn's optimized classifiers to evaluate the effects of regularization strength on accuracy and parameter magnitude.
+
+<h2>What You Will Accomplish</h2>
+<ul>
+<li>Describe what regularization is and why it is needed to prevent overfitting.</li>
+<li>Explain the mathematical intuition behind L1 (Lasso) and L2 (Ridge) penalties.</li>
+<li>Implement an L2-regularized logistic regression training loop from scratch using NumPy.</li>
+<li>Compare your from-scratch model with Scikit-learn's optimized `LogisticRegression` classifier.</li>
+<li>Visualize the relationship between Scikit-learn's `C` hyperparameter, feature weights, and validation accuracy.</li>
+</ul>
+
+<h2>Before You Start (Prerequisites)</h2>
+<ul>
+<li>Comfort writing basic Python loops, methods, and list operations.</li>
+<li>Familiarity with NumPy array index queries and Pandas DataFrames.</li>
+<li>Basic understanding of classification evaluation tables.</li>
+</ul>
+
+<h2>About the Dataset</h2>
+This notebook uses the benchmark <strong>Iris flower dataset</strong>, containing 150 instances of flowers split evenly across three species: *setosa*, *versicolor*, and *virginica*. For every flower, we have four numeric measurements:
+<ul>
+<li>Sepal length (cm)</li>
+<li>Sepal width (cm)</li>
+<li>Petal length (cm)</li>
+<li>Petal width (cm)</li>
+</ul>
+
+<p>We load it directly using `sklearn.datasets.load_iris`. If you want to explore the dataset outside this notebook, it is also archived on Kaggle:
+<strong>https://www.kaggle.com/datasets/uciml/iris</strong></p>
+
+<hr></div>
+<div class="notebook-markdown"><h2>1. Setup & Workspace Preparation</h2>
+
+<h3>WHY?</h3>
+Importing all libraries upfront with clean imports ensures that the workspace is configured correctly and sets the seeds for reproducible operations.
+
+<h3>HOW?</h3>
+We import NumPy, Pandas, Matplotlib, Seaborn, and the necessary Scikit-learn helper tools, then apply custom plot styles.</div>
+
+            <div class="notebook-block glass">
+                <div class="notebook-header">
+                    <span class="file-name">Python Code Block</span>
+                </div>
+                <div class="notebook-body">
+                    <div class="code-cell">
+                        <div class="cell-label">In [1]:</div>
+                        <pre class="code-editor-mock"><code># Import NumPy for fast matrix arithmetic and manual MSE loss functions
+import numpy as np
+
+# Import Pandas to display data statistics within dataframes
+import pandas as pd
+
+# Import Matplotlib and Seaborn for plotting target class boundaries
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Import Iris dataset tools and models from sklearn
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+
+# Set seaborn style for clean grids
+sns.set_style("whitegrid")
+
+# Fix numpy seed for reproducibility
+np.random.seed(42)
+
+print("Libraries imported and workspace seed initialized.")</code></pre>
+                    </div>
+                    
+                </div>
+            </div>
+            
+<div class="notebook-markdown"><h2>2. Dataset Loading & Exploration</h2>
+
+<h3>WHY?</h3>
+Exploring the columns and distributions of the dataset before applying any transformations is key to identifying potential issues like class imbalance or scale variations.
+
+<h3>HOW?</h3>
+We load the dataset using `load_iris()`, construct a Pandas DataFrame, and print statistical summaries.</div>
+
+            <div class="notebook-block glass">
+                <div class="notebook-header">
+                    <span class="file-name">Python Code Block</span>
+                </div>
+                <div class="notebook-body">
+                    <div class="code-cell">
+                        <div class="cell-label">In [2]:</div>
+                        <pre class="code-editor-mock"><code># Load iris dataset dictionary from sklearn
+iris = load_iris()
+
+# Wrap measurements inside a dataframe, applying original column names
+df = pd.DataFrame(data=iris.data, columns=iris.feature_names)
+
+# Append target codes (0, 1, 2) to the dataframe
+df['target'] = iris.target
+
+# Peek at the first 5 records
+print("First 5 rows of the dataset:")
+display(df.head())
+
+# Print dataframe properties to check coordinates and data types
+print("\nDataset info:")
+df.info()
+
+# Print statistical characteristics (mean, std, min, max)
+print("\nSummary statistics:")
+display(df.describe())
+
+print("\nFeatures:", iris.feature_names)
+print("Target classes:", iris.target_names)</code></pre>
+                    </div>
+                    
+                </div>
+            </div>
+            
+<div class="notebook-markdown"><h2>3. Preprocessing & Feature Scaling</h2>
+
+<h3>WHY?</h3>
+Regularization penalizes weight sizes without knowing the scale of the features. To ensure that the penalty is applied evenly across features, we must standardize them to the same scale.
+
+<h3>HOW?</h3>
+We audit the dataset for null values and duplicates, split it into train and test sets, and apply `StandardScaler` to normalize the feature dimensions.</div>
+
+            <div class="notebook-block glass">
+                <div class="notebook-header">
+                    <span class="file-name">Python Code Block</span>
+                </div>
+                <div class="notebook-body">
+                    <div class="code-cell">
+                        <div class="cell-label">In [3]:</div>
+                        <pre class="code-editor-mock"><code># Verify missing value counts per column
+print("Missing values per column:")
+print(df.isnull().sum())
+
+# Count duplicate rows in the dataset
+print("\nNumber of duplicate rows:", df.duplicated().sum())
+
+# Extract features X and targets y
+X = df[iris.feature_names].values
+y = df['target'].values
+
+# Split into training (80%) and testing (20%) datasets
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42, stratify=y
+)
+
+# Scale the features so that all variables have a similar range.
+# This ensures regularization penalizes each feature fairly.
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+
+print("\nTraining set shape:", X_train_scaled.shape)
+print("Test set shape:", X_test_scaled.shape)</code></pre>
+                    </div>
+                    
+                </div>
+            </div>
+            
+<div class="notebook-markdown"><h2>4. Part 3: L2 Regularized Logistic Regression From Scratch</h2>
+
+<h3>WHY?</h3>
+Implementing regularized optimization from scratch using NumPy builds intuition for how the L2 penalty affects the gradient update step during training.
+
+<h3>HOW?</h3>
+We define the mathematical loss functions, prediction probabilities, and update rules. To keep the math clear, we train on a binary classification subset (Species Setosa vs. others) and add the derivative of the L2 penalty term ($2 \lambda w$) to the weight updates.</div>
+
+            <div class="notebook-block glass">
+                <div class="notebook-header">
+                    <span class="file-name">Python Code Block</span>
+                </div>
+                <div class="notebook-body">
+                    <div class="code-cell">
+                        <div class="cell-label">In [4]:</div>
+                        <pre class="code-editor-mock"><code># Set up binary targets: Setosa (class 0) vs. all others
+y_train_binary = (y_train == 0).astype(float)
+y_test_binary = (y_test == 0).astype(float)
+
+n_features = X_train_scaled.shape[1]
+
+# Set numpy seed to make calculations deterministic
+np.random.seed(42)
+
+# Initialize weights and bias randomly (small values for stable training)
+weights = np.random.randn(n_features) * 0.01
+bias = 0.0
+
+# Hyperparameters
+learning_rate = 0.1
+lambda_l2 = 0.1
+n_epochs = 500
+
+# Sigmoid activation function
+def sigmoid(z):
+    return 1 / (1 + np.exp(-z))
+
+# Model prediction function
+def predict_proba(X, w, b):
+    z = np.dot(X, w) + b
+    return sigmoid(z)
+
+# Cost function incorporating L2 penalty
+def compute_loss(X, y, w, b, lam):
+    m = X.shape[0]
+    y_pred = predict_proba(X, w, b)
+    eps = 1e-15
+    y_pred = np.clip(y_pred, eps, 1 - eps)
+    
+    # Binary cross-entropy loss
+    data_loss = -np.mean(y * np.log(y_pred) + (1 - y) * np.log(1 - y_pred))
+    
+    # Regularization penalty (bias term is NOT regularized)
+    l2_penalty = lam * np.sum(w ** 2)
+    
+    # Total regularized cost
+    regularized_loss = data_loss + l2_penalty
+    return data_loss, l2_penalty, regularized_loss
+
+# Gradient descent optimization loop
+for epoch in range(n_epochs):
+    y_pred = predict_proba(X_train_scaled, weights, bias)
+    error = y_pred - y_train_binary
+    
+    # Compute raw gradients for weights and bias
+    grad_w = np.dot(X_train_scaled.T, error) / X_train_scaled.shape[0]
+    grad_b = np.mean(error)
+    
+    # Add derivative of the L2 penalty term: d/dw [lambda * w^2] = 2 * lambda * w
+    grad_w += 2 * lambda_l2 * weights
+    
+    # Update weights and bias
+    weights -= learning_rate * grad_w
+    bias -= learning_rate * grad_b
+
+print("Training complete.")
+print("Final weights:", np.round(weights, 4))
+print("Final bias:", round(bias, 4))</code></pre>
+                    </div>
+                    
+                </div>
+            </div>
+            
+<div class="notebook-markdown"><h2>5. Evaluating the From-Scratch Model</h2>
+
+<h3>WHY?</h3>
+We evaluate predictions on the test set and log the breakdown of the final loss components to verify that our manual model generalizes correctly.
+
+<h3>HOW?</h3>
+We run the test features through our prediction pipeline, compute loss terms, and evaluate test accuracy.</div>
+
+            <div class="notebook-block glass">
+                <div class="notebook-header">
+                    <span class="file-name">Python Code Block</span>
+                </div>
+                <div class="notebook-body">
+                    <div class="code-cell">
+                        <div class="cell-label">In [5]:</div>
+                        <pre class="code-editor-mock"><code># Compute probabilities and binary predictions on test data
+test_probs = predict_proba(X_test_scaled, weights, bias)
+test_preds = (test_probs &gt;= 0.5).astype(int)
+
+print("Sample predictions (probabilities):", np.round(test_probs[:10], 4))
+print("Sample predicted classes:          ", test_preds[:10])
+print("Sample true classes:               ", y_test_binary[:10].astype(int))
+
+# Calculate loss breakdown
+data_loss, l2_penalty, reg_loss = compute_loss(X_test_scaled, y_test_binary, weights, bias, lambda_l2)
+
+print("\n--- Loss Breakdown (Test Set) ---")
+print(f"Data loss (cross-entropy):  {data_loss:.4f}")
+print(f"L2 penalty:                 {l2_penalty:.4f}")
+print(f"Regularized loss (total):   {reg_loss:.4f}")
+
+# Evaluate test accuracy
+scratch_accuracy = np.mean(test_preds == y_test_binary)
+print(f"\nFrom-scratch test accuracy: {scratch_accuracy:.4f}")</code></pre>
+                    </div>
+                    
+                </div>
+            </div>
+            
+<div class="notebook-markdown"><h2>6. Part 4: Scikit-learn Classifier Comparison</h2>
+
+<h3>WHY?</h3>
+Now, we compare the effects of strong vs. weak regularization on the full multi-class classification task using Scikit-learn's optimized solvers.
+
+<h3>HOW?</h3>
+We train one model with strong regularization ($C=0.01$, large penalty) and one with weak regularization ($C=100$, small penalty). Then, we print accuracy, classification reports, and confusion matrices for both settings.</div>
+
+            <div class="notebook-block glass">
+                <div class="notebook-header">
+                    <span class="file-name">Python Code Block</span>
+                </div>
+                <div class="notebook-body">
+                    <div class="code-cell">
+                        <div class="cell-label">In [6]:</div>
+                        <pre class="code-editor-mock"><code># Train strongly regularized model (C=0.01 specifies strong penalty)
+model_strong_reg = LogisticRegression(C=0.01, max_iter=1000, random_state=42)
+model_strong_reg.fit(X_train_scaled, y_train)
+preds_strong = model_strong_reg.predict(X_test_scaled)
+
+# Train weakly regularized model (C=100 specifies weak penalty)
+model_weak_reg = LogisticRegression(C=100, max_iter=1000, random_state=42)
+model_weak_reg.fit(X_train_scaled, y_train)
+preds_weak = model_weak_reg.predict(X_test_scaled)
+
+print("===== LogisticRegression(C=0.01) — Strong Regularization =====")
+print("Accuracy:", accuracy_score(y_test, preds_strong))
+print("\nClassification Report:")
+print(classification_report(y_test, preds_strong, target_names=iris.target_names))
+print("Confusion Matrix:")
+print(confusion_matrix(y_test, preds_strong))
+
+print("\n===== LogisticRegression(C=100) — Weak Regularization =====")
+print("Accuracy:", accuracy_score(y_test, preds_weak))
+print("\nClassification Report:")
+print(classification_report(y_test, preds_weak, target_names=iris.target_names))
+print("Confusion Matrix:")
+print(confusion_matrix(y_test, preds_weak))</code></pre>
+                    </div>
+                    
+                </div>
+            </div>
+            
+<div class="notebook-markdown"><h2>7. Visualizing Regularization Penalty Effects</h2>
+
+<h3>WHY?</h3>
+Visualizing feature weight magnitudes for strong vs. weak regularization provides concrete, visual evidence of how the penalty term shrinks coefficients.
+
+<h3>HOW?</h3>
+We extract the average absolute coefficient values for both models and plot them as a bar chart comparison.</div>
+
+            <div class="notebook-block glass">
+                <div class="notebook-header">
+                    <span class="file-name">Python Code Block</span>
+                </div>
+                <div class="notebook-body">
+                    <div class="code-cell">
+                        <div class="cell-label">In [7]:</div>
+                        <pre class="code-editor-mock"><code># Compute average absolute coefficient sizes across the features
+mean_abs_weights_strong = np.mean(np.abs(model_strong_reg.coef_), axis=0)
+mean_abs_weights_weak = np.mean(np.abs(model_weak_reg.coef_), axis=0)
+
+x_pos = np.arange(len(iris.feature_names))
+width = 0.35
+
+# Plot the coefficient magnitudes comparison
+plt.figure(figsize=(7, 4))
+plt.bar(x_pos - width/2, mean_abs_weights_strong, width, label='C = 0.01 (Strong)', color='steelblue')
+plt.bar(x_pos + width/2, mean_abs_weights_weak, width, label='C = 100 (Weak)', color='salmon')
+plt.title('Mean Absolute Weight Magnitude per Feature')
+plt.xlabel('Feature')
+plt.ylabel('Mean |Coefficient|')
+plt.xticks(x_pos, iris.feature_names, rotation=20, ha='right')
+plt.legend()
+plt.tight_layout()
+plt.show()</code></pre>
+                    </div>
+                    
+                </div>
+            </div>
+            
+<div class="notebook-markdown"><h2>8. Part 5: Hyperparameter Tuning Sweeps</h2>
+
+<h3>WHY?</h3>
+To analyze the behavior of the regularization hyperparameter, we plot accuracy and weight magnitudes across a range of values for $C$, observing the transition from underfitting to overfitting.
+
+<h3>HOW?</h3>
+We loop through a range of values for $C$, train a `LogisticRegression` model for each, track validation accuracy and average weight sizes, and compile them into a results table.</div>
+
+            <div class="notebook-block glass">
+                <div class="notebook-header">
+                    <span class="file-name">Python Code Block</span>
+                </div>
+                <div class="notebook-body">
+                    <div class="code-cell">
+                        <div class="cell-label">In [8]:</div>
+                        <pre class="code-editor-mock"><code># Define range of C values
+C_values = [0.001, 0.01, 0.1, 1, 10, 100]
+results = []
+
+# Iterate over parameters and log metrics
+for c in C_values:
+    model = LogisticRegression(C=c, max_iter=1000, random_state=42)
+    model.fit(X_train_scaled, y_train)
+    preds = model.predict(X_test_scaled)
+    acc = accuracy_score(y_test, preds)
+    avg_weight_magnitude = np.mean(np.abs(model.coef_))
+    results.append((c, acc, avg_weight_magnitude))
+
+# Wrap output within a dataframe table
+results_df = pd.DataFrame(results, columns=['C', 'Test Accuracy', 'Mean |Weight|'])
+print("Effect of C on Accuracy and Weight Magnitude:")
+display(results_df)</code></pre>
+                    </div>
+                    
+                </div>
+            </div>
+            
+<div class="notebook-markdown"><p># Part 6: Interview Corner</p>
+
+<p><strong>Q1: What is Regularization?</strong>
+Regularization is a set of techniques that add a penalty term to a model's loss function based on the size of its parameters, discouraging overly complex models and improving generalization to unseen data.</p>
+
+<p><strong>Q2: Why is Regularization needed?</strong>
+Without it, models — especially those with many parameters relative to the amount of training data — can fit noise in the training set, leading to high variance and poor performance on new data. Regularization constrains the parameter space to favor simpler, more generalizable solutions.</p>
+
+<p><strong>Q3: L1 vs. L2 — what's the difference?</strong>
+L1 (Lasso) adds the sum of absolute weight values as a penalty and tends to drive some weights exactly to zero, effectively performing feature selection. L2 (Ridge) adds the sum of squared weight values and shrinks all weights toward zero smoothly, but rarely to exactly zero. L1 is preferred when feature selection or sparsity is desired; L2 is preferred when all features are believed to contribute and multicollinearity is a concern.</p>
+
+<p><strong>Q4: What is Elastic Net?</strong>
+Elastic Net combines L1 and L2 penalties using a mixing parameter (often called `l1_ratio`), allowing the model to enjoy both the sparsity benefits of L1 and the stability benefits of L2 — particularly useful when features are correlated.</p>
+
+<p><strong>Q5: What is Overfitting?</strong>
+Overfitting occurs when a model learns patterns specific to the training data (including noise and outliers) so closely that it performs well on training data but poorly on unseen test data.</p>
+
+<p><strong>Q6: What is the Bias-Variance Tradeoff?</strong>
+Bias is the error from overly simplistic assumptions (underfitting), while variance is the error from sensitivity to small fluctuations in the training data (overfitting). Regularization increases bias slightly (by constraining the model) in exchange for a larger reduction in variance, often improving overall test performance — this balance is the bias-variance tradeoff.</p></div>
+<div class="notebook-markdown"><p># Key Takeaways</p>
+
+<ul>
+<li>Regularization adds a penalty on model weight magnitudes to the loss function, helping prevent overfitting and improve generalization.</li>
+<li>L1 (Lasso) encourages sparse models by driving some weights to exactly zero, while L2 (Ridge) shrinks all weights smoothly without eliminating them.</li>
+<li>Elastic Net blends L1 and L2 penalties to combine feature selection with stability on correlated features.</li>
+<li>In Scikit-learn, the `C` parameter is the inverse of regularization strength — smaller `C` means stronger regularization and typically smaller weight magnitudes.</li>
+<li>Regularization directly addresses the bias-variance tradeoff: it slightly increases bias but can substantially reduce variance, often improving performance on unseen data.</li>
+</ul></div>
+                    </div>
+                    
+          </div>
+
+          <!-- 6. Bottom Navigation Cards -->
+          <div class="bottom-navigation-cards-row">
+            
+                <a href="3.3-effects.html" class="bottom-nav-card glass">
+                  <span class="nav-direction">&larr; Previous Lesson</span>
+                  <span class="nav-title">3.3 Impact on Coefficients</span>
+                </a>
+                
+            
+                <a href="../../curriculum.html" class="bottom-nav-card next glass">
+                  <span class="nav-direction">Finish Module &rarr;</span>
+                  <span class="nav-title">Back to Curriculum</span>
+                </a>
+                
+          </div>
+
+          <div class="bottom-return-curriculum-row">
+            <a href="../../curriculum.html" class="btn btn-secondary">&larr; Return to Curriculum</a>
+          </div>
+
+        </div>
+
+        <!-- 7. Right Sidebar Panel (Sticky Accordion Mount) -->
+        <aside id="sidebar-container" class="lesson-right-sidebar glass"></aside>
+
+      </div>
+    </main>
+
+    <!-- Footer Injector Mount -->
+    <footer id="footer-container" class="main-footer"></footer>
+
+    <!-- Shared Static LMS Scripts -->
+    <script src="../../js/app.js"></script>
+    <script src="../../js/navigation.js"></script>
+    <script src="../../js/sidebar.js"></script>
+    <script src="../../js/progress.js"></script>
+</body>
+</html>

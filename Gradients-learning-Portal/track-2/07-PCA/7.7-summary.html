@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Summary & Interview Preparation â€” Gradients ML LMS</title>
+    
+        <!-- KaTeX CSS and JS for mathematical equations -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    <script defer src="../../js/katex.js"></script>
+
+    <!-- CSS sheets -->
+    <link rel="stylesheet" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../css/layout.css" />
+    <link rel="stylesheet" href="../../css/responsive.css" />
+    <link rel="stylesheet" href="../../css/lesson.css" />
+    <link rel="stylesheet" href="../../css/sidebar.css" />
+</head>
+<body>
+    <!-- Top Header Navigation Injector -->
+    <header id="header-container" class="main-header glass"></header>
+
+    <main class="container fade-in" style="padding-bottom: 6rem;">
+      
+      <!-- 1. Breadcrumb Navigation -->
+      <div class="breadcrumb-container">
+        <div class="lesson-breadcrumb">
+          <a href="../../index.html">Home</a> &gt; 
+          <a href="../../course-overview.html">Course Overview</a> &gt; 
+          <a href="../../curriculum.html">Curriculum</a> &gt; 
+          <span>07-PCA: Principal Component Analysis (PCA)</span> &gt; 
+          <span class="active-node">Lesson 7.7</span>
+        </div>
+      </div>
+
+      <!-- 2. Two-Column Layout (Main Content + Right Sidebar) -->
+      <div class="lesson-grid-layout">
+        
+        <!-- Center-Left Content Area -->
+        <div class="lesson-content-area">
+          <div class="content-connector-line"></div>
+
+          <!-- 3. Lesson Header -->
+          <header class="lesson-template-header">
+            <div class="lesson-header-meta-row">
+              <span class="lesson-header-badge track">Dimensionality Reduction</span>
+              <span class="lesson-header-badge">07-PCA</span>
+              <span class="lesson-header-badge">Lesson 7.7</span>
+              <span class="lesson-header-badge diff">Intermediate</span>
+              <span class="lesson-header-badge">15 mins</span>
+            </div>
+            <h1>Summary & Interview Preparation</h1>
+          </header>
+
+          <!-- 4. Learning Objectives Card -->
+          <div class="objectives-box-card glass">
+            <h3>Lesson Objectives</h3>
+            <div class="objectives-box-grid">
+              <div class="objectives-box-col">
+                <h4>What you will learn</h4>
+                <p>Review the entire module through interview-style Q&A, compare PCA with alternatives, and access curated references for further study.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Prerequisites</h4>
+                <p>Completion of all prior lessons in Module 07 (7.1 through 7.6).</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Expected Outcome</h4>
+                <p>Articulate PCA concepts in interview settings, explain key trade-offs between DR methods, and know where to go deeper.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. Main Lesson Content Area -->
+          <div class="markdown-content">
+            
+                    <div class="lesson-content-block">
+                        <h2>Module Recap</h2>
+                        <p><strong>Tagline:</strong> Compress the noise, keep the signal â€” the definitive guide to PCA for learners and practitioners.</p>
+
+                        <p><strong>Learning Summary:</strong> What PCA is, why dimensionality reduction is critical, how to calculate covariance and eigenvalues, how to project features onto principal components, and how to implement this in Python from scratch and using Scikit-learn.</p>
+
+<hr>
+                    </div>
+                    
+                    
+                    <div class="lesson-content-block">
+                        <h2>Lesson 7.6: Placement & Interview Q&A</h2>
+                        <p><strong>Q1: What is PCA and why is it preferred over raw feature pruning?</strong>  
+<strong>Answer:</strong> PCA is an unsupervised linear dimensionality reduction method. Instead of discarding original columns (which can lose important information), PCA projects the entire feature space onto orthogonal directions of maximum variance. This compresses the dataset while retaining as much of the original information as possible.</p>
+
+<p><strong>Q2: What is the purpose of standardizing data before running PCA?</strong>  
+<strong>Answer:</strong> PCA is highly sensitive to the scale of features. Features with larger ranges (e.g., income) have higher variance than features with smaller ranges (e.g., age). Without standardization, the first principal component will align almost entirely with the feature that has the largest scale, ignoring the others.</p>
+
+<p><strong>Q3: How do you choose the optimal number of components ($k$) for a pipeline?</strong>  
+<strong>Answer:</strong> There are two main strategies:</p>
+<ul>
+<li><strong>Explained Variance Threshold:</strong> Sum the explained variance ratios of sorted components and select $k$ where the cumulative sum exceeds a threshold (typically $95\%$).</li>
+<li><strong>Scree Plot Elbow Method:</strong> Plot eigenvalues against component indexes and choose $k$ at the point where the curve flattens out (the "elbow").</li>
+</ul>
+
+<p><strong>Q4: Explain the difference between Feature Selection and Feature Extraction.</strong>  
+<strong>Answer:</strong> Feature Selection keeps a subset of the original features as-is without changing them (e.g. keeping 3 out of 10 columns). Feature Extraction projects the original features into a new, lower-dimensional space, creating entirely new features (e.g. principal components) that are combinations of the original ones.</p>
+
+<p><strong>Q5: Why is PCA considered an unsupervised algorithm?</strong>  
+<strong>Answer:</strong> PCA does not use target class labels to calculate projection directions. It identifies the axes of maximum variance based entirely on the coordinates of the feature data $X$ itself.</p>
+
+<hr>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h2>Key Takeaways</h2>
+                        <ul>
+                            <li><strong>Dimensionality reduction</strong> compresses high-dimensional data while preserving signal, addressing overfitting, computational bottlenecks, and the curse of dimensionality.</li>
+                            <li><strong>PCA</strong> finds orthogonal directions of maximum variance by decomposing the covariance matrix into eigenvalues and eigenvectors.</li>
+                            <li><strong>Mean centering and standardization</strong> are mandatory preprocessing steps â€” PCA is scale-sensitive.</li>
+                            <li>The <strong>Explained Variance Ratio</strong> $\text{EVR}_i = \lambda_i / \sum \lambda_j$ quantifies information retained per component and guides the choice of $k$.</li>
+                            <li>Use a <strong>scree plot</strong> and the <strong>elbow method</strong> or a <strong>95% cumulative variance threshold</strong> to select the number of components.</li>
+                            <li><strong>SVD</strong> is numerically more stable than eigendecomposition of $X^T X$ and is the default solver in Scikit-learn.</li>
+                            <li>PCA assumes <strong>linearity, variance = information, orthogonal components,</strong> and trades <strong>interpretability</strong> for compression â€” know when to use LDA or t-SNE instead.</li>
+                        </ul>
+
+<hr>
+
+                        <h2>Lesson 7.7: References & Further Reading</h2>
+                        <ol>
+                            <li><strong>Original PCA Paper:</strong> Pearson, K. (1901). <em>On Lines and Planes of Closest Fit to Systems of Points in Space.</em> Philosophical Magazine, 2(11), 559â€“572. The foundational paper introducing the geometric concept of PCA.</li>
+                            <li><strong>Scikit-learn PCA Documentation:</strong> <a href="https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html" target="_blank" rel="noopener">sklearn.decomposition.PCA</a>. API reference detailing solvers, parameters, and code usage.</li>
+                            <li><strong>Visual Introduction:</strong> Setosa.io's <a href="https://setosa.io/ev/principal-component-analysis/" target="_blank" rel="noopener">Principal Component Analysis Explained Visually</a>. An interactive tool demonstrating how eigenvectors rotate as data points are dragged.</li>
+                            <li><strong>StatQuest Video Series:</strong> Josh Starmer's <a href="https://www.youtube.com/watch?v=FgakZw6K1QQ" target="_blank" rel="noopener">Principal Component Analysis (PCA) Step-by-Step</a>. A visual explanation of eigenvalues and eigenvectors.</li>
+                        </ol>
+                    </div>
+                    
+          </div>
+
+          <!-- 6. Bottom Navigation Cards -->
+          <div class="bottom-navigation-cards-row">
+            
+                <a href="7.6-limitations.html" class="bottom-nav-card glass">
+                  <span class="nav-direction">&larr; Previous Lesson</span>
+                  <span class="nav-title">7.6 Assumptions & Limitations of PCA</span>
+                </a>
+                
+            
+                <a href="7.8-notebook.html" class="bottom-nav-card next glass">
+                  <span class="nav-direction">Next Lesson &rarr;</span>
+                  <span class="nav-title">7.8 Notebook Practice</span>
+                </a>
+                
+          </div>
+
+          <div class="bottom-return-curriculum-row">
+            <a href="../../curriculum.html" class="btn btn-secondary">&larr; Return to Curriculum</a>
+          </div>
+
+        </div>
+
+        <!-- 7. Right Sidebar Panel (Sticky Accordion Mount) -->
+        <aside id="sidebar-container" class="lesson-right-sidebar glass"></aside>
+
+      </div>
+    </main>
+
+    <!-- Footer Injector Mount -->
+    <footer id="footer-container" class="main-footer"></footer>
+
+    <!-- Shared Static LMS Scripts -->
+    <script src="../../js/app.js"></script>
+    <script src="../../js/navigation.js"></script>
+    <script src="../../js/sidebar.js"></script>
+    <script src="../../js/progress.js"></script>
+</body>
+</html>

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assumptions & Limitations of PCA â€” Gradients ML LMS</title>
+    
+        <!-- KaTeX CSS and JS for mathematical equations -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    <script defer src="../../js/katex.js"></script>
+
+    <!-- CSS sheets -->
+    <link rel="stylesheet" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../css/layout.css" />
+    <link rel="stylesheet" href="../../css/responsive.css" />
+    <link rel="stylesheet" href="../../css/lesson.css" />
+    <link rel="stylesheet" href="../../css/sidebar.css" />
+</head>
+<body>
+    <!-- Top Header Navigation Injector -->
+    <header id="header-container" class="main-header glass"></header>
+
+    <main class="container fade-in" style="padding-bottom: 6rem;">
+      
+      <!-- 1. Breadcrumb Navigation -->
+      <div class="breadcrumb-container">
+        <div class="lesson-breadcrumb">
+          <a href="../../index.html">Home</a> &gt; 
+          <a href="../../course-overview.html">Course Overview</a> &gt; 
+          <a href="../../curriculum.html">Curriculum</a> &gt; 
+          <span>07-PCA: Principal Component Analysis (PCA)</span> &gt; 
+          <span class="active-node">Lesson 7.6</span>
+        </div>
+      </div>
+
+      <!-- 2. Two-Column Layout (Main Content + Right Sidebar) -->
+      <div class="lesson-grid-layout">
+        
+        <!-- Center-Left Content Area -->
+        <div class="lesson-content-area">
+          <div class="content-connector-line"></div>
+
+          <!-- 3. Lesson Header -->
+          <header class="lesson-template-header">
+            <div class="lesson-header-meta-row">
+              <span class="lesson-header-badge track">Dimensionality Reduction</span>
+              <span class="lesson-header-badge">07-PCA</span>
+              <span class="lesson-header-badge">Lesson 7.6</span>
+              <span class="lesson-header-badge diff">Intermediate</span>
+              <span class="lesson-header-badge">15 mins</span>
+            </div>
+            <h1>Assumptions & Limitations of PCA</h1>
+          </header>
+
+          <!-- 4. Learning Objectives Card -->
+          <div class="objectives-box-card glass">
+            <h3>Lesson Objectives</h3>
+            <div class="objectives-box-grid">
+              <div class="objectives-box-col">
+                <h4>What you will learn</h4>
+                <p>Recognize the core assumptions and limitations of PCA, and compare it with alternative dimensionality reduction techniques like LDA and t-SNE.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Prerequisites</h4>
+                <p>Understanding of how PCA computes principal components from Lessons 7.1-7.3.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Expected Outcome</h4>
+                <p>Identify scenarios where PCA is appropriate and select an alternative method when its assumptions are violated.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. Main Lesson Content Area -->
+          <div class="markdown-content">
+            
+                    <div class="lesson-content-block">
+                        <h2>Lesson 7.4: Core Assumptions & Limitations</h2>
+                        <p>Like all statistical methods, PCA makes assumptions about the structure of your data.</p>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h3>1. Linearity</h3>
+                        <p>PCA assumes that features are linearly related. It projects data onto straight lines in the high-dimensional space. If the data lies on a curved surface (such as the concentric circles shown below), PCA will fail to find a clean separation.</p>
+
+<pre class="output-console-mock"><code>[Non-linear Concentric Circles]
+       .  *  *  .
+     *   .    .   *      &lt;-- PCA cannot separate these with a straight line.
+     *   .    .   *          Use Kernel PCA or UMAP instead.
+       .  *  *  .</code></pre>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h3>2. Variance Equals Information</h3>
+                        <p>PCA assumes that directions with the largest spread contain the most important signal, while directions with low spread are noise. This assumption holds for many datasets, but it can fail if the key pattern you are looking for lies along a direction of low variance.</p>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h3>3. Orthogonality</h3>
+                        <p>PCA constrains principal components to be perpendicular (orthogonal) to one another. While this eliminates correlation between components, it may force PCA to choose projection directions that do not align with the true physical axes of variation.</p>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h3>4. Interpretability Trade-off</h3>
+                        <p>Because principal components are linear combinations of all original features, they do not have a simple real-world meaning. If your business or research requires explainable features, PCA may not be the right choice.</p>
+                    </div>
+
+                    <div class="lesson-content-block">
+                        <h2>Lesson 7.5: Dimensionality Reduction Comparison Matrix</h2>
+                        <p>To help choose the right method, compare the characteristics of the three main dimensionality reduction techniques:</p>
+
+                        <table class="variable-table">
+                            <thead>
+                                <tr><th>Feature</th><th>PCA</th><th>LDA</th><th>t-SNE</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td><strong>Supervised?</strong></td><td>No (Unsupervised)</td><td>Yes (Supervised)</td><td>No (Unsupervised)</td></tr>
+                                <tr><td><strong>Linearity</strong></td><td>Linear</td><td>Linear</td><td>Non-linear</td></tr>
+                                <tr><td><strong>Primary Goal</strong></td><td>Maximize variance</td><td>Maximize class separability</td><td>Preserve local neighborhoods</td></tr>
+                                <tr><td><strong>Label Required?</strong></td><td>No</td><td>Yes</td><td>No</td></tr>
+                                <tr><td><strong>Component Limit</strong></td><td>Up to $d$ (original features)</td><td>Up to $C - 1$ ($C$ is class count)</td><td>Typically 2 or 3</td></tr>
+                                <tr><td><strong>Determinism</strong></td><td>Deterministic</td><td>Deterministic</td><td>Stochastic (run-dependent)</td></tr>
+                                <tr><td><strong>Downstream Use</strong></td><td>Modeling, compression</td><td>Classification preprocessing</td><td>Visualization only</td></tr>
+                            </tbody>
+                        </table>
+
+<hr>
+                    </div>
+                    
+          </div>
+
+          <!-- 6. Bottom Navigation Cards -->
+          <div class="bottom-navigation-cards-row">
+            
+                <a href="7.5-scree-plots.html" class="bottom-nav-card glass">
+                  <span class="nav-direction">&larr; Previous Lesson</span>
+                  <span class="nav-title">7.5 Explained Variance & Scree Plots</span>
+                </a>
+                
+            
+                <a href="7.7-summary.html" class="bottom-nav-card next glass">
+                  <span class="nav-direction">Next Lesson &rarr;</span>
+                  <span class="nav-title">7.7 Summary & Interview Preparation</span>
+                </a>
+                
+          </div>
+
+          <div class="bottom-return-curriculum-row">
+            <a href="../../curriculum.html" class="btn btn-secondary">&larr; Return to Curriculum</a>
+          </div>
+
+        </div>
+
+        <!-- 7. Right Sidebar Panel (Sticky Accordion Mount) -->
+        <aside id="sidebar-container" class="lesson-right-sidebar glass"></aside>
+
+      </div>
+    </main>
+
+    <!-- Footer Injector Mount -->
+    <footer id="footer-container" class="main-footer"></footer>
+
+    <!-- Shared Static LMS Scripts -->
+    <script src="../../js/app.js"></script>
+    <script src="../../js/navigation.js"></script>
+    <script src="../../js/sidebar.js"></script>
+    <script src="../../js/progress.js"></script>
+</body>
+</html>

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-class LDA & Projection Limits â€” Gradients ML LMS</title>
+    
+        <!-- KaTeX CSS and JS for mathematical equations -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    <script defer src="../../js/katex.js"></script>
+
+    <!-- CSS sheets -->
+    <link rel="stylesheet" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../css/layout.css" />
+    <link rel="stylesheet" href="../../css/responsive.css" />
+    <link rel="stylesheet" href="../../css/lesson.css" />
+    <link rel="stylesheet" href="../../css/sidebar.css" />
+</head>
+<body>
+    <!-- Top Header Navigation Injector -->
+    <header id="header-container" class="main-header glass"></header>
+
+    <main class="container fade-in" style="padding-bottom: 6rem;">
+      
+      <!-- 1. Breadcrumb Navigation -->
+      <div class="breadcrumb-container">
+        <div class="lesson-breadcrumb">
+          <a href="../../index.html">Home</a> &gt; 
+          <a href="../../course-overview.html">Course Overview</a> &gt; 
+          <a href="../../curriculum.html">Curriculum</a> &gt; 
+          <span>06-LDA: Linear Discriminant Analysis (LDA)</span> &gt; 
+          <span class="active-node">Lesson 6.5</span>
+        </div>
+      </div>
+
+      <!-- 2. Two-Column Layout (Main Content + Right Sidebar) -->
+      <div class="lesson-grid-layout">
+        
+        <!-- Center-Left Content Area -->
+        <div class="lesson-content-area">
+          <div class="content-connector-line"></div>
+
+          <!-- 3. Lesson Header -->
+          <header class="lesson-template-header">
+            <div class="lesson-header-meta-row">
+              <span class="lesson-header-badge track">Dimensionality Reduction</span>
+              <span class="lesson-header-badge">06-LDA</span>
+              <span class="lesson-header-badge">Lesson 6.5</span>
+              <span class="lesson-header-badge diff">Advanced</span>
+              <span class="lesson-header-badge">15 mins</span>
+            </div>
+            <h1>Multi-class LDA & Projection Limits</h1>
+          </header>
+
+          <!-- 4. Learning Objectives Card -->
+          <div class="objectives-box-card glass">
+            <h3>Lesson Objectives</h3>
+            <div class="objectives-box-grid">
+              <div class="objectives-box-col">
+                <h4>What you will learn</h4>
+                <p>Extend LDA to multiple classes, understand the \( C-1 \) component limit, and learn the complete multi-class LDA workflow.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Prerequisites</h4>
+                <p>Completion of Lesson 6.4 (Derivation) â€” comfortable with the eigenproblem formulation.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Expected Outcome</h4>
+                <p>Apply multi-class LDA step by step, interpret the eigenproblem solution, and reference key properties from the quick-reference table.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. Main Lesson Content Area -->
+          <div class="markdown-content">
+            
+                    <div class="lesson-content-block">
+                        <h2>4. HOW IT WORKS (STEP-BY-STEP)</h2>
+                        <p>![LDA Workflow](images/lda_workflow.png)</p>
+
+<p>*Figure 1: Labeled data â†’ Class means â†’ Scatter matrices â†’ Projection directions â†’ Reduced feature space.*</p>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h3>Step 1: Collect Labeled Data</h3>
+                        <p>Every data point must have a class label. For example: 100 emails labelled "spam" or "not spam", each represented by feature counts of words like "free", "winner", "urgent".</p>
+
+<p><strong>Analogy 2 â€” Sorting Coloured Beads.</strong> You have a bowl of red and blue beads. Before you can find the best way to separate them, you need to know which is which. Labels are the teacher telling you the answer during training.</p>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h3>Step 2: Compute Class Means</h3>
+                        <p>For each class, calculate the centre point by averaging all its members.</p>
+
+<p><strong>Practical example â€” Iris dataset:</strong> Setosa flowers have average petal length 1.46 cm, versicolor 4.26 cm, virginica 5.55 cm. Those three centres are what LDA will try to push apart.</p>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h3>Step 3: Compute Scatter Matrices</h3>
+                        <p>Calculate \( S_W \) (spread within classes) and \( S_B \) (spread between classes). This tells LDA two things: how tight each cluster is, and how far apart the clusters are from each other.</p>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h3>Step 4: Find Optimal Projection Directions</h3>
+                        <p>Solve the eigenproblem \( S_W^{-1} S_B \). The eigenvectors (directions) with the largest eigenvalues (importance scores) form the new axes. You get at most \( C - 1 \) non-zero eigenvalues, meaning LDA can reduce dimensions to at most number-of-classes-minus-one.</p>
+
+<p><strong>Practical example â€” Binary classification (spam vs. not spam):</strong> LDA will find at most 1 direction. All 10,000 word counts get reduced to a single "spam score" per email.</p>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h3>Step 5: Project Data</h3>
+                        <p>Multiply the original data by the selected eigenvectors to obtain the low-dimensional representation.</p>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h3>Step 6: Visualise Reduced Space</h3>
+                        <p>Plot the projected data. Classes that were overlapping in the original high-dimensional space now appear separated along the LDA axes.</p>
+
+<p><strong>Analogy 3 â€” Shadow Puppets.</strong> Your hand is a 3D object (high-dimensional data). Shining a light from different angles casts 2D shadows on the wall. LDA finds the exact angle that makes the "rabbit" shadow look completely different from the "eagle" shadow.</p>
+
+<hr>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h2>9. QUICK REFERENCE TABLE</h2>
+                        <table class="variable-table">
+        <thead>
+            <tr><th>Property</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+            <tr><td><strong>Learning Type</strong></td><td>Supervised</td></tr><tr><td><strong>Algorithm Family</strong></td><td>Linear dimensionality reduction / Linear classifier</td></tr><tr><td><strong>Input</strong></td><td>\( X \) (feature matrix, shape \( N \times d \)), \( y \) (labels, shape \( N \))</td></tr><tr><td><strong>Output</strong></td><td>Projected data \( Y \) (shape \( N \times k \)), projection matrix \( W \) (shape \( d \times k \))</td></tr><tr><td><strong>Main Hyperparameters</strong></td><td>`n_components` (target dimensions, max \( C-1 \)), `solver` (svd, lsqr, eigen), shrinkage parameter for regularisation</td></tr><tr><td><strong>Advantages</strong></td><td>Supervised (uses labels), interpretable components, closed-form solution (no iterative training), built-in classifier option, maximises class separation</td></tr><tr><td><strong>Limitations</strong></td><td>Strong Gaussian + equal-covariance assumptions, at most \( C-1 \) components, fails when \( d > N \) without regularisation, linear boundary only</td></tr>
+        </tbody>
+    </table>
+                    </div>
+                    
+          </div>
+
+          <!-- 6. Bottom Navigation Cards -->
+          <div class="bottom-navigation-cards-row">
+            
+                <a href="6.4-derivation.html" class="bottom-nav-card glass">
+                  <span class="nav-direction">&larr; Previous Lesson</span>
+                  <span class="nav-title">6.4 Mathematical Derivation of LDA</span>
+                </a>
+                
+            
+                <a href="6.6-assumptions.html" class="bottom-nav-card next glass">
+                  <span class="nav-direction">Next Lesson &rarr;</span>
+                  <span class="nav-title">6.6 Assumptions & Limitations</span>
+                </a>
+                
+          </div>
+
+          <div class="bottom-return-curriculum-row">
+            <a href="../../curriculum.html" class="btn btn-secondary">&larr; Return to Curriculum</a>
+          </div>
+
+        </div>
+
+        <!-- 7. Right Sidebar Panel (Sticky Accordion Mount) -->
+        <aside id="sidebar-container" class="lesson-right-sidebar glass"></aside>
+
+      </div>
+    </main>
+
+    <!-- Footer Injector Mount -->
+    <footer id="footer-container" class="main-footer"></footer>
+
+    <!-- Shared Static LMS Scripts -->
+    <script src="../../js/app.js"></script>
+    <script src="../../js/navigation.js"></script>
+    <script src="../../js/sidebar.js"></script>
+    <script src="../../js/progress.js"></script>
+</body>
+</html>

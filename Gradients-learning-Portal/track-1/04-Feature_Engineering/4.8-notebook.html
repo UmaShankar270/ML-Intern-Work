@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notebook Practice â€” Gradients ML LMS</title>
+    
+        <!-- KaTeX CSS and JS for mathematical equations -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    <script defer src="../../js/katex.js"></script>
+
+    <!-- CSS sheets -->
+    <link rel="stylesheet" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../css/layout.css" />
+    <link rel="stylesheet" href="../../css/responsive.css" />
+    <link rel="stylesheet" href="../../css/lesson.css" />
+    <link rel="stylesheet" href="../../css/sidebar.css" />
+</head>
+<body>
+    <!-- Top Header Navigation Injector -->
+    <header id="header-container" class="main-header glass"></header>
+
+    <main class="container fade-in" style="padding-bottom: 6rem;">
+      
+      <!-- 1. Breadcrumb Navigation -->
+      <div class="breadcrumb-container">
+        <div class="lesson-breadcrumb">
+          <a href="../../index.html">Home</a> &gt; 
+          <a href="../../course-overview.html">Course Overview</a> &gt; 
+          <a href="../../curriculum.html">Curriculum</a> &gt; 
+          <span>04-Feature_Engineering: Feature Engineering</span> &gt; 
+          <span class="active-node">Lesson 4.8</span>
+        </div>
+      </div>
+
+      <!-- 2. Two-Column Layout (Main Content + Right Sidebar) -->
+      <div class="lesson-grid-layout">
+        
+        <!-- Center-Left Content Area -->
+        <div class="lesson-content-area">
+          <div class="content-connector-line"></div>
+
+          <!-- 3. Lesson Header -->
+          <header class="lesson-template-header">
+            <div class="lesson-header-meta-row">
+              <span class="lesson-header-badge track">Machine Learning Fundamentals</span>
+              <span class="lesson-header-badge">04-Feature_Engineering</span>
+              <span class="lesson-header-badge">Lesson 4.8</span>
+              <span class="lesson-header-badge diff">Intermediate</span>
+              <span class="lesson-header-badge">20 mins</span>
+            </div>
+            <h1>Notebook Practice</h1>
+          </header>
+
+          <!-- 4. Learning Objectives Card -->
+          <div class="objectives-box-card glass">
+            <h3>Lesson Objectives</h3>
+            <div class="objectives-box-grid">
+              <div class="objectives-box-col">
+                <h4>What you will learn</h4>
+                <p>Implement feature scaling, interaction features, polynomial expansion, and leak-proof Scikit-learn Pipelines on the Iris dataset using NumPy, Pandas, and sklearn.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Prerequisites</h4>
+                <p>Python fundamentals (loops, functions, arrays); Pandas and NumPy basics; completion of Lessons 4.1â€“4.6.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Expected Outcome</h4>
+                <p>Build a complete feature engineering pipeline from scratch, visualize class separation in raw vs. engineered feature spaces, and sweep polynomial degrees to diagnose overfitting.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. Main Lesson Content Area -->
+          <div class="markdown-content">
+            
+                    <div class="lesson-content-block">
+                        <h2>Jupyter Notebook Practice Lab</h2>
+                        <p class="hero-lead">Run, modify, and analyze python execution outputs. Verify mathematical claims against dataset projections.</p>
+                        <div class="notebook-markdown"><p># Feature Engineering in Machine Learning: Hands-on Implementation</p>
+
+<h2>What This Notebook Covers</h2>
+This notebook is the practical, code-driven counterpart to the <strong>Feature Engineering in Machine Learning README</strong>. We will explore how raw measurements can be transformed into informative features that help models draw cleaner boundaries. You will learn to perform manual transformations using NumPy and Pandas, audit feature distributions across target classes, and construct automated, leak-proof Scikit-learn Pipelines.
+
+<h2>What You Will Accomplish</h2>
+<ul>
+<li>Describe the workflow of feature engineering and explain why it is the primary bottleneck in production ML systems.</li>
+<li>Identify the difference between Feature Selection (compressing feature space) and Feature Engineering (expanding feature space).</li>
+<li>Implement manual scaling methods (StandardScaler, MinMaxScaler) and domain-driven interaction features (ratios, areas) using NumPy and Pandas.</li>
+<li>Build, train, and evaluate a leak-proof Scikit-learn Pipeline incorporating standard scaling, polynomial expansion, and classification models.</li>
+<li>Verify the impact of your engineered features visually using Seaborn coordinate scatter plots.</li>
+<li>Audit how polynomial expansion degrees affect training vs. testing accuracy to diagnose overfitting signals.</li>
+</ul>
+
+<h2>Before You Start (Prerequisites)</h2>
+<ul>
+<li>Familiarity with Python methods, loops, and index queries.</li>
+<li>Comfort manipulating data using NumPy arrays and Pandas DataFrames.</li>
+<li>Basic understanding of train-test data splits and validation concepts.</li>
+</ul>
+
+<h2>About the Dataset</h2>
+We use the benchmark <strong>Iris flower dataset</strong>, containing 150 instances of flowers split evenly across three species: *setosa*, *versicolor*, and *virginica*. For every flower, we have four numeric measurements:
+<ul>
+<li>Sepal length (cm)</li>
+<li>Sepal width (cm)</li>
+<li>Petal length (cm)</li>
+<li>Petal width (cm)</li>
+</ul>
+
+<p>We load it directly using `sklearn.datasets.load_iris`. If you want to explore the dataset outside this notebook, it is also archived on Kaggle:
+<strong>https://www.kaggle.com/datasets/uciml/iris</strong></p>
+
+<hr></div>
+<div class="notebook-markdown"><h2>1. Setup & Workspace Preparation</h2>
+
+<h3>WHY?</h3>
+Importing all required libraries upfront ensures that the workspace is configured correctly and sets the seeds for reproducible operations.
+
+<h3>HOW?</h3>
+We import NumPy, Pandas, Matplotlib, Seaborn, and the necessary Scikit-learn helper tools, then apply custom plot styles.</div>
+
+            <div class="notebook-block glass">
+                <div class="notebook-header">
+                    <span class="file-name">Python Code Block</span>
+                </div>
+                <div class="notebook-body">
+                    <div class="code-cell">
+                        <div class="cell-label">In [1]:</div>
+                        <pre class="code-editor-mock"><code># Import NumPy for fast matrix arithmetic and manual MSE loss functions
+import numpy as np
+
+# Import Pandas to display data statistics within dataframes
+import pandas as pd
+
+# Import Matplotlib and Seaborn for plotting target class boundaries
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Import Iris dataset tools and models from sklearn
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler, MinMaxScaler, PolynomialFeatures
+from sklearn.linear_model import LogisticRegression
+from sklearn.pipeline import Pipeline
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+
+# Set seaborn style for clean grids
+sns.set_style("whitegrid")
+
+# Fix numpy seed for reproducibility
+np.random.seed(42)
+
+print("Libraries imported and workspace seed initialized.")</code></pre>
+                    </div>
+                    
+                </div>
+            </div>
+            
+<div class="notebook-markdown"><h2>2. Dataset Loading & Exploration</h2>
+
+<h3>WHY?</h3>
+Exploring the columns and distributions of the dataset before applying any transformations is key to identifying potential issues like class imbalance or scale variations.
+
+<h3>HOW?</h3>
+We load the dataset using `load_iris()`, construct a Pandas DataFrame, and print statistical summaries.</div>
+
+            <div class="notebook-block glass">
+                <div class="notebook-header">
+                    <span class="file-name">Python Code Block</span>
+                </div>
+                <div class="notebook-body">
+                    <div class="code-cell">
+                        <div class="cell-label">In [2]:</div>
+                        <pre class="code-editor-mock"><code># Load iris dataset dictionary from sklearn
+iris = load_iris()
+
+# Wrap measurements inside a dataframe, applying original column names
+df = pd.DataFrame(data=iris.data, columns=iris.feature_names)
+
+# Append target codes (0, 1, 2) to the dataframe
+df['species'] = iris.target
+
+# Map species target integers to string labels to improve readability
+species_map = {0: 'Setosa', 1: 'Versicolor', 2: 'Virginica'}
+df['species_name'] = df['species'].map(species_map)
+
+# Peek at the first 5 records
+print("First 5 rows of the dataset:")
+display(df.head())
+
+# Print dataframe properties to check coordinates and data types
+print("\nDataset info:")
+df.info()
+
+# Print statistical characteristics (mean, std, min, max)
+print("\nSummary statistics:")
+display(df.describe())
+
+print("\nFeatures:", iris.feature_names)
+print("Target classes:", iris.target_names)</code></pre>
+                    </div>
+                    
+                </div>
+            </div>
+            
+<div class="notebook-markdown"><h2>3. Data Auditing & Separation</h2>
+
+<h3>WHY?</h3>
+Auditing the dataset for missing data or duplicates is necessary to ensure input quality. Separating the feature matrix ($X$) from the target vector ($y$) is required before fitting models.
+
+<h3>HOW?</h3>
+We call `.isnull().sum()` and `.duplicated().sum()` to inspect the DataFrame, drop any duplicate rows, and split features from the target species label.</div>
+
+            <div class="notebook-block glass">
+                <div class="notebook-header">
+                    <span class="file-name">Python Code Block</span>
+                </div>
+                <div class="notebook-body">
+                    <div class="code-cell">
+                        <div class="cell-label">In [3]:</div>
+                        <pre class="code-editor-mock"><code>print("=" * 60)
+print("PREPROCESSING CHECKS")
+print("=" * 60)
+
+# Check for missing values in each column
+missing = df.isnull().sum()
+print("\nMissing values per column:")
+print(missing)
+print(f"\nTotal missing values: {missing.sum()}")
+
+# Check for duplicate rows â€” identical rows can bias training
+duplicates = df.duplicated().sum()
+print(f"\nNumber of duplicate rows: {duplicates}")
+
+if duplicates &gt; 0:
+    # Drop duplicates and reset the index to keep mapping clean
+    df = df.drop_duplicates().reset_index(drop=True)
+    print(f"Duplicates removed. New shape: {df.shape}")
+else:
+    print("No duplicates found. Dataset is clean.")
+
+print()
+print("=" * 60)
+print("SEPARATING FEATURES AND TARGET")
+print("=" * 60)
+
+# Isolate features (capital X matrix) from output targets (lowercase y vector)
+X = df[iris.feature_names].values
+y = df['species'].values
+
+print(f"\nFeature matrix X shape : {X.shape}  (samples Ã— features)")
+print(f"Target vector y shape  : {y.shape}  (samples)")
+print(f"Target classes         : {np.unique(y)}")
+print("\nPreprocessing complete. Ready for Feature Engineering.")</code></pre>
+                    </div>
+                    
+                </div>
+            </div>
+            
+<div class="notebook-markdown"><h2>4. Part 2: Manual Feature Engineering</h2>
+
+<h3>WHY?</h3>
+Manually constructing scaled inputs and interaction variables using NumPy and Pandas is highly educational. It demonstrates that feature engineering is simply applied mathematics and domain knowledge, not a magic trick performed by libraries.
+
+<h3>HOW?</h3>
+We apply `StandardScaler` and `MinMaxScaler` to the feature columns, and create four new interaction variables: a ratio (Petal Length / Sepal Length), a sum (Sepal Length + Petal Length), a difference (Sepal Length - Petal Width), and a product (Petal Length * Petal Width) representing petal area.</div>
+
+            <div class="notebook-block glass">
+                <div class="notebook-header">
+                    <span class="file-name">Python Code Block</span>
+                </div>
+                <div class="notebook-body">
+                    <div class="code-cell">
+                        <div class="cell-label">In [4]:</div>
+                        <pre class="code-editor-mock"><code># Work on a clean copy of the original feature matrix
+X_df = pd.DataFrame(X, columns=iris.feature_names)
+
+# ----------------------------------------------------------------
+# STEP 1: Standardization (Z-score Normalization)
+# Formula: z = (x - mean) / std
+# Result: mean=0, std=1 for each feature
+# ----------------------------------------------------------------
+
+scaler_std = StandardScaler()
+X_standardized = scaler_std.fit_transform(X_df)
+
+# Store in a DataFrame with descriptive column names
+std_cols = [f'{col}_std' for col in iris.feature_names]
+X_std_df = pd.DataFrame(X_standardized, columns=std_cols)
+
+# ----------------------------------------------------------------
+# STEP 2: Min-Max Scaling
+# Formula: x_scaled = (x - x_min) / (x_max - x_min)
+# Result: all values compressed to [0, 1]
+# ----------------------------------------------------------------
+
+scaler_mm = MinMaxScaler()
+X_minmax = scaler_mm.fit_transform(X_df)
+
+mm_cols = [f'{col}_mm' for col in iris.feature_names]
+X_mm_df = pd.DataFrame(X_minmax, columns=mm_cols)
+
+# ----------------------------------------------------------------
+# STEP 3: Interaction Feature Creation (using raw values)
+# ----------------------------------------------------------------
+
+# Shorter column aliases for readability
+sl = X_df['sepal length (cm)']   # sepal length
+sw = X_df['sepal width (cm)']    # sepal width
+pl = X_df['petal length (cm)']   # petal length
+pw = X_df['petal width (cm)']    # petal width
+
+# Ratio: petal length to sepal length
+X_df['petal_to_sepal_length_ratio'] = pl / sl
+
+# Sum: sepal length + petal length â€” captures overall size
+X_df['sepal_petal_length_sum'] = sl + pl
+
+# Difference: sepal length minus petal width â€” captures contrast
+X_df['sepal_length_petal_width_diff'] = sl - pw
+
+# Product: petal length Ã— petal width â‰ˆ approximate petal area
+X_df['petal_area_approx'] = pl * pw
+
+# ----------------------------------------------------------------
+# STEP 4: Combine everything into one master engineered DataFrame
+# ----------------------------------------------------------------
+X_engineered = pd.concat([X_df, X_std_df, X_mm_df], axis=1)
+
+# Add species name for interpretability
+X_engineered['species_name'] = df['species_name'].values
+
+print("=" * 60)
+print("ENGINEERED FEATURE DATAFRAME")
+print("=" * 60)
+print(f"\nShape: {X_engineered.shape}")
+print(f"\nAll columns:")
+for i, col in enumerate(X_engineered.columns):
+    print(f"  {i+1:02d}. {col}")
+
+print("\n--- Sample of Engineered Features (first 3 rows) ---")
+display(X_engineered.head(3))</code></pre>
+                    </div>
+                    
+                </div>
+            </div>
+            
+<div class="notebook-markdown"><h2>5. Evaluating Engineered Features</h2>
+
+<h3>WHY?</h3>
+We must audit our engineered features to confirm they provide class separation. A good feature should group similar species together while keeping different species far apart.
+
+<h3>HOW?</h3>
+We print dimensionality changes, compare raw feature counts to engineered counts, and evaluate the mean values of our interaction terms across species.</div>
+
+            <div class="notebook-block glass">
+                <div class="notebook-header">
+                    <span class="file-name">Python Code Block</span>
+                </div>
+                <div class="notebook-body">
+                    <div class="code-cell">
+                        <div class="cell-label">In [5]:</div>
+                        <pre class="code-editor-mock"><code>print("=" * 60)
+print("FEATURE DIMENSIONALITY COMPARISON")
+print("=" * 60)
+
+# Original raw feature matrix
+original_dim = X.shape
+
+# Engineered matrix (excluding the species_name label column)
+X_eng_numeric = X_engineered.drop(columns=['species_name'])
+engineered_dim = X_eng_numeric.shape
+
+print(f"\nOriginal feature dimensions  : {original_dim[0]} samples Ã— {original_dim[1]} features")
+print(f"Engineered feature dimensions: {engineered_dim[0]} samples Ã— {engineered_dim[1]} features")
+print(f"New features added           : {engineered_dim[1] - original_dim[1]}")
+
+print("\n--- Sample Transformed Rows (rows 0, 50, 100) ---")
+# Row 0 = Setosa, Row 50 = Versicolor, Row 100 = Virginica
+sample_rows = X_engineered.iloc[[0, 50, 100]]
+display(sample_rows)
+
+print("\n" + "=" * 60)
+print("PER-SPECIES MEAN OF KEY ENGINEERED FEATURES")
+print("=" * 60)
+
+# Audit target class separation across our new features
+key_features = [
+    'petal_to_sepal_length_ratio',
+    'sepal_petal_length_sum',
+    'sepal_length_petal_width_diff',
+    'petal_area_approx'
+]
+
+analysis_df = X_engineered[key_features + ['species_name']].copy()
+species_means = analysis_df.groupby('species_name').mean().round(4)
+display(species_means)
+
+print("\n--- Interpretation ---")
+print("petal_area_approx    : Setosa has ~0.37 vs Virginica ~11.33 â€” massive separation!")
+print("petal_to_sepal_ratio : Setosa ~0.29 vs Virginica ~0.84 â€” strong discriminator.")
+print("sepal_petal_length_sum: Grows monotonically from Setosa â†’ Versicolor â†’ Virginica.")
+print()
+print("INSIGHT: Engineered features like 'petal_area_approx' show far greater")
+print("class separation than raw features alone, making the classifier's job easier.")
+
+# INTERVIEW NOTE: High between-class variance + low within-class variance
+# is the hallmark of a good feature (Fisher's criterion).</code></pre>
+                    </div>
+                    
+                </div>
+            </div>
+            
+<div class="notebook-markdown"><h2>6. Part 3: Automated Scikit-learn Pipelines</h2>
+
+<h3>WHY?</h3>
+Performing data transformations manually is prone to errors and data leakage (fitting transformers on test data). A <strong>Pipeline</strong> chains scaling, feature generation, and modeling steps into a single, leak-proof object.
+
+<h3>HOW?</h3>
+We split the dataset into training ($80\%$) and testing ($20\%$) sets. We construct a 3-step Pipeline (`StandardScaler -> PolynomialFeatures -> LogisticRegression`), fit it, and evaluate test accuracy, class F1-scores, and the confusion matrix.</div>
+
+            <div class="notebook-block glass">
+                <div class="notebook-header">
+                    <span class="file-name">Python Code Block</span>
+                </div>
+                <div class="notebook-body">
+                    <div class="code-cell">
+                        <div class="cell-label">In [6]:</div>
+                        <pre class="code-editor-mock"><code># Split into training and testing sets BEFORE fitting any pipeline step.
+# This ensures no test statistics leak into the training process.
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42, stratify=y
+)
+
+print(f"Training samples : {X_train.shape[0]}")
+print(f"Testing samples  : {X_test.shape[0]}")
+
+# ----------------------------------------------------------------
+# BUILD THE PIPELINE
+# ----------------------------------------------------------------
+pipeline = Pipeline([
+    # Step 1: Standardize features to zero mean, unit variance
+    ('scaler', StandardScaler()),
+
+    # Step 2: Generate polynomial + interaction features up to degree 2
+    # degree=2 creates: original features + squares + cross-products
+    # include_bias=False excludes the constant '1' column (LogisticRegression adds its own)
+    ('poly', PolynomialFeatures(degree=2, include_bias=False)),
+
+    # Step 3: Logistic Regression classifier
+    ('model', LogisticRegression(max_iter=300, random_state=42))
+])
+
+# Fit: scaler fits on X_train â†’ poly fits on scaled X_train â†’ LR fits on poly features
+pipeline.fit(X_train, y_train)
+
+# Predict: same transformation chain applied to X_test
+y_pred = pipeline.predict(X_test)
+
+# ----------------------------------------------------------------
+# EVALUATION
+# ----------------------------------------------------------------
+accuracy = accuracy_score(y_test, y_pred)
+
+print("\n" + "=" * 60)
+print("PIPELINE EVALUATION RESULTS")
+print("=" * 60)
+print(f"\nTest Accuracy: {accuracy * 100:.2f}%")
+
+print("\n--- Classification Report ---")
+target_names = ['Setosa', 'Versicolor', 'Virginica']
+print(classification_report(y_test, y_pred, target_names=target_names))
+
+print("--- Confusion Matrix ---")
+cm = confusion_matrix(y_test, y_pred)
+
+# Plot confusion matrix as a heatmap
+fig, ax = plt.subplots(figsize=(6, 5))
+sns.heatmap(
+    cm,
+    annot=True,
+    fmt='d',
+    cmap='Blues',
+    xticklabels=target_names,
+    yticklabels=target_names,
+    ax=ax
+)
+ax.set_title('Confusion Matrix â€” Pipeline (Degree-2 Polynomial Features)', fontsize=13, pad=12)
+ax.set_xlabel('Predicted Label', fontsize=11)
+ax.set_ylabel('True Label', fontsize=11)
+plt.tight_layout()
+plt.show()
+
+print("\n--- Pipeline vs Manual Feature Engineering ---")
+print("Manual FE : Hand-crafted domain features (ratio, area, sum, difference)")
+print("            Interpretable, requires domain knowledge")
+print("Pipeline  : Automated polynomial expansion â€” systematic but less interpretable")
+print("            Production-safe, prevents data leakage, GridSearch-compatible")</code></pre>
+                    </div>
+                    
+                </div>
+            </div>
+            
+<div class="notebook-markdown"><h2>7. Visualizing Clusters: Raw vs. Engineered Features</h2>
+
+<h3>WHY?</h3>
+Comparing class separation visually demonstrates how feature engineering simplifies classification. If class clusters are overlapping, a linear classifier will struggle; if they are separated, the classification task becomes straightforward.
+
+<h3>HOW?</h3>
+We plot two scatter plots: Plot 1 shows raw features (Sepal Length vs. Sepal Width), and Plot 2 shows two of our manual interaction features (Petal Area vs. Petal-to-Sepal Ratio).</div>
+
+            <div class="notebook-block glass">
+                <div class="notebook-header">
+                    <span class="file-name">Python Code Block</span>
+                </div>
+                <div class="notebook-body">
+                    <div class="code-cell">
+                        <div class="cell-label">In [7]:</div>
+                        <pre class="code-editor-mock"><code># Copy engineered DataFrame with labels for visualization
+viz_df = X_engineered.copy()
+
+fig, axes = plt.subplots(1, 2, figsize=(14, 6))
+species_colors = {'Setosa': '#2196F3', 'Versicolor': '#FF9800', 'Virginica': '#4CAF50'}
+
+# ----------------------------------------------------------------
+# PLOT 1: Original Features â€” Sepal Length vs Sepal Width
+# ----------------------------------------------------------------
+for species, grp in viz_df.groupby('species_name'):
+    axes[0].scatter(
+        grp['sepal length (cm)'],
+        grp['sepal width (cm)'],
+        label=species,
+        color=species_colors[species],
+        alpha=0.75,
+        edgecolors='white',
+        s=80
+    )
+
+axes[0].set_title('Plot 1: Original Features\n(Sepal Length vs Sepal Width)', fontsize=13, fontweight='bold')
+axes[0].set_xlabel('Sepal Length (cm)', fontsize=11)
+axes[0].set_ylabel('Sepal Width (cm)', fontsize=11)
+axes[0].legend(title='Species', fontsize=10)
+axes[0].set_facecolor('#f9f9f9')
+
+axes[0].annotate(
+    'Versicolor &amp; Virginica\nare mixed here',
+    xy=(6.5, 2.7), xytext=(5.0, 2.2),
+    arrowprops=dict(arrowstyle='-&gt;', color='red'),
+    color='red', fontsize=9
+)
+
+# ----------------------------------------------------------------
+# PLOT 2: Engineered Features â€” Petal Area vs Petal-to-Sepal Ratio
+# ----------------------------------------------------------------
+for species, grp in viz_df.groupby('species_name'):
+    axes[1].scatter(
+        grp['petal_area_approx'],
+        grp['petal_to_sepal_length_ratio'],
+        label=species,
+        color=species_colors[species],
+        alpha=0.75,
+        edgecolors='white',
+        s=80
+    )
+
+axes[1].set_title('Plot 2: Engineered Features\n(Petal Area vs Petal/Sepal Length Ratio)', fontsize=13, fontweight='bold')
+axes[1].set_xlabel('Petal Area Approximation (length Ã— width)', fontsize=11)
+axes[1].set_ylabel('Petal-to-Sepal Length Ratio', fontsize=11)
+axes[1].legend(title='Species', fontsize=10)
+axes[1].set_facecolor('#f9f9f9')
+
+axes[1].annotate(
+    'Near-perfect\nseparation!',
+    xy=(4.0, 0.55), xytext=(6.0, 0.3),
+    arrowprops=dict(arrowstyle='-&gt;', color='darkgreen'),
+    color='darkgreen', fontsize=9
+)
+
+plt.suptitle(
+    'Feature Engineering Impact: Raw Features vs Engineered Features',
+    fontsize=14, fontweight='bold', y=1.02
+)
+plt.tight_layout()
+plt.show()
+
+print("\n--- What You Should Observe ---")
+print("Plot 1 (Raw): Versicolor and Virginica clusters overlap significantly.")
+print("              A linear classifier will struggle to separate them.")
+print()
+print("Plot 2 (Engineered): All three species form tight, well-separated clusters.")
+print("              A simple classifier achieves near-perfect accuracy here.")</code></pre>
+                    </div>
+                    
+                </div>
+            </div>
+            
+<div class="notebook-markdown"><h2>8. Part 5: Sweeping Over Polynomial Degrees</h2>
+
+<h3>WHY?</h3>
+Generating polynomial features increases model flexibility but also risks overfitting. We must sweep across multiple degrees to find the optimal balance between training accuracy and generalizability.
+
+<h3>HOW?</h3>
+We loop through polynomial degrees ($1, 2, 3$), fit our Pipeline for each, track feature dimension count, compute train and test scores, and plot the results.</div>
+
+            <div class="notebook-block glass">
+                <div class="notebook-header">
+                    <span class="file-name">Python Code Block</span>
+                </div>
+                <div class="notebook-body">
+                    <div class="code-cell">
+                        <div class="cell-label">In [8]:</div>
+                        <pre class="code-editor-mock"><code>degrees = [1, 2, 3]
+results = []
+
+# Loop through polynomial degrees
+for deg in degrees:
+    pipe = Pipeline([
+        ('scaler', StandardScaler()),
+        ('poly', PolynomialFeatures(degree=deg, include_bias=False)),
+        ('model', LogisticRegression(max_iter=1000, random_state=42))
+    ])
+
+    # Fit on training data
+    pipe.fit(X_train, y_train)
+
+    # Retrieve output dimension count
+    n_features_out = pipe.named_steps['poly'].n_output_features_
+
+    # Evaluate accuracy
+    train_acc = accuracy_score(y_train, pipe.predict(X_train))
+    test_acc = accuracy_score(y_test, pipe.predict(X_test))
+
+    results.append({
+        'Degree': deg,
+        'Features Generated': n_features_out,
+        'Train Accuracy (%)': round(train_acc * 100, 2),
+        'Test Accuracy (%)': round(test_acc * 100, 2)
+    })
+
+results_df = pd.DataFrame(results)
+
+print("=" * 60)
+print("POLYNOMIAL DEGREE COMPARISON TABLE")
+print("=" * 60)
+display(results_df.set_index('Degree'))
+
+# ----------------------------------------------------------------
+# VISUALIZATION: Training vs Test Accuracy per Degree
+# ----------------------------------------------------------------
+fig, ax = plt.subplots(figsize=(8, 5))
+x = np.arange(len(degrees))
+bar_width = 0.35
+
+bars_train = ax.bar(
+    x - bar_width / 2,
+    results_df['Train Accuracy (%)'],
+    width=bar_width,
+    label='Train Accuracy',
+    color='#2196F3',
+    alpha=0.85,
+    edgecolor='white'
+)
+
+bars_test = ax.bar(
+    x + bar_width / 2,
+    results_df['Test Accuracy (%)'],
+    width=bar_width,
+    label='Test Accuracy',
+    color='#FF9800',
+    alpha=0.85,
+    edgecolor='white'
+)
+
+# Annotate bars with accuracy values
+for bar in bars_train:
+    ax.text(bar.get_x() + bar.get_width() / 2, bar.get_height() + 0.3,
+            f'{bar.get_height():.1f}%', ha='center', va='bottom', fontsize=9)
+
+for bar in bars_test:
+    ax.text(bar.get_x() + bar.get_width() / 2, bar.get_height() + 0.3,
+            f'{bar.get_height():.1f}%', ha='center', va='bottom', fontsize=9)
+
+ax.set_title('Effect of Polynomial Degree on Training vs Test Accuracy', fontsize=13, fontweight='bold')
+ax.set_xlabel('Polynomial Degree', fontsize=11)
+ax.set_ylabel('Accuracy (%)', fontsize=11)
+ax.set_xticks(x)
+ax.set_xticklabels([f'Degree {d}' for d in degrees])
+ax.set_ylim(80, 105)
+ax.legend(fontsize=10)
+ax.set_facecolor('#f9f9f9')
+plt.tight_layout()
+plt.show()
+
+print("\n--- Analysis ---")
+print("Degree 1 : Fewest features, may underfit complex boundaries.")
+print("Degree 2 : Sweet spot â€” captures interactions without overfitting.")
+print("Degree 3 : More features (risk of overfitting on small datasets).")
+print("           If test acc drops while train acc rises â†’ classic overfitting signal.")</code></pre>
+                    </div>
+                    
+                </div>
+            </div>
+            
+<div class="notebook-markdown"><p># Part 5: Interview Corner</p>
+
+<p><strong>Q1. What is Feature Engineering?</strong>
+Feature Engineering is the process of using domain knowledge and mathematical transformations to create, modify, or select input variables that make ML algorithms perform better. It bridges the gap between raw data and what a model can effectively learn.</p>
+
+<p><strong>Q2. Why is Feature Engineering Important?</strong>
+ML models are only as good as the information fed to them. Well-engineered features encode domain knowledge directly into the data, allowing even simple models to achieve high performance. It often matters more than the choice of algorithm.</p>
+
+<p><strong>Q3. Difference Between Feature Engineering and Feature Selection?</strong>
+<ul>
+<li><strong>Feature Engineering</strong> *creates* new features from existing ones (e.g., computing petal area from length Ã— width).</li>
+<li><strong>Feature Selection</strong> *chooses* the best subset of existing features to use (e.g., dropping features with low variance or high collinearity).</li>
+</ul>
+One expands the feature space; the other compresses it. They are often used together in sequence.</p>
+
+<p><strong>Q4. Why Do We Scale Features?</strong>
+Features measured in different units have different numerical ranges. Without scaling, a model treats large-valued features as more important â€” not because they carry more signal, but because their numbers dominate the math.
+<ul>
+<li><strong>Gradient descent</strong> converges faster when the loss surface is spherical (equal scale in all directions).</li>
+<li><strong>Distance metrics</strong> (KNN, SVM) measure proximity in feature space â€” unscaled features make distance meaningless.</li>
+<li><strong>Regularization</strong> (L1/L2) penalizes weights by magnitude â€” without scaling, the regularizer punishes features with large units more harshly, independent of their true importance.</li>
+</ul></p>
+
+<p><strong>Q5. What Are Interaction Features?</strong>
+Interaction features are created by multiplying two or more features together. They capture combined effects â€” outcomes that depend on two variables jointly, not independently. 
+Example: `petal_length Ã— petal_width` captures petal size as an area. A petal 5 cm long and 2 cm wide is meaningfully different from one that is 1 cm long and 10 cm wide â€” the product encodes that difference in a single number.</p>
+
+<p><strong>Q6. What Are Polynomial Features?</strong>
+Polynomial features are higher-degree transformations of existing features. For a single feature `x`, degree-2 polynomial features add `xÂ²`. For two features `x` and `z`, they add `xÂ²`, `xz`, and `zÂ²`.
+This allows a linear model to fit curved decision boundaries. In the expanded feature space, the decision boundary is still a hyperplane â€” but projected back into the original space, it appears curved.</p>
+
+<p><strong>Q7. Can Feature Engineering Reduce Bias?</strong>
+Yes. Bias (underfitting) occurs when a model is too simple to capture the true underlying patterns. Adding polynomial features, interaction terms, or domain-derived features gives the model richer inputs, reducing bias by enabling it to fit more complex relationships.</p>
+
+<p><strong>Q8. Can Feature Engineering Cause Overfitting?</strong>
+Absolutely. Adding too many features â€” especially high-degree polynomial expansions â€” increases model complexity. With a small dataset, the model may memorize training examples rather than learning general patterns. The tell-tale sign: training accuracy climbs while test accuracy stagnates or falls.
+Countermeasures:
+<ul>
+<li><strong>L1/L2 regularization</strong> on the model to penalize large weights.</li>
+<li><strong>Cross-validation</strong> to detect overfitting before it is too late.</li>
+<li><strong>Feature selection</strong> to remove redundant or low-signal features after expansion.</li>
+<li><strong>Early stopping</strong> on degree â€” empirically compare degree=1,2,3 as shown in Part 4.</li>
+</ul></p></div>
+<div class="notebook-markdown"><p># Key Takeaways</p>
+
+<ul>
+<li><strong>Feature Engineering is often more impactful than model selection.</strong> A simple Logistic Regression with well-crafted features can outperform a complex neural network on poorly prepared data. The quality of your input representation determines the ceiling of model performance â€” no algorithm can recover information that was never in the features.</li>
+<li><strong>Always scale features before applying distance-based or gradient-based algorithms.</strong> StandardScaler (zero mean, unit variance) and MinMaxScaler ([0, 1] range) ensure that no feature dominates due to its measurement units rather than its true predictive power. Tree-based models are the notable exception â€” they are scale-invariant by construction.</li>
+<li><strong>Handcrafted features encode domain knowledge; polynomial features encode mathematical interactions.</strong> Domain features (ratios, areas, differences) are interpretable, generalizable, and require less data to be effective. Polynomial features are systematic but grow exponentially and require regularization to avoid overfitting. In practice, use domain features first â€” they give you more signal per feature.</li>
+<li><strong>More features do not guarantee better performance.</strong> Adding features increases model complexity, which can hurt generalization on small datasets. Always monitor both training and test accuracy across feature sets. A widening gap between the two is your signal to stop adding features and start regularizing.</li>
+<li><strong>In production, always use Scikit-learn Pipelines for feature engineering.</strong> Pipelines prevent data leakage, ensure consistent preprocessing between training and inference, are compatible with `GridSearchCV` for hyperparameter tuning, and can be serialized into a single deployable object with `joblib`. Manual step-by-step preprocessing works in notebooks but breaks silently in production.</li>
+</ul></div>
+                    </div>
+                    
+          </div>
+
+          <!-- 6. Bottom Navigation Cards -->
+          <div class="bottom-navigation-cards-row">
+            
+                <a href="4.7-summary.html" class="bottom-nav-card glass">
+                  <span class="nav-direction">&larr; Previous Lesson</span>
+                  <span class="nav-title">4.7 Summary & Interview Preparation</span>
+                </a>
+                
+            
+                <a href="../../curriculum.html" class="bottom-nav-card next glass">
+                  <span class="nav-direction">Finish Module &rarr;</span>
+                  <span class="nav-title">Back to Curriculum</span>
+                </a>
+                
+          </div>
+
+          <div class="bottom-return-curriculum-row">
+            <a href="../../curriculum.html" class="btn btn-secondary">&larr; Return to Curriculum</a>
+          </div>
+
+        </div>
+
+        <!-- 7. Right Sidebar Panel (Sticky Accordion Mount) -->
+        <aside id="sidebar-container" class="lesson-right-sidebar glass"></aside>
+
+      </div>
+    </main>
+
+    <!-- Footer Injector Mount -->
+    <footer id="footer-container" class="main-footer"></footer>
+
+    <!-- Shared Static LMS Scripts -->
+    <script src="../../js/app.js"></script>
+    <script src="../../js/navigation.js"></script>
+    <script src="../../js/sidebar.js"></script>
+    <script src="../../js/progress.js"></script>
+</body>
+</html>

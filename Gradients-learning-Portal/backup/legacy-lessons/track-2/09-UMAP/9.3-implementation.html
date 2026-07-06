@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UMAP Math & Optimization — Gradients ML LMS</title>
+    
+    <!-- KaTeX CSS and JS for mathematical equations -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
+
+    <!-- CSS sheets -->
+    <link rel="stylesheet" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../css/layout.css" />
+    <link rel="stylesheet" href="../../css/responsive.css" />
+    <link rel="stylesheet" href="../../css/lesson.css" />
+    <link rel="stylesheet" href="../../css/sidebar.css" />
+</head>
+<body>
+    <!-- Top Header Navigation Injector -->
+    <header id="header-container" class="main-header glass"></header>
+
+    <main class="container fade-in" style="padding-bottom: 6rem;">
+      
+      <!-- 1. Breadcrumb Navigation -->
+      <div class="breadcrumb-container">
+        <div class="lesson-breadcrumb">
+          <a href="../../index.html">Home</a> &gt; 
+          <a href="../../course-overview.html">Course Overview</a> &gt; 
+          <a href="../../curriculum.html">Curriculum</a> &gt; 
+          <span>09-UMAP: Uniform Manifold Approximation & Projection (UMAP)</span> &gt; 
+          <span class="active-node">Lesson 9.3</span>
+        </div>
+      </div>
+
+      <!-- 2. Two-Column Layout (Main Content + Right Sidebar) -->
+      <div class="lesson-grid-layout">
+        
+        <!-- Center-Left Content Area -->
+        <div class="lesson-content-area">
+          <div class="content-connector-line"></div>
+
+          <!-- 3. Lesson Header -->
+          <header class="lesson-template-header">
+            <div class="lesson-header-meta-row">
+              <span class="lesson-header-badge track">Dimensionality Reduction</span>
+              <span class="lesson-header-badge">09-UMAP</span>
+              <span class="lesson-header-badge">Lesson 9.3</span>
+              <span class="lesson-header-badge diff">Advanced</span>
+              <span class="lesson-header-badge">20 mins</span>
+            </div>
+            <h1>UMAP Math & Optimization</h1>
+          </header>
+
+          <!-- 4. Learning Objectives Card -->
+          <div class="objectives-box-card glass">
+            <h3>Lesson Objectives</h3>
+            <div class="objectives-box-grid">
+              <div class="objectives-box-col">
+                <h4>What you will learn</h4>
+                <p>Master the details of UMAP Math & Optimization to build complete technical intuition.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Prerequisites</h4>
+                <p>Completion of previous conceptual lessons in this track.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Expected Outcome</h4>
+                <p>Apply UMAP Math & Optimization diagnostics to prevent training loops leakage or parameters decay.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. Main Lesson Content Area -->
+          <div class="markdown-content">
+            
+                    <div class="lesson-content-block">
+                        <h2>9.3 Worked Numerical Example</h2>
+                        <p>Let's trace how UMAP processes a tiny dataset of 3 points in a 2D space:
+<ul>
+<li>  $x_1 = [0, 0]$</li>
+<li>  $x_2 = [3, 0]$</li>
+<li>  $x_3 = [0, 4]$</li>
+</ul></p>
+
+<h3>Step 1: Compute Raw Distance Matrix</h3>
+Using Euclidean distance:
+<ul>
+<li>  $d(x_1, x_2) = \sqrt{(3-0)^2 + (0-0)^2} = 3$</li>
+<li>  $d(x_1, x_3) = \sqrt{(0-0)^2 + (4-0)^2} = 4$</li>
+<li>  $d(x_2, x_3) = \sqrt{(3-0)^2 + (0-4)^2} = 5$</li>
+</ul>
+
+<div class="math-card glass"><div class="math-eq">D = \begin{pmatrix} 0 & 3 & 4 \\ 3 & 0 & 5 \\ 4 & 5 & 0 \end{pmatrix}</div></div>
+
+<h3>Step 2: Determine Nearest Neighbor Offsets ($\rho_i$)</h3>
+The offset $\rho_i$ is the distance to the single nearest neighbor for point $i$:
+<ul>
+<li>  For $x_1$, neighbors are $x_2$ ($d=3$) and $x_3$ ($d=4$). The nearest is $x_2$, so <strong>$\rho_1 = 3$</strong>.</li>
+<li>  For $x_2$, neighbors are $x_1$ ($d=3$) and $x_3$ ($d=5$). The nearest is $x_1$, so <strong>$\rho_2 = 3$</strong>.</li>
+<li>  For $x_3$, neighbors are $x_1$ ($d=4$) and $x_2$ ($d=5$). The nearest is $x_1$, so <strong>$\rho_3 = 4$</strong>.</li>
+</ul>
+
+<h3>Step 3: Compute Asymmetric Similarities ($w_{j|i}$)</h3>
+For simplicity, we assume the bandwidth parameter $\sigma_i = 1$ for all points:
+<ul>
+<li>  <strong>For $x_1$:</strong></li>
+<li>  $w_{2|1} = \exp(-\max(0, d(x_1, x_2) - \rho_1) / 1) = \exp(-\max(0, 3 - 3)) = \exp(0) = 1.0$</li>
+<li>  $w_{3|1} = \exp(-\max(0, d(x_1, x_3) - \rho_1) / 1) = \exp(-\max(0, 4 - 3)) = \exp(-1) \approx 0.368$</li>
+<li>  <strong>For $x_2$:</strong></li>
+<li>  $w_{1|2} = \exp(-\max(0, d(x_2, x_1) - \rho_2) / 1) = \exp(-\max(0, 3 - 3)) = \exp(0) = 1.0$</li>
+<li>  $w_{3|2} = \exp(-\max(0, d(x_2, x_3) - \rho_2) / 1) = \exp(-\max(0, 5 - 3)) = \exp(-2) \approx 0.135$</li>
+<li>  <strong>For $x_3$:</strong></li>
+<li>  $w_{1|3} = \exp(-\max(0, d(x_3, x_1) - \rho_3) / 1) = \exp(-\max(0, 4 - 4)) = \exp(0) = 1.0$</li>
+<li>  $w_{2|3} = \exp(-\max(0, d(x_3, x_2) - \rho_3) / 1) = \exp(-\max(0, 5 - 4)) = \exp(-1) \approx 0.368$</li>
+</ul>
+
+<h3>Step 4: Symmetrize the Probabilities ($p_{ij}$)</h3>
+Using the fuzzy set union formula $p_{ij} = w_{j|i} + w_{i|j} - w_{j|i} w_{i|j}$:
+<ul>
+<li>  <strong>$p_{12}$:</strong> $1.0 + 1.0 - (1.0 \times 1.0) = \mathbf{1.0}$</li>
+<li>  <strong>$p_{13}$:</strong> $0.368 + 1.0 - (0.368 \times 1.0) = \mathbf{1.0}$</li>
+<li>  <strong>$p_{23}$:</strong> $0.135 + 0.368 - (0.135 \times 0.368) = 0.503 - 0.050 = \mathbf{0.453}$</li>
+</ul>
+
+<h3>Step 5: Interpretation</h3>
+1.  <strong>$p_{12} = 1.0$ & $p_{13} = 1.0$:</strong> Points $x_1$ and $x_2$ are strongly linked, as are $x_1$ and $x_3$.
+2.  <strong>$p_{23} = 0.453$:</strong> Points $x_2$ and $x_3$ are far apart, resulting in a weak connection.
+3.  During optimization in 2D, $x_1$ will act as a central anchor, pulling both $x_2$ and $x_3$ toward it, while the weak similarity $p_{23}$ will allow $x_2$ and $x_3$ to repel each other, keeping the global right-angle triangle layout intact.
+
+<hr>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h2>9.4 The UMAP Algorithm & Workflow</h2>
+                        <pre class="output-console-mock"><code>Raw Data
+   │
+   ▼
+[Step 1: KNN Graph construction] ──► Uses NN-Descent to speed up neighborhood searches
+   │
+   ▼
+[Step 2: Fuzzy Weighting & Union] ──► Normalizes local densities and symmetrizes edges
+   │
+   ▼
+[Step 3: Spectral Initialization] ──► Places 2D coordinates using Laplacian Eigenmaps
+   │
+   ▼
+[Step 4: Layout Optimization] ──► Runs SGD with Negative Sampling on Cross-Entropy
+   │
+   ▼
+Compressed 2D Coordinates</code></pre>
+
+<h3>Step 1: Approximate Nearest Neighbor Graph</h3>
+<ul>
+<li>  <strong>What UMAP does:</strong> Finds the $k$ nearest neighbors (set by `n_neighbors`) for every data point.</li>
+<li>  <strong>How it works:</strong> Instead of performing an expensive exact distance sweep ($O(N^2)$), UMAP uses <strong>NN-Descent</strong> (Nearest Neighbor Descent). This iterative algorithm projects points randomly and refines neighborhoods by comparing neighbors of neighbors, yielding a near-linear runtime of $O(N^{1.14})$.</li>
+</ul>
+
+<h3>Step 2: Graph Construction & Symmetrization</h3>
+<ul>
+<li>  <strong>What UMAP does:</strong> Converts distances into probability weights using Equation 1 and symmetrizes them using Equation 2.</li>
+<li>  <strong>How it works:</strong> This creates a fuzzy simplicial set—a weighted graph where edges represent neighborhood similarity probabilities.</li>
+</ul>
+
+<h3>Step 3: Spectral Initialization</h3>
+<ul>
+<li>  <strong>What UMAP does:</strong> Generates the initial 2D layout coordinates.</li>
+<li>  <strong>How it works:</strong> Instead of starting with random placements, UMAP uses <strong>Spectral Embedding</strong> (Laplacian Eigenmaps). This step solves the eigenvectors of the graph's Laplacian matrix to approximate a rough global layout of the clusters, placing similar components close together before optimization begins.</li>
+</ul>
+
+<h3>Step 4: Force-Directed Layout Optimization</h3>
+<ul>
+<li>  <strong>What UMAP does:</strong> Minimizes the cross-entropy loss by moving the 2D coordinates.</li>
+<li>  <strong>How it works:</strong> Runs Stochastic Gradient Descent (SGD). To speed up the repulsion step, UMAP uses <strong>Negative Sampling</strong>: for every attractive force update between neighbors, it randomly samples a few non-neighbors and applies a repulsive force, avoiding an $O(N^2)$ sweep.</li>
+</ul>
+
+<hr>
+                    </div>
+                    
+          </div>
+
+          <!-- 6. Bottom Navigation Cards -->
+          <div class="bottom-navigation-cards-row">
+            
+                <a href="9.2-global-preservation.html" class="bottom-nav-card glass">
+                  <span class="nav-direction">&larr; Previous Lesson</span>
+                  <span class="nav-title">9.2 Global vs Local Structure Preservation</span>
+                </a>
+                
+            
+                <a href="9.4-summary.html" class="bottom-nav-card next glass">
+                  <span class="nav-direction">Next Lesson &rarr;</span>
+                  <span class="nav-title">9.4 Summary & Large-Scale UMAP Notebook</span>
+                </a>
+                
+          </div>
+
+          <div class="bottom-return-curriculum-row">
+            <a href="../../curriculum.html" class="btn btn-secondary">&larr; Return to Curriculum</a>
+          </div>
+
+        </div>
+
+        <!-- 7. Right Sidebar Panel (Sticky Accordion Mount) -->
+        <aside id="sidebar-container" class="lesson-right-sidebar glass"></aside>
+
+      </div>
+    </main>
+
+    <!-- Footer Injector Mount -->
+    <footer id="footer-container" class="main-footer"></footer>
+
+    <!-- Shared Static LMS Scripts -->
+    <script src="../../js/app.js"></script>
+    <script src="../../js/navigation.js"></script>
+    <script src="../../js/sidebar.js"></script>
+    <script src="../../js/progress.js"></script>
+</body>
+</html>

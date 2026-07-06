@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autoencoder Math & Loss Functions â€” Gradients ML LMS</title>
+    
+        <!-- KaTeX CSS and JS for mathematical equations -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    <script defer src="../../js/katex.js"></script>
+
+    <!-- CSS sheets -->
+    <link rel="stylesheet" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../css/layout.css" />
+    <link rel="stylesheet" href="../../css/responsive.css" />
+    <link rel="stylesheet" href="../../css/lesson.css" />
+    <link rel="stylesheet" href="../../css/sidebar.css" />
+</head>
+<body>
+    <!-- Top Header Navigation Injector -->
+    <header id="header-container" class="main-header glass"></header>
+
+    <main class="container fade-in" style="padding-bottom: 6rem;">
+      
+      <!-- 1. Breadcrumb Navigation -->
+      <div class="breadcrumb-container">
+        <div class="lesson-breadcrumb">
+          <a href="../../index.html">Home</a> &gt; 
+          <a href="../../course-overview.html">Course Overview</a> &gt; 
+          <a href="../../curriculum.html">Curriculum</a> &gt; 
+          <span>10-Autoencoders-VAE: Autoencoders & VAEs</span> &gt; 
+          <span class="active-node">Lesson 10.3</span>
+        </div>
+      </div>
+
+      <!-- 2. Two-Column Layout (Main Content + Right Sidebar) -->
+      <div class="lesson-grid-layout">
+        
+        <!-- Center-Left Content Area -->
+        <div class="lesson-content-area">
+          <div class="content-connector-line"></div>
+
+          <!-- 3. Lesson Header -->
+          <header class="lesson-template-header">
+            <div class="lesson-header-meta-row">
+              <span class="lesson-header-badge track">Dimensionality Reduction</span>
+              <span class="lesson-header-badge">10-Autoencoders-VAE</span>
+              <span class="lesson-header-badge">Lesson 10.3</span>
+              <span class="lesson-header-badge diff">Advanced</span>
+              <span class="lesson-header-badge">15 mins</span>
+            </div>
+            <h1>Autoencoder Math & Loss Functions</h1>
+          </header>
+
+          <!-- 4. Learning Objectives Card -->
+          <div class="objectives-box-card glass">
+            <h3>Lesson Objectives</h3>
+            <div class="objectives-box-grid">
+              <div class="objectives-box-col">
+                <h4>What you will learn</h4>
+                <p>Derive the encoder and decoder equations for a traditional autoencoder. Compute reconstruction loss (MSE) and perform a full forward pass calculation by hand.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Prerequisites</h4>
+                <p>Basic linear algebra (matrix multiplication). Familiarity with neural network forward passes.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Expected Outcome</h4>
+                <p>Manually compute the encoder output, decoder reconstruction, and MSE loss for a 2D input example. Understand how each parameter contributes to the loss.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. Main Lesson Content Area -->
+          <div class="markdown-content">
+            
+                    <div class="lesson-content-block">
+                        <h2>Lesson 10.3: Autoencoder Math & Worked Example</h2>
+                        <p>Let's look at the mathematical formulations behind traditional autoencoders.</p>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h3>1. The Encoder Equation</h3>
+                        <div class="math-card glass"><div class="math-eq">z = f_\phi(x) = a(W_1 x + b_1)</div></div>
+<ul>
+<li>  $x \in \mathbb{R}^d$: The high-dimensional input vector (e.g., $d = 784$ pixels).</li>
+<li>  $z \in \mathbb{R}^k$: The latent bottleneck vector ($k \ll d$).</li>
+<li>  $W_1, b_1$: The weights and biases of the encoder network parameterized by $\phi$.</li>
+<li>  $a$: A non-linear activation function (such as ReLU).</li>
+</ul>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h3>2. The Decoder Equation</h3>
+                        <div class="math-card glass"><div class="math-eq">\hat{x} = g_\theta(z) = \sigma(W_2 z + b_2)</div></div>
+<ul>
+<li>  $\hat{x} \in \mathbb{R}^d$: The reconstructed output vector.</li>
+<li>  $W_2, b_2$: The weights and biases of the decoder network parameterized by $\theta$.</li>
+<li>  $\sigma$: The final activation function (e.g., Sigmoid to ensure reconstructed pixel values fall between $0$ and $1$).</li>
+</ul>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h3>3. Reconstruction Loss (Mean Squared Error)</h3>
+                        <div class="math-card glass"><div class="math-eq">L_{recon}(\phi, \theta) = \frac{1}{N} \sum_{i=1}^{N} \|x^{(i)} - \hat{x}^{(i)}\|^2</div></div>
+This loss measures the squared difference between the original input $x$ and the reconstruction $\hat{x}$. The network updates its weights using backpropagation to minimize this error.
+
+<hr>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h3>Worked Numerical Example (Autoencoder Forward Pass)</h3>
+                        <p>Let's calculate a forward pass through a simple Autoencoder step-by-step.</p>
+
+                        <h4>1. Setup</h4>
+                        <ul>
+                            <li><strong>Input Vector:</strong> $x = [0.8, 0.2]^T$ (a 2-dimensional feature space).</li>
+                            <li><strong>Encoder weights &amp; bias:</strong></li>
+                        </ul>
+                        <div class="math-card glass"><div class="math-eq">W_1 = \begin{bmatrix} 0.5 \\ -0.5 \end{bmatrix}, \quad b_1 = [0.1]</div></div>
+                        <ul>
+                            <li><strong>Decoder weights &amp; bias:</strong></li>
+                        </ul>
+                        <div class="math-card glass"><div class="math-eq">W_2 = \begin{bmatrix} 1.0 & -1.0 \end{bmatrix}, \quad b_2 = [0.0, 0.0]^T</div></div>
+                        <ul>
+                            <li><strong>Activations:</strong> We assume identity activations for simplicity.</li>
+                        </ul>
+
+                        <h4>2. Encoding step</h4>
+                        <p>Calculate the latent bottleneck representation $z$:</p>
+                        <div class="math-card glass"><div class="math-eq">z = W_1^T x + b_1 = \left( 0.5 \times 0.8 + (-0.5) \times 0.2 \right) + 0.1</div></div>
+                        <div class="math-card glass"><div class="math-eq">z = (0.4 - 0.1) + 0.1 = 0.4</div></div>
+                        <p>The 2D input is compressed to a 1D value ($z = 0.4$).</p>
+
+                        <h4>3. Decoding step</h4>
+                        <p>Reconstruct the input:</p>
+                        <div class="math-card glass"><div class="math-eq">\hat{x} = z W_2 + b_2 = 0.4 \times [1.0, -1.0] + [0.0, 0.0] = [0.4, -0.4]^T</div></div>
+
+                        <h4>4. Loss Computation</h4>
+                        <p>Calculate the Mean Squared Error (MSE) loss:</p>
+                        <div class="math-card glass"><div class="math-eq">L_{recon} = \|x - \hat{x}\|^2 = (0.8 - 0.4)^2 + (0.2 - (-0.4))^2</div></div>
+                        <div class="math-card glass"><div class="math-eq">L_{recon} = (0.4)^2 + (0.6)^2 = 0.16 + 0.36 = 0.52</div></div>
+                        <p>This loss value tells the optimizer how far off the reconstruction was, guiding gradient updates to adjust $W_1$, $b_1$, $W_2$, and $b_2$.</p>
+
+                        <table class="variable-table">
+                            <thead>
+                                <tr><th>Variable</th><th>Value</th><th>Description</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>$x$</td><td>$[0.8, 0.2]^T$</td><td>Original input (2D)</td></tr>
+                                <tr><td>$z$</td><td>$0.4$</td><td>Latent bottleneck (1D)</td></tr>
+                                <tr><td>$\hat{x}$</td><td>$[0.4, -0.4]^T$</td><td>Reconstructed output</td></tr>
+                                <tr><td>$L_{recon}$</td><td>$0.52$</td><td>Mean Squared Error loss</td></tr>
+                            </tbody>
+                        </table>
+
+<hr>
+                    </div>
+                    
+          </div>
+
+          <!-- 6. Bottom Navigation Cards -->
+          <div class="bottom-navigation-cards-row">
+            
+                <a href="10.2-pca-relationship.html" class="bottom-nav-card glass">
+                  <span class="nav-direction">&larr; Previous Lesson</span>
+                  <span class="nav-title">10.2 PCA Relationship</span>
+                </a>
+                
+            
+                <a href="10.4-limitations.html" class="bottom-nav-card next glass">
+                  <span class="nav-direction">Next Lesson &rarr;</span>
+                  <span class="nav-title">10.4 Limitations of Traditional Autoencoders</span>
+                </a>
+                
+          </div>
+
+          <div class="bottom-return-curriculum-row">
+            <a href="../../curriculum.html" class="btn btn-secondary">&larr; Return to Curriculum</a>
+          </div>
+
+        </div>
+
+        <!-- 7. Right Sidebar Panel (Sticky Accordion Mount) -->
+        <aside id="sidebar-container" class="lesson-right-sidebar glass"></aside>
+
+      </div>
+    </main>
+
+    <!-- Footer Injector Mount -->
+    <footer id="footer-container" class="main-footer"></footer>
+
+    <!-- Shared Static LMS Scripts -->
+    <script src="../../js/app.js"></script>
+    <script src="../../js/navigation.js"></script>
+    <script src="../../js/sidebar.js"></script>
+    <script src="../../js/progress.js"></script>
+</body>
+</html>

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why Regularization is Needed â€” Gradients ML LMS</title>
+    
+        <!-- KaTeX CSS and JS for mathematical equations -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    <script defer src="../../js/katex.js"></script>
+
+    <!-- CSS sheets -->
+    <link rel="stylesheet" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../css/layout.css" />
+    <link rel="stylesheet" href="../../css/responsive.css" />
+    <link rel="stylesheet" href="../../css/lesson.css" />
+    <link rel="stylesheet" href="../../css/sidebar.css" />
+</head>
+<body>
+    <!-- Top Header Navigation Injector -->
+    <header id="header-container" class="main-header glass"></header>
+
+    <main class="container fade-in" style="padding-bottom: 6rem;">
+      
+      <!-- 1. Breadcrumb Navigation -->
+      <div class="breadcrumb-container">
+        <div class="lesson-breadcrumb">
+          <a href="../../index.html">Home</a> &gt; 
+          <a href="../../course-overview.html">Course Overview</a> &gt; 
+          <a href="../../curriculum.html">Curriculum</a> &gt; 
+          <span>03-Regularization: Regularization</span> &gt; 
+          <span class="active-node">Lesson 3.2</span>
+        </div>
+      </div>
+
+      <!-- 2. Two-Column Layout (Main Content + Right Sidebar) -->
+      <div class="lesson-grid-layout">
+        
+        <!-- Center-Left Content Area -->
+        <div class="lesson-content-area">
+          <div class="content-connector-line"></div>
+
+          <!-- 3. Lesson Header -->
+          <header class="lesson-template-header">
+            <div class="lesson-header-meta-row">
+              <span class="lesson-header-badge track">Machine Learning Fundamentals</span>
+              <span class="lesson-header-badge">03-Regularization</span>
+              <span class="lesson-header-badge">Lesson 3.2</span>
+              <span class="lesson-header-badge diff">Beginner</span>
+              <span class="lesson-header-badge">12 mins</span>
+            </div>
+            <h1>Why Regularization is Needed</h1>
+          </header>
+
+          <!-- 4. Learning Objectives Card -->
+          <div class="objectives-box-card glass">
+            <h3>Lesson Objectives</h3>
+            <div class="objectives-box-grid">
+              <div class="objectives-box-col">
+                <h4>What you will learn</h4>
+                <ul>
+<li>Define overfitting and explain why it harms model generalization.</li>
+<li>Describe regularization as a mathematical constraint that controls complexity.</li>
+<li>Connect real-world analogies to the mechanics of L1 and L2 penalty terms.</li>
+</ul>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Prerequisites</h4>
+                <p>Completion of previous conceptual lessons in this track.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Expected Outcome</h4>
+                <p>Articulate the overfitting problem and explain how regularization provides a principled solution through weight penalties.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. Main Lesson Content Area -->
+          <div class="markdown-content">
+            
+                    <div class="lesson-content-block">
+                        <h2>Lesson 3.1: The Intuition of Regularization (What & Why)</h2>
+                        
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h3>1. What is the Problem?</h3>
+                        <p>In machine learning, we train models to fit historical records. However, if a model is highly flexible (e.g., has many features or parameters), it risks <strong>overfitting</strong>â€”memorizing the noise, outliers, and coincidences in the training set rather than learning generalizable relationships.</p>
+
+<h4>The Analogy of the Memorizing Student:</h4>
+Consider a student preparing for an exam by memorizing the exact phrasing of every practice question. The student will score 100% on those specific questions, but will fail the real exam if the questions are slightly rephrased. The student has overfit. We need the student to learn the general concepts, not memorize the records.
+
+<hr>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h3>2. The Solution: What is Regularization?</h3>
+                        <p><strong>Regularization</strong> is a set of mathematical constraints that discourages a model from fitting the training data too closely. It does this by adding a penalty term to the model's loss function based on the size of its weights.</p>
+
+<p>By penalizing large weight values, the optimizer is forced to keep weights small and stable, producing a simpler, smoother decision boundary that generalizes to unseen data.</p>
+
+<h4>The Analogy of the "Spice Tax":</h4>
+Imagine a chef competing in a culinary contest. The judges tell the chef: <em>"Use as many spices as you want, but every extra spice you add costs you penalty points."</em> 
+<ul>
+<li>Without this rule, the chef might throw in 20 different spices to make the dish taste perfect to one specific judge. However, that dish would taste overwhelming to anyone else.</li>
+<li>Under the "spice tax," the chef is forced to use only the essential ingredients that genuinely improve the flavor. The result is a simpler dish that appeals to a wider audience. Regularization is that spice tax for machine learning.</li>
+</ul>
+
+<hr>
+                    </div>
+                    
+          </div>
+
+          <!-- 6. Bottom Navigation Cards -->
+          <div class="bottom-navigation-cards-row">
+            
+                <a href="3.1-introduction.html" class="bottom-nav-card glass">
+                  <span class="nav-direction">&larr; Previous Lesson</span>
+                  <span class="nav-title">3.1 Introduction to Complexity Control</span>
+                </a>
+                
+            
+                <a href="3.3-l1-lasso.html" class="bottom-nav-card next glass">
+                  <span class="nav-direction">Next Lesson &rarr;</span>
+                  <span class="nav-title">3.3 L1 Regularization (Lasso)</span>
+                </a>
+                
+          </div>
+
+          <div class="bottom-return-curriculum-row">
+            <a href="../../curriculum.html" class="btn btn-secondary">&larr; Return to Curriculum</a>
+          </div>
+
+        </div>
+
+        <!-- 7. Right Sidebar Panel (Sticky Accordion Mount) -->
+        <aside id="sidebar-container" class="lesson-right-sidebar glass"></aside>
+
+      </div>
+    </main>
+
+    <!-- Footer Injector Mount -->
+    <footer id="footer-container" class="main-footer"></footer>
+
+    <!-- Shared Static LMS Scripts -->
+    <script src="../../js/app.js"></script>
+    <script src="../../js/navigation.js"></script>
+    <script src="../../js/sidebar.js"></script>
+    <script src="../../js/progress.js"></script>
+</body>
+</html>

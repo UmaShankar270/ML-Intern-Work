@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Summary & Interview Preparation â€” Gradients ML LMS</title>
+    
+        <!-- KaTeX CSS and JS for mathematical equations -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    <script defer src="../../js/katex.js"></script>
+
+    <!-- CSS sheets -->
+    <link rel="stylesheet" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../css/layout.css" />
+    <link rel="stylesheet" href="../../css/responsive.css" />
+    <link rel="stylesheet" href="../../css/lesson.css" />
+    <link rel="stylesheet" href="../../css/sidebar.css" />
+</head>
+<body>
+    <!-- Top Header Navigation Injector -->
+    <header id="header-container" class="main-header glass"></header>
+
+    <main class="container fade-in" style="padding-bottom: 6rem;">
+      
+      <!-- 1. Breadcrumb Navigation -->
+      <div class="breadcrumb-container">
+        <div class="lesson-breadcrumb">
+          <a href="../../index.html">Home</a> &gt; 
+          <a href="../../course-overview.html">Course Overview</a> &gt; 
+          <a href="../../curriculum.html">Curriculum</a> &gt; 
+          <span>02-Bias: Bias-Variance Dilemma</span> &gt; 
+          <span class="active-node">Lesson 2.8</span>
+        </div>
+      </div>
+
+      <!-- 2. Two-Column Layout (Main Content + Right Sidebar) -->
+      <div class="lesson-grid-layout">
+        
+        <!-- Center-Left Content Area -->
+        <div class="lesson-content-area">
+          <div class="content-connector-line"></div>
+
+          <!-- 3. Lesson Header -->
+          <header class="lesson-template-header">
+            <div class="lesson-header-meta-row">
+              <span class="lesson-header-badge track">Machine Learning Fundamentals</span>
+              <span class="lesson-header-badge">02-Bias</span>
+              <span class="lesson-header-badge">Lesson 2.8</span>
+              <span class="lesson-header-badge diff">Beginner</span>
+              <span class="lesson-header-badge">15 mins</span>
+            </div>
+            <h1>Summary & Interview Preparation</h1>
+          </header>
+
+          <!-- 4. Learning Objectives Card -->
+          <div class="objectives-box-card glass">
+            <h3>Lesson Objectives</h3>
+            <div class="objectives-box-grid">
+              <div class="objectives-box-col">
+                <h4>What you will learn</h4>
+                <p>Answer interview questions on bias, variance, regularization, and the bias-variance tradeoff with clear, structured explanations.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Prerequisites</h4>
+                <p>Completion of all lessons in Module 02.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Expected Outcome</h4>
+                <p>Confidently respond to placement Q&A on bias concepts and connect theoretical knowledge to practical implementation.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. Main Lesson Content Area -->
+          <div class="markdown-content">
+            
+                    <div class="lesson-content-block">
+                        <h2>Module Summary</h2>
+                        <blockquote><strong>"When your model is too confident in the wrong direction â€” every single time."</strong></blockquote>
+
+<p>This module covered the complete landscape of <strong>bias in machine learning</strong> â€” from intuitive understanding through mathematical decomposition, practical diagnostics, and interview preparation. You should now be able to identify, quantify, and address high-bias models in any ML pipeline.</p>
+
+<hr>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h2>Lesson 2.6: Placement & Interview Q&A</h2>
+                        <p><strong>Q1. What is bias in Machine Learning?</strong>
+<ul>
+<li><strong>Answer:</strong> Bias is the systematic error introduced when a model's assumptions are too simple to capture the true patterns in the data. It causes the model's predictions to be consistently off-target in a predictable direction, leading to underfitting.</li>
+</ul></p>
+
+<p><strong>Q2. How do you distinguish high bias from high variance using validation curves?</strong>
+<ul>
+<li><strong>Answer:</strong> High bias is characterized by high training error and high validation error that sit close together. High variance is characterized by low training error but high validation error, creating a large gap between the two curves.</li>
+</ul></p>
+
+<p><strong>Q3. Why does adding more training data fail to resolve a high-bias problem?</strong>
+<ul>
+<li><strong>Answer:</strong> High bias is a limitation of the model's capacity (its "shape"), not the data volume. If you try to fit a straight line to curved data, adding more points will only confirm the curve; the line will still fail to fit it. You must increase model complexity.</li>
+</ul></p>
+
+<p><strong>Q4. What is the relationship between regularization and bias?</strong>
+<ul>
+<li><strong>Answer:</strong> Regularization constrains model parameters to prevent overfitting, which intentionally increases bias. Increasing regularization (e.g., lower <code>C</code> or higher <code>alpha</code>) increases bias while decreasing variance.</li>
+</ul></p>
+
+<p><strong>Q5. Explain the Bias-Variance Tradeoff.</strong>
+<ul>
+<li><strong>Answer:</strong> Total error is the sum of squared bias, variance, and irreducible noise. As you increase model complexity, bias decreases but variance increases. The tradeoff is the process of finding the optimal complexity that minimizes the sum of these errors.</li>
+</ul></p>
+
+<hr>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h2>Further Reading</h2>
+                        <ol>
+<li><strong>Bishop, C. M. (2006).</strong> <em>Pattern Recognition and Machine Learning</em>. Springer. â€” Chapter 3 covers the Bias-Variance decomposition.</li>
+<li><strong>GÃ©ron, A. (2022).</strong> <em>Hands-On Machine Learning</em> (3rd ed.). O'Reilly. â€” Chapter 4 covers training linear models and regularization.</li>
+<li><strong>Mitchell, T. M. (1997).</strong> <em>Machine Learning</em>. McGraw-Hill.</li>
+</ol>
+
+<hr>
+<p><em>Gradients Â· Advanced AI Engineering Program Â· 2026 Â· Educational Content Â· Beginner Friendly</em></p>
+                    </div>
+                    
+          </div>
+
+          <!-- 6. Bottom Navigation Cards -->
+          <div class="bottom-navigation-cards-row">
+            
+                <a href="2.7-examples.html" class="bottom-nav-card glass">
+                  <span class="nav-direction">&larr; Previous Lesson</span>
+                  <span class="nav-title">2.7 Real-world Diagnostic Examples</span>
+                </a>
+                
+            
+                <a href="2.9-notebook.html" class="bottom-nav-card next glass">
+                  <span class="nav-direction">Next Lesson &rarr;</span>
+                  <span class="nav-title">2.9 Notebook Practice</span>
+                </a>
+                
+          </div>
+
+          <div class="bottom-return-curriculum-row">
+            <a href="../../curriculum.html" class="btn btn-secondary">&larr; Return to Curriculum</a>
+          </div>
+
+        </div>
+
+        <!-- 7. Right Sidebar Panel (Sticky Accordion Mount) -->
+        <aside id="sidebar-container" class="lesson-right-sidebar glass"></aside>
+
+      </div>
+    </main>
+
+    <!-- Footer Injector Mount -->
+    <footer id="footer-container" class="main-footer"></footer>
+
+    <!-- Shared Static LMS Scripts -->
+    <script src="../../js/app.js"></script>
+    <script src="../../js/navigation.js"></script>
+    <script src="../../js/sidebar.js"></script>
+    <script src="../../js/progress.js"></script>
+</body>
+</html>

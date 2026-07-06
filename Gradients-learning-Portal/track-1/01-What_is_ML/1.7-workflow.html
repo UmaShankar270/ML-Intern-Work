@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Machine Learning Workflow â€” Gradients ML LMS</title>
+    
+        <!-- KaTeX CSS and JS for mathematical equations -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    <script defer src="../../js/katex.js"></script>
+
+    <!-- CSS sheets -->
+    <link rel="stylesheet" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../css/layout.css" />
+    <link rel="stylesheet" href="../../css/responsive.css" />
+    <link rel="stylesheet" href="../../css/lesson.css" />
+    <link rel="stylesheet" href="../../css/sidebar.css" />
+</head>
+<body>
+    <!-- Top Header Navigation Injector -->
+    <header id="header-container" class="main-header glass"></header>
+
+    <main class="container fade-in" style="padding-bottom: 6rem;">
+      
+      <!-- 1. Breadcrumb Navigation -->
+      <div class="breadcrumb-container">
+        <div class="lesson-breadcrumb">
+          <a href="../../index.html">Home</a> &gt; 
+          <a href="../../course-overview.html">Course Overview</a> &gt; 
+          <a href="../../curriculum.html">Curriculum</a> &gt; 
+          <span>01-What_is_ML: Introduction to Machine Learning</span> &gt; 
+          <span class="active-node">Lesson 1.7</span>
+        </div>
+      </div>
+
+      <!-- 2. Two-Column Layout (Main Content + Right Sidebar) -->
+      <div class="lesson-grid-layout">
+        
+        <!-- Center-Left Content Area -->
+        <div class="lesson-content-area">
+          <div class="content-connector-line"></div>
+
+          <!-- 3. Lesson Header -->
+          <header class="lesson-template-header">
+            <div class="lesson-header-meta-row">
+              <span class="lesson-header-badge track">Machine Learning Fundamentals</span>
+              <span class="lesson-header-badge">01-What_is_ML</span>
+              <span class="lesson-header-badge">Lesson 1.7</span>
+              <span class="lesson-header-badge diff">Beginner</span>
+              <span class="lesson-header-badge">15 mins</span>
+            </div>
+            <h1>Machine Learning Workflow</h1>
+          </header>
+
+          <!-- 4. Learning Objectives Card -->
+          <div class="objectives-box-card glass">
+            <h3>Lesson Objectives</h3>
+            <div class="objectives-box-grid">
+              <div class="objectives-box-col">
+                <h4>What you will learn</h4>
+                <p>Understand loss functions (MSE, BCE), the differentiability requirement, the end-to-end ML pipeline, core assumptions, and common pitfalls.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Prerequisites</h4>
+                <p>Basic familiarity with derivatives/calculus and the ERM framework from Lesson 1.3.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Expected Outcome</h4>
+                <p>Compute MSE and BCE for sample data, explain why differentiability matters, and identify data leakage, overfitting, and the accuracy paradox.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. Main Lesson Content Area -->
+          <div class="markdown-content">
+            
+                    <div class="lesson-content-block">
+                        <h2>Lesson 1.4: Common Loss Functions & Differentiability</h2>
+                        <p>The loss function $L$ measures how much a prediction deviates from the target. We must use different loss functions depending on the task type.</p>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h3>1. Mean Squared Error (MSE) â€” For Regression</h3>
+                        <p>Used to evaluate continuous target errors. Because it squares deviations, it penalizes larger mistakes heavily.</p>
+
+<div class="math-card glass"><div class="math-eq">\text{MSE} = \frac{1}{n} \sum_{i=1}^{n} (y_i - \hat{y}_i)^2</div></div>
+
+<h4>ðŸ“ Worked Numerical Example:</h4>
+Let's evaluate the MSE for two samples:
+1. Sample 1: Actual $y_1 = 300$, Prediction $\hat{y}_1 = 280$
+<ul>
+<li>Error deviation = $300 - 280 = 20$</li>
+<li>Squared deviation = $20^2 = 400$</li>
+</ul>
+2. Sample 2: Actual $y_2 = 150$, Prediction $\hat{y}_2 = 180$
+<ul>
+<li>Error deviation = $150 - 180 = -30$</li>
+<li>Squared deviation = $(-30)^2 = 900$</li>
+</ul>
+
+<div class="math-card glass"><div class="math-eq">\text{MSE} = \frac{400 + 900}{2} = \mathbf{650.0}</div></div>
+
+<hr>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h3>2. Binary Cross-Entropy (BCE) â€” For Classification</h3>
+                        <p>Used to evaluate binary probabilistic predictions. It penalizes confidently incorrect predictions exponentially.</p>
+
+<div class="math-card glass"><div class="math-eq">\text{BCE} = - \frac{1}{n} \sum_{i=1}^{n} \big[y_i\log(\hat{y}_i) + (1-y_i)\log(1-\hat{y}_i)\big]</div></div>
+
+<h4>ðŸ“ Worked Numerical Example:</h4>
+Let's evaluate BCE for one sample where the true label $y_1 = 1$:
+<ul>
+<li><strong>Scenario A (Confidently Correct):</strong> Prediction probability $\hat{y}_1 = 0.95$</li>
+</ul>
+  <div class="math-card glass"><div class="math-eq">\text{Loss} = -[1\log(0.95) + 0] \approx -(-0.051) = \mathbf{0.051}</div></div>
+<ul>
+<li><strong>Scenario B (Confidently Incorrect):</strong> Prediction probability $\hat{y}_1 = 0.05$</li>
+</ul>
+  <div class="math-card glass"><div class="math-eq">\text{Loss} = -[1\log(0.05) + 0] \approx -(-2.996) = \mathbf{2.996}</div></div>
+
+<p>As predictions move away from the target, the loss penalty increases exponentially.</p>
+
+<hr>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h3>3. The Differentiability Requirement</h3>
+                        <div class="alert-box tip" style="border-left-color: var(--accent-blue);">
+                <span class="alert-icon">â„¹ï¸</span>
+                <div class="alert-content">
+                    <strong>Why Differentiability is Mandatory:</strong>
+To update model parameters, optimization algorithms like Gradient Descent calculate the derivative of the loss function. If a function is not differentiable (like raw accuracy), its derivatives are zero or undefined, and the optimizer cannot determine how to adjust parameters to reduce errors.
+                </div>
+            </div>
+
+<hr>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h2>Lesson 1.5: The End-to-End Pipeline & Pitfalls</h2>
+                        
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h3>1. The Machine Learning Pipeline</h3>
+                        <pre class="output-console-mock"><code>â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”     â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”     â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  Define Goal  â”‚ â”€â”€> â”‚Collect & Cleanâ”‚ â”€â”€> â”‚ Preprocess    â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜     â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜     â””â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”˜
+                                                    â”‚
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”     â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”     â”Œâ”€â”€â”€â”€â”€â”€â”€â–¼â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  Deployment   â”‚ <â”€â”€ â”‚  Evaluate     â”‚ <â”€â”€ â”‚  Train Model  â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜     â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜     â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜</code></pre>
+
+<ol>
+<li><strong>Define Goal:</strong> Frame the task as classification, regression, or clustering, and establish evaluation metrics. Decide on success criteria before collecting data.</li>
+<li><strong>Collect & Clean:</strong> Gather representative datasets and handle missing values, outliers, and duplicate records. The quality of data directly determines model performance.</li>
+<li><strong>Preprocess:</strong> Scale numeric ranges, normalize features, and encode categorical inputs. Split into training, validation, and test sets <em>before</em> any scaling.</li>
+<li><strong>Train Model:</strong> Run optimization loops to minimize empirical training loss. Select an algorithm suited to the problem size and complexity.</li>
+<li><strong>Evaluate:</strong> Test generalization performance on a separate validation or test set. Use appropriate metrics (accuracy, precision, recall, F1, AUC).</li>
+<li><strong>Deployment:</strong> Serve the model to production systems and monitor for data drift or performance degradation over time.</li>
+</ol>
+
+<hr>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h3>2. Core Assumptions of Machine Learning</h3>
+                        <ul>
+<li><strong>Independent and Identically Distributed (i.i.d.):</strong> Training and production samples are drawn from the same probability distribution, and observations do not influence one another.</li>
+<li><strong>Representativeness:</strong> The training dataset covers real-world scenarios.</li>
+<li><strong>Feature Signal:</strong> The input features contain genuine predictive information rather than random noise.</li>
+<li><strong>Stationarity:</strong> The underlying data patterns do not drift over time.</li>
+</ul>
+
+<hr>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h3>3. Common Pipeline Pitfalls</h3>
+                        <h4>A. Data Leakage</h4>
+                        <p>Data Leakage occurs when information from the test dataset is inadvertently shared with the model during training.</p>
+                        <ul>
+                            <li><strong>Example:</strong> Computing normalization metrics (mean/std) on the entire dataset <em>before</em> splitting into train/test sets.</li>
+                            <li><strong>Prevention:</strong> Split your dataset before applying imputation, scaling, or feature engineering.</li>
+                        </ul>
+
+                        <h4>B. The Accuracy Paradox</h4>
+                        <p>Evaluating highly imbalanced datasets using accuracy alone can be misleading. Since gradient-based optimizers require differentiable loss functions, raw accuracy cannot be used as a training objective â€” it is a step function with zero derivatives almost everywhere.</p>
+                        <ul>
+                            <li><strong>Example:</strong> In credit card fraud detection where only 0.1% of transactions are fraudulent, a model that classifies everything as "not fraud" achieves 99.9% accuracy but fails to detect any fraud.</li>
+                            <li><strong>Prevention:</strong> Use alternative metrics like Precision, Recall, F1-Score, or Area under ROC (AUC).</li>
+                        </ul>
+
+                        <h4>C. Overfitting</h4>
+                        <p>Overfitting occurs when a complex model memorizes training noise rather than learning general patterns, resulting in high training performance but poor generalization on unseen test data.</p>
+                        <ul>
+                            <li><strong>Prevention:</strong> Apply regularization constraints, collect more training samples, or simplify model structures.</li>
+                        </ul>
+
+                        <h4>D. The Differentiability Requirement</h4>
+                        <p>As covered in the loss functions section above, all objective functions used during training must be differentiable. Non-differentiable metrics like accuracy can only be used for evaluation, not optimization.</p>
+
+<hr>
+                    </div>
+                    
+          </div>
+
+          <!-- 6. Bottom Navigation Cards -->
+          <div class="bottom-navigation-cards-row">
+            
+                <a href="1.6-applications.html" class="bottom-nav-card glass">
+                  <span class="nav-direction">&larr; Previous Lesson</span>
+                  <span class="nav-title">1.6 Applications</span>
+                </a>
+                
+            
+                <a href="1.8-summary.html" class="bottom-nav-card next glass">
+                  <span class="nav-direction">Next Lesson &rarr;</span>
+                  <span class="nav-title">1.8 Summary & Interview Preparation</span>
+                </a>
+                
+          </div>
+
+          <div class="bottom-return-curriculum-row">
+            <a href="../../curriculum.html" class="btn btn-secondary">&larr; Return to Curriculum</a>
+          </div>
+
+        </div>
+
+        <!-- 7. Right Sidebar Panel (Sticky Accordion Mount) -->
+        <aside id="sidebar-container" class="lesson-right-sidebar glass"></aside>
+
+      </div>
+    </main>
+
+    <!-- Footer Injector Mount -->
+    <footer id="footer-container" class="main-footer"></footer>
+
+    <!-- Shared Static LMS Scripts -->
+    <script src="../../js/app.js"></script>
+    <script src="../../js/navigation.js"></script>
+    <script src="../../js/sidebar.js"></script>
+    <script src="../../js/progress.js"></script>
+</body>
+</html>

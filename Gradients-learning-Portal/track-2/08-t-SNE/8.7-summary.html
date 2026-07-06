@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Summary & Interview Preparation â€” Gradients ML LMS</title>
+    
+        <!-- KaTeX CSS and JS for mathematical equations -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    <script defer src="../../js/katex.js"></script>
+
+    <!-- CSS sheets -->
+    <link rel="stylesheet" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../css/layout.css" />
+    <link rel="stylesheet" href="../../css/responsive.css" />
+    <link rel="stylesheet" href="../../css/lesson.css" />
+    <link rel="stylesheet" href="../../css/sidebar.css" />
+</head>
+<body>
+    <!-- Top Header Navigation Injector -->
+    <header id="header-container" class="main-header glass"></header>
+
+    <main class="container fade-in" style="padding-bottom: 6rem;">
+      
+      <!-- 1. Breadcrumb Navigation -->
+      <div class="breadcrumb-container">
+        <div class="lesson-breadcrumb">
+          <a href="../../index.html">Home</a> &gt; 
+          <a href="../../course-overview.html">Course Overview</a> &gt; 
+          <a href="../../curriculum.html">Curriculum</a> &gt; 
+          <span>08-t-SNE: t-Distributed Stochastic Neighbor Embedding (t-SNE)</span> &gt; 
+          <span class="active-node">Lesson 8.7</span>
+        </div>
+      </div>
+
+      <!-- 2. Two-Column Layout (Main Content + Right Sidebar) -->
+      <div class="lesson-grid-layout">
+        
+        <!-- Center-Left Content Area -->
+        <div class="lesson-content-area">
+          <div class="content-connector-line"></div>
+
+          <!-- 3. Lesson Header -->
+          <header class="lesson-template-header">
+            <div class="lesson-header-meta-row">
+              <span class="lesson-header-badge track">Dimensionality Reduction</span>
+              <span class="lesson-header-badge">08-t-SNE</span>
+              <span class="lesson-header-badge">Lesson 8.7</span>
+              <span class="lesson-header-badge diff">Intermediate</span>
+              <span class="lesson-header-badge">15 mins</span>
+            </div>
+            <h1>Summary & Interview Preparation</h1>
+          </header>
+
+          <!-- 4. Learning Objectives Card -->
+          <div class="objectives-box-card glass">
+            <h3>Lesson Objectives</h3>
+            <div class="objectives-box-grid">
+              <div class="objectives-box-col">
+                <h4>What you will learn</h4>
+                <p>Answer 10 professional placement interview questions about t-SNE with conceptual depth: crowding problem, global distance trust, cluster size trust, out-of-sample projection, early exaggeration, perplexity effects, complexity, PCA pre-processing, stochasticity, and t-SNE vs UMAP.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Prerequisites</h4>
+                <p>All previous lessons in Module 08 (8.1-8.6).</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Expected Outcome</h4>
+                <p>Confidently answer t-SNE-related interview questions. Recall key papers (van der Maaten & Hinton 2008, Barnes-Hut 2014) and the Distill.pub visualization guide.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. Main Lesson Content Area -->
+          <div class="markdown-content">
+            
+                    <div class="lesson-content-block">
+                        <h2>Key Takeaways</h2>
+                        <ul>
+                            <li><strong>t-SNE preserves local neighborhoods</strong> â€” points close in high-D remain close in 2D, while global distances are warped.</li>
+                            <li><strong>The Crowding Problem</strong> arises from exponential volume scaling $V(d) \propto r^d$; the Student t-distribution's fat tails resolve it by forcing moderately-distant points further apart.</li>
+                            <li><strong>Four core formulas:</strong> Gaussian conditional $p_{j|i}$, symmetrized $p_{ij}$, Cauchy $q_{ij}$, and KL Divergence $C = \sum p_{ij} \log(p_{ij}/q_{ij})$.</li>
+                            <li><strong>Numerical stretching:</strong> A squared-distance ratio of 4 in high-D becomes ~29.6 in 2D under the t-distribution.</li>
+                            <li><strong>Algorithm pipeline:</strong> Standardize &rarr; PCA (optional) &rarr; binary search for $\sigma_i$ &rarr; initialize $Y$ &rarr; gradient descent with momentum + early exaggeration.</li>
+                            <li><strong>Hyperparameters:</strong> Perplexity (5-50), Learning Rate (100-1000), Max Iterations (500-1000).</li>
+                            <li><strong>Limitations:</strong> Visualization-only, no out-of-sample projection, $O(N^2)$ exact complexity, stochastic and non-convex.</li>
+                            <li><strong>Comparisons:</strong> PCA (linear, global), LDA (supervised), t-SNE (non-linear, local), UMAP (non-linear, local+global, faster).</li>
+                        </ul>
+                        <hr>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h2>Lesson 8.7: Placement & Interview Q&A</h2>
+                        <p><strong>Q1: What is the "Crowding Problem" in dimensionality reduction, and how does t-SNE solve it?</strong>  
+<strong>Answer:</strong> The crowding problem is the mathematical difficulty of representing high-dimensional distances on a low-dimensional (2D/3D) map due to the exponential reduction of volume. In high-D, points have many orthogonal directions to spread out. Squeezing them into 2D crowds them into a single center blob. t-SNE solves this by replacing the light-tailed Gaussian distribution in the high-D space with a heavy-tailed Student t-distribution in the low-D space. The fat tails force moderately-distant points much further apart on the map, providing breathing room for separate clusters.</p>
+
+<p><strong>Q2: Why can we NOT trust the distance between clusters on a t-SNE plot?</strong>  
+<strong>Answer:</strong> t-SNE's cost function (KL Divergence) is built on neighbor-probabilities $p_{ij}$, which prioritize keeping close neighbors together. For far-apart points, $p_{ij} \to 0$, which means the optimization penalty for distorting large distances is negligible. As a result, t-SNE warps and stretches global space to accommodate local groupings, making inter-cluster distances unreliable for measuring absolute similarity.</p>
+
+<p><strong>Q3: Why can we NOT trust the visual sizes of clusters on a t-SNE plot?</strong>  
+<strong>Answer:</strong> t-SNE adapts the local bandwidth $\sigma_i$ of each point to match the target perplexity. In dense regions, $\sigma_i$ is small; in sparse regions, $\sigma_i$ is large. This local scaling acts as an equalizer: sparse, spread-out clusters are drawn tighter, and small, dense clusters are expanded. Therefore, the physical size of a cluster on a t-SNE plot does not reflect its original variance.</p>
+
+<p><strong>Q4: Can we use t-SNE to project new, unseen test data points into the 2D space?</strong>  
+<strong>Answer:</strong> No. Standard t-SNE does not learn a parametric mapping function (like a projection matrix in PCA or weights in a neural network). It directly optimizes the coordinates $Y$ of the input points. To project new data points, you would have to re-run the entire optimization on the combined dataset.</p>
+
+<p><strong>Q5: What is the role of "Early Exaggeration" in t-SNE optimization?</strong>  
+<strong>Answer:</strong> Early exaggeration multiplies the high-dimensional probabilities $p_{ij}$ by a constant factor (typically 4) for the first 100â€“250 iterations. This scale increase forces the KL divergence gradient to heavily penalize points that are close in high-D but far in 2D. This clusters similar points into tight, compact islands early on, leaving plenty of empty space on the canvas for the clusters to reorganize and move past each other without getting tangled.</p>
+
+<p><strong>Q6: What happens if you run t-SNE with a perplexity value that is too low?</strong>  
+<strong>Answer:</strong> A perplexity that is too low (e.g., 2) forces the algorithm to focus only on a few immediate neighbors, ignoring the broader structure. This results in the data fragmenting into many small, artificial sub-clusters (local noise artifacts) rather than forming cohesive global groups.</p>
+
+<p><strong>Q7: How does t-SNE's complexity scale with the number of samples, and how do we resolve this?</strong>  
+<strong>Answer:</strong> Exact t-SNE has a time complexity of $O(N^2)$ because it computes all pairwise similarities. This is computationally expensive for large datasets. To resolve this, optimized implementations use the <strong>Barnes-Hut approximation</strong>, which constructs a quadtree (in 2D) or octree (in 3D) to approximate the forces from distant points as a single center-of-mass, reducing complexity to $O(N \log N)$.</p>
+
+<p><strong>Q8: Why do we typically run PCA before applying t-SNE?</strong>  
+<strong>Answer:</strong> Running PCA first (typically reducing to 50 components) serves three purposes:
+1. It reduces computational time by making initial distance calculations much faster.
+2. It filters out high-frequency noise that could confuse distance computations.
+3. It prevents the non-linear optimization from getting trapped in poor local configurations during initialization.</p>
+
+<p><strong>Q9: Why does t-SNE produce different plots for the same dataset, and how do we fix it?</strong>  
+<strong>Answer:</strong> t-SNE is stochastic; its optimization starts with a random initialization of the low-dimensional coordinates $Y^{(0)}$. Because the cost function is non-convex and has many local minima, different starting points lead to different final layouts. To ensure reproducibility, you must set a fixed random seed (`random_state`) or initialize coordinates deterministically using PCA.</p>
+
+<p><strong>Q10: What is the main difference between t-SNE and UMAP?</strong>  
+<strong>Answer:</strong> While both are non-linear, neighbor-preserving visual tools, UMAP is based on Riemannian geometry and algebraic topology. UMAP uses a fuzzy simplicial set representation and a cross-entropy cost function. Crucially, UMAP is much faster than t-SNE, scales better to large datasets, better preserves global structure alongside local structure, and allows for mapping new unseen test points.</p>
+
+<hr>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h2>References</h2>
+                        <ul>
+<li><strong>Original t-SNE Paper:</strong> van der Maaten, L., & Hinton, G. (2008). *Visualizing Data using t-SNE*. Journal of Machine Learning Research, 9(Nov), 2579-2605.</li>
+<li><strong>Barnes-Hut t-SNE:</strong> van der Maaten, L. (2014). *Accelerating t-SNE using Tree-Based Algorithms*. Journal of Machine Learning Research, 15(1), 3221-3245.</li>
+<li><strong>Distill.pub Visualization Guide:</strong> Wattenberg, M., ViÃ©gas, F., & Johnson, I. (2016). <em>How to Use t-SNE Effectively</em>. Distill. <a href="https://distill.pub/2016/misread-tsne/">https://distill.pub/2016/misread-tsne/</a></li>
+</ul>
+                    </div>
+                    
+          </div>
+
+          <!-- 6. Bottom Navigation Cards -->
+          <div class="bottom-navigation-cards-row">
+            
+                <a href="8.6-limitations.html" class="bottom-nav-card glass">
+                  <span class="nav-direction">&larr; Previous Lesson</span>
+                  <span class="nav-title">8.6 Limitations & Global Structure Trade-offs</span>
+                </a>
+                
+            
+                <a href="8.8-notebook.html" class="bottom-nav-card next glass">
+                  <span class="nav-direction">Next Lesson &rarr;</span>
+                  <span class="nav-title">8.8 Notebook Practice</span>
+                </a>
+                
+          </div>
+
+          <div class="bottom-return-curriculum-row">
+            <a href="../../curriculum.html" class="btn btn-secondary">&larr; Return to Curriculum</a>
+          </div>
+
+        </div>
+
+        <!-- 7. Right Sidebar Panel (Sticky Accordion Mount) -->
+        <aside id="sidebar-container" class="lesson-right-sidebar glass"></aside>
+
+      </div>
+    </main>
+
+    <!-- Footer Injector Mount -->
+    <footer id="footer-container" class="main-footer"></footer>
+
+    <!-- Shared Static LMS Scripts -->
+    <script src="../../js/app.js"></script>
+    <script src="../../js/navigation.js"></script>
+    <script src="../../js/sidebar.js"></script>
+    <script src="../../js/progress.js"></script>
+</body>
+</html>

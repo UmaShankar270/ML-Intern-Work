@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math of Bias & Variance — Gradients ML LMS</title>
+    
+    <!-- KaTeX CSS and JS for mathematical equations -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
+
+    <!-- CSS sheets -->
+    <link rel="stylesheet" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../css/layout.css" />
+    <link rel="stylesheet" href="../../css/responsive.css" />
+    <link rel="stylesheet" href="../../css/lesson.css" />
+    <link rel="stylesheet" href="../../css/sidebar.css" />
+</head>
+<body>
+    <!-- Top Header Navigation Injector -->
+    <header id="header-container" class="main-header glass"></header>
+
+    <main class="container fade-in" style="padding-bottom: 6rem;">
+      
+      <!-- 1. Breadcrumb Navigation -->
+      <div class="breadcrumb-container">
+        <div class="lesson-breadcrumb">
+          <a href="../../index.html">Home</a> &gt; 
+          <a href="../../course-overview.html">Course Overview</a> &gt; 
+          <a href="../../curriculum.html">Curriculum</a> &gt; 
+          <span>02-Bias: Bias-Variance Dilemma</span> &gt; 
+          <span class="active-node">Lesson 2.2</span>
+        </div>
+      </div>
+
+      <!-- 2. Two-Column Layout (Main Content + Right Sidebar) -->
+      <div class="lesson-grid-layout">
+        
+        <!-- Center-Left Content Area -->
+        <div class="lesson-content-area">
+          <div class="content-connector-line"></div>
+
+          <!-- 3. Lesson Header -->
+          <header class="lesson-template-header">
+            <div class="lesson-header-meta-row">
+              <span class="lesson-header-badge track">Machine Learning Fundamentals</span>
+              <span class="lesson-header-badge">02-Bias</span>
+              <span class="lesson-header-badge">Lesson 2.2</span>
+              <span class="lesson-header-badge diff">Intermediate</span>
+              <span class="lesson-header-badge">15 mins</span>
+            </div>
+            <h1>Math of Bias & Variance</h1>
+          </header>
+
+          <!-- 4. Learning Objectives Card -->
+          <div class="objectives-box-card glass">
+            <h3>Lesson Objectives</h3>
+            <div class="objectives-box-grid">
+              <div class="objectives-box-col">
+                <h4>What you will learn</h4>
+                <p>Master the details of Math of Bias & Variance to build complete technical intuition.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Prerequisites</h4>
+                <p>Completion of previous conceptual lessons in this track.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Expected Outcome</h4>
+                <p>Apply Math of Bias & Variance diagnostics to prevent training loops leakage or parameters decay.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. Main Lesson Content Area -->
+          <div class="markdown-content">
+            
+                    <div class="lesson-content-block">
+                        <h2>Lesson 2.1: The Intuition of Bias (What & Why)</h2>
+                        <h3>1. What is Bias?</h3>
+<strong>Bias</strong> describes how far off a model's predictions are, on average, when that model is built on assumptions that are too simple for the problem it is trying to solve. Rather than learning the actual pattern in the data, a high-bias model matches a fixed, rigid rule and sticks to it, regardless of what the data points indicate.
+
+<p>The outcome of high bias is not random, noisy deviation—it is a <strong>consistent, predictable kind of wrongness</strong> that shows up in the same direction for similar inputs.</p>
+
+<hr>
+
+<h3>2. The Analogy: The Pre-judging Teacher</h3>
+Imagine a teacher who decides on the first day of class that every student sitting in the back row will score poorly. The teacher then grades every back-row assignment with that belief baked in, ignoring the actual quality of the work.
+
+<p>The teacher is not acting randomly; they have committed to a rule before looking at the evidence, and that rule colors every judgment. A high-bias model does the same thing: it selects its "shape" (e.g., a straight line) before training even starts, and the training data can only nudge it slightly—it cannot undo a fundamentally wrong shape.</p>
+
+<hr>
+
+<h3>3. Underfitting: The Visible Symptom</h3>
+Underfitting is what high bias *looks like* when you analyze model metrics. A high-bias model struggles to fit the training data itself, not just unseen test data. 
+<ul>
+<li>While overfitting (high variance) is caught by noticing a large gap between training performance and test performance, <strong>underfitting hides in plain sight</strong>: both train and validation scores are low, and they sit close together.</li>
+</ul>
+
+<hr>
+
+<h3>4. Real-world Examples of Bias</h3>
+<ul>
+<li><strong>The Medical Diagnostic Tool:</strong> A cardiovascular risk screening tool is trained on feature columns collected from a single young age group. When deployed in general hospitals, it carries high bias because it assumes heart behavior patterns are identical across all age cohorts—it lacks the representativeness to adapt.</li>
+<li><strong>The Job Candidate Filter:</strong> A resume-screening model is restricted to evaluating only a single feature: *years of experience*. It systematically misjudges candidates with high technical skills but non-traditional career paths because its simple linear assumptions ignore other skill indicators.</li>
+</ul>
+
+<hr>
+                    </div>
+                    
+          </div>
+
+          <!-- 6. Bottom Navigation Cards -->
+          <div class="bottom-navigation-cards-row">
+            
+                <a href="2.1-generalization.html" class="bottom-nav-card glass">
+                  <span class="nav-direction">&larr; Previous Lesson</span>
+                  <span class="nav-title">2.1 Generalization & Overfitting</span>
+                </a>
+                
+            
+                <a href="2.3-diagnostics.html" class="bottom-nav-card next glass">
+                  <span class="nav-direction">Next Lesson &rarr;</span>
+                  <span class="nav-title">2.3 Real-world Diagnostics</span>
+                </a>
+                
+          </div>
+
+          <div class="bottom-return-curriculum-row">
+            <a href="../../curriculum.html" class="btn btn-secondary">&larr; Return to Curriculum</a>
+          </div>
+
+        </div>
+
+        <!-- 7. Right Sidebar Panel (Sticky Accordion Mount) -->
+        <aside id="sidebar-container" class="lesson-right-sidebar glass"></aside>
+
+      </div>
+    </main>
+
+    <!-- Footer Injector Mount -->
+    <footer id="footer-container" class="main-footer"></footer>
+
+    <!-- Shared Static LMS Scripts -->
+    <script src="../../js/app.js"></script>
+    <script src="../../js/navigation.js"></script>
+    <script src="../../js/sidebar.js"></script>
+    <script src="../../js/progress.js"></script>
+</body>
+</html>

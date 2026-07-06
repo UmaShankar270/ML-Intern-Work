@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Encoding Categorical Variables â€” Gradients ML LMS</title>
+    
+        <!-- KaTeX CSS and JS for mathematical equations -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    <script defer src="../../js/katex.js"></script>
+
+    <!-- CSS sheets -->
+    <link rel="stylesheet" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../css/layout.css" />
+    <link rel="stylesheet" href="../../css/responsive.css" />
+    <link rel="stylesheet" href="../../css/lesson.css" />
+    <link rel="stylesheet" href="../../css/sidebar.css" />
+</head>
+<body>
+    <!-- Top Header Navigation Injector -->
+    <header id="header-container" class="main-header glass"></header>
+
+    <main class="container fade-in" style="padding-bottom: 6rem;">
+      
+      <!-- 1. Breadcrumb Navigation -->
+      <div class="breadcrumb-container">
+        <div class="lesson-breadcrumb">
+          <a href="../../index.html">Home</a> &gt; 
+          <a href="../../course-overview.html">Course Overview</a> &gt; 
+          <a href="../../curriculum.html">Curriculum</a> &gt; 
+          <span>04-Feature_Engineering: Feature Engineering</span> &gt; 
+          <span class="active-node">Lesson 4.2</span>
+        </div>
+      </div>
+
+      <!-- 2. Two-Column Layout (Main Content + Right Sidebar) -->
+      <div class="lesson-grid-layout">
+        
+        <!-- Center-Left Content Area -->
+        <div class="lesson-content-area">
+          <div class="content-connector-line"></div>
+
+          <!-- 3. Lesson Header -->
+          <header class="lesson-template-header">
+            <div class="lesson-header-meta-row">
+              <span class="lesson-header-badge track">Machine Learning Fundamentals</span>
+              <span class="lesson-header-badge">04-Feature_Engineering</span>
+              <span class="lesson-header-badge">Lesson 4.2</span>
+              <span class="lesson-header-badge diff">Intermediate</span>
+              <span class="lesson-header-badge">12 mins</span>
+            </div>
+            <h1>Encoding Categorical Variables</h1>
+          </header>
+
+          <!-- 4. Learning Objectives Card -->
+          <div class="objectives-box-card glass">
+            <h3>Lesson Objectives</h3>
+            <div class="objectives-box-grid">
+              <div class="objectives-box-col">
+                <h4>What you will learn</h4>
+                <p>Understand one-hot encoding, label encoding, and ordinal encoding â€” three fundamental techniques for converting categorical variables into numerical representations.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Prerequisites</h4>
+                <p>Understanding of categorical vs. numerical data types; completion of Lesson 4.1.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Expected Outcome</h4>
+                <p>Choose the correct encoding method for a given categorical feature based on cardinality and ordinality, and explain how encoding choices affect model dimensionality.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. Main Lesson Content Area -->
+          <div class="markdown-content">
+            
+                    <div class="lesson-content-block">
+                        <h2>Encoding Categorical Variables</h2>
+                        <p>Most machine learning models require numerical input. Categorical variables â€” data that takes a limited number of discrete values (e.g., colors, countries, departments) â€” must be converted into numerical representations before they can be used by an algorithm. This process is called <strong>encoding</strong>.</p>
+
+                        <div class="alert-box tip">
+                            <span class="alert-icon">ðŸ’¡</span>
+                            <div class="alert-content">
+                                <strong>Key Insight:</strong> The choice of encoding method directly impacts model performance. A poor encoding can introduce misleading ordinal relationships or create excessive dimensionality.
+                            </div>
+                        </div>
+
+                        <hr>
+                    </div>
+
+                    <div class="lesson-content-block">
+                        <h3>1. One-Hot Encoding</h3>
+                        <p>One-Hot Encoding creates a separate binary column for each category. For a categorical variable with $k$ unique values, it generates $k$ new columns, where exactly one column is "hot" (set to 1) for each row.</p>
+
+                        <h4>Example: Fruit Color Encoding</h4>
+                        <table class="variable-table">
+                            <thead>
+                                <tr><th>Original Value</th><th>Red</th><th>Green</th><th>Yellow</th><th>Orange</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Red</td><td>1</td><td>0</td><td>0</td><td>0</td></tr>
+                                <tr><td>Green</td><td>0</td><td>1</td><td>0</td><td>0</td></tr>
+                                <tr><td>Yellow</td><td>0</td><td>0</td><td>1</td><td>0</td></tr>
+                                <tr><td>Orange</td><td>0</td><td>0</td><td>0</td><td>1</td></tr>
+                            </tbody>
+                        </table>
+
+                        <h4>Diagram: One-Hot Encoding</h4>
+                        <pre class="output-console-mock"><code>Original Categories          One-Hot Encoded Matrix
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”          â”Œâ”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”
+â”‚   "Red"      â”‚   â”€â”€â–¶    â”‚  1  â”‚  0  â”‚  0  â”‚  0  â”‚
+â”‚   "Green"    â”‚   â”€â”€â–¶    â”‚  0  â”‚  1  â”‚  0  â”‚  0  â”‚
+â”‚   "Blue"     â”‚   â”€â”€â–¶    â”‚  0  â”‚  0  â”‚  1  â”‚  0  â”‚
+â”‚   "Yellow"   â”‚   â”€â”€â–¶    â”‚  0  â”‚  0  â”‚  0  â”‚  1  â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜          â””â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”˜</code></pre>
+
+                        <p><strong>Pros:</strong> No implied ordinal relationship; works well with linear models.</p>
+                        <p><strong>Cons:</strong> Increases dimensionality significantly for high-cardinality features (the "curse of dimensionality").</p>
+
+                        <hr>
+                    </div>
+
+                    <div class="lesson-content-block">
+                        <h3>2. Label Encoding</h3>
+                        <p>Label Encoding assigns a unique integer to each category. The values are 0, 1, 2, ..., $k-1$ for $k$ categories.</p>
+
+                        <h4>Example:</h4>
+                        <table class="variable-table">
+                            <thead>
+                                <tr><th>City</th><th>Encoded Label</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>New York</td><td>0</td></tr>
+                                <tr><td>London</td><td>1</td></tr>
+                                <tr><td>Tokyo</td><td>2</td></tr>
+                                <tr><td>Paris</td><td>3</td></tr>
+                            </tbody>
+                        </table>
+
+                        <div class="alert-box tip" style="border-left-color: var(--accent-purple);">
+                            <span class="alert-icon">âš ï¸</span>
+                            <div class="alert-content">
+                                <strong>Caution:</strong> Label encoding implies an artificial ordinal relationship (e.g., Tokyo > London). This can mislead linear models. Reserve label encoding for ordinal categorical variables or tree-based models.
+                            </div>
+                        </div>
+
+                        <hr>
+                    </div>
+
+                    <div class="lesson-content-block">
+                        <h3>3. Ordinal Encoding</h3>
+                        <p>Ordinal Encoding is specifically designed for ordinal categorical variables â€” categories with a natural order (e.g., education level: High School < Bachelor's < Master's < PhD).</p>
+
+                        <h4>Example: Education Level</h4>
+                        <table class="variable-table">
+                            <thead>
+                                <tr><th>Level</th><th>Ordinal Value</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>High School</td><td>1</td></tr>
+                                <tr><td>Bachelor's</td><td>2</td></tr>
+                                <tr><td>Master's</td><td>3</td></tr>
+                                <tr><td>PhD</td><td>4</td></tr>
+                            </tbody>
+                        </table>
+
+                        <hr>
+                    </div>
+
+                    <div class="lesson-content-block">
+                        <h3>4. Encoding Method Comparison</h3>
+                        <table class="variable-table">
+                            <thead>
+                                <tr><th>Method</th><th>Number of New Columns</th><th>Preserves Order?</th><th>Best For</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>One-Hot Encoding</td><td>$k$ (categories)</td><td>No</td><td>Nominal categories, linear models</td></tr>
+                                <tr><td>Label Encoding</td><td>1</td><td>Yes (arbitrary)</td><td>Tree-based models, high cardinality</td></tr>
+                                <tr><td>Ordinal Encoding</td><td>1</td><td>Yes (meaningful)</td><td>Ordinal categories only</td></tr>
+                            </tbody>
+                        </table>
+
+                        <div class="alert-box tip">
+                            <span class="alert-icon">ðŸ’¡</span>
+                            <div class="alert-content">
+                                <strong>Rule of Thumb:</strong> Use One-Hot Encoding for nominal features with fewer than ~20 categories. For high-cardinality features, consider target encoding or feature hashing.
+                            </div>
+                        </div>
+
+                        <hr>
+                    </div>
+                    
+          </div>
+
+          <!-- 6. Bottom Navigation Cards -->
+          <div class="bottom-navigation-cards-row">
+            
+                <a href="4.1-introduction.html" class="bottom-nav-card glass">
+                  <span class="nav-direction">&larr; Previous Lesson</span>
+                  <span class="nav-title">4.1 Introduction to Feature Representations</span>
+                </a>
+                
+            
+                <a href="4.3-scaling.html" class="bottom-nav-card next glass">
+                  <span class="nav-direction">Next Lesson &rarr;</span>
+                  <span class="nav-title">4.3 Feature Scaling Techniques</span>
+                </a>
+                
+          </div>
+
+          <div class="bottom-return-curriculum-row">
+            <a href="../../curriculum.html" class="btn btn-secondary">&larr; Return to Curriculum</a>
+          </div>
+
+        </div>
+
+        <!-- 7. Right Sidebar Panel (Sticky Accordion Mount) -->
+        <aside id="sidebar-container" class="lesson-right-sidebar glass"></aside>
+
+      </div>
+    </main>
+
+    <!-- Footer Injector Mount -->
+    <footer id="footer-container" class="main-footer"></footer>
+
+    <!-- Shared Static LMS Scripts -->
+    <script src="../../js/app.js"></script>
+    <script src="../../js/navigation.js"></script>
+    <script src="../../js/sidebar.js"></script>
+    <script src="../../js/progress.js"></script>
+</body>
+</html>

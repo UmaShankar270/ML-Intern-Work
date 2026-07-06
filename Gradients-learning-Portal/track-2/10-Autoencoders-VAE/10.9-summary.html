@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Summary & Interview Preparation â€” Gradients ML LMS</title>
+    
+        <!-- KaTeX CSS and JS for mathematical equations -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    <script defer src="../../js/katex.js"></script>
+
+    <!-- CSS sheets -->
+    <link rel="stylesheet" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../css/layout.css" />
+    <link rel="stylesheet" href="../../css/responsive.css" />
+    <link rel="stylesheet" href="../../css/lesson.css" />
+    <link rel="stylesheet" href="../../css/sidebar.css" />
+</head>
+<body>
+    <!-- Top Header Navigation Injector -->
+    <header id="header-container" class="main-header glass"></header>
+
+    <main class="container fade-in" style="padding-bottom: 6rem;">
+      
+      <!-- 1. Breadcrumb Navigation -->
+      <div class="breadcrumb-container">
+        <div class="lesson-breadcrumb">
+          <a href="../../index.html">Home</a> &gt; 
+          <a href="../../course-overview.html">Course Overview</a> &gt; 
+          <a href="../../curriculum.html">Curriculum</a> &gt; 
+          <span>10-Autoencoders-VAE: Autoencoders & VAEs</span> &gt; 
+          <span class="active-node">Lesson 10.9</span>
+        </div>
+      </div>
+
+      <!-- 2. Two-Column Layout (Main Content + Right Sidebar) -->
+      <div class="lesson-grid-layout">
+        
+        <!-- Center-Left Content Area -->
+        <div class="lesson-content-area">
+          <div class="content-connector-line"></div>
+
+          <!-- 3. Lesson Header -->
+          <header class="lesson-template-header">
+            <div class="lesson-header-meta-row">
+              <span class="lesson-header-badge track">Dimensionality Reduction</span>
+              <span class="lesson-header-badge">10-Autoencoders-VAE</span>
+              <span class="lesson-header-badge">Lesson 10.9</span>
+              <span class="lesson-header-badge diff">Intermediate</span>
+              <span class="lesson-header-badge">15 mins</span>
+            </div>
+            <h1>Summary & Interview Preparation</h1>
+          </header>
+
+          <!-- 4. Learning Objectives Card -->
+          <div class="objectives-box-card glass">
+            <h3>Lesson Objectives</h3>
+            <div class="objectives-box-grid">
+              <div class="objectives-box-col">
+                <h4>What you will learn</h4>
+                <p>Consolidate module knowledge through interview-style Q&A. Be able to answer five key questions about autoencoders, VAEs, and their practical applications.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Prerequisites</h4>
+                <p>Completion of all lessons in Module 10 (10.1â€“10.8).</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Expected Outcome</h4>
+                <p>Answer technical interview questions on reparameterization, posterior collapse, anomaly detection, and latent dimension tuning with confidence.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. Main Lesson Content Area -->
+            <div class="markdown-content">
+            
+                    <div class="lesson-content-block">
+                        <h2>Placement & Interview Q&A</h2>
+                        <p class="hero-lead">Test your understanding of Autoencoders and VAEs with these five curated interview questions.</p>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h2>Lesson 10.7: Placement & Interview Q&A</h2>
+                        <p><strong>Q1. What is the reparameterization trick in VAEs, and why is it needed?</strong>  
+<ul>
+<li>  <strong>Good Answer:</strong> It allows the VAE to train using backpropagation. We rewrite the latent variable as $z = \mu + \sigma \odot \epsilon$. This separates the random noise from the trainable parameters.</li>
+<li>  <strong>Strong Answer:</strong> Direct sampling $z \sim \mathcal{N}(\mu, \sigma^2)$ is a stochastic operation that does not have a derivative, which blocks gradient flow during backpropagation. The reparameterization trick shifts this stochasticity to an external input $\epsilon \sim \mathcal{N}(0, I)$. This makes $z$ a deterministic, differentiable function of $\mu$ and $\sigma$. The network can then learn the mean and variance parameters using standard gradient descent.</li>
+</ul></p>
+
+<p><strong>Q2. Why do VAE reconstructions tend to look blurrier than those from Generative Adversarial Networks (GANs)?</strong>  
+<ul>
+<li>  <strong>Good Answer:</strong> VAEs use simple pixel-wise reconstruction losses like MSE, which averages pixel values and leads to blurriness.</li>
+<li>  <strong>Strong Answer:</strong> VAEs minimize pixel-wise reconstruction errors (like MSE or Binary Cross-Entropy) alongside KL Divergence. When a model has multiple options for sharp details, minimizing pixel-wise loss forces it to output the average of those possibilities to minimize overall error, resulting in blurriness. GANs avoid this by using a discriminator loss that penalizes fake features, forcing the generator to output sharp, realistic details.</li>
+</ul></p>
+
+<p><strong>Q3. What is "posterior collapse" in VAEs, and how do you prevent it?</strong>  
+<ul>
+<li>  <strong>Good Answer:</strong> It happens when the network ignores the latent space, setting the KL loss to zero and outputting the average of the dataset.</li>
+<li>  <strong>Strong Answer:</strong> Posterior collapse occurs when the KL divergence term dominates training. The encoder collapses the predicted distribution to the prior $\mathcal{N}(0, I)$, making $\mu \to 0$ and $\sigma \to 1$. As a result, the decoder ignores the latent code $z$ and relies solely on self-autoregressive decoders (like PixelCNN) to reconstruct the average of the dataset. To prevent this, we use <strong>KL Annealing</strong> (gradually increasing the KL weight $\beta$ from $0$ to $1$ during training) or set a minimum budget on the KL term.</li>
+</ul></p>
+
+<p><strong>Q4. How does an Autoencoder detect anomalies in production systems?</strong>  
+<ul>
+<li>  <strong>Good Answer:</strong> You train it on normal transactions. When an anomaly occurs, it cannot compress it well, resulting in high reconstruction error.</li>
+<li>  <strong>Strong Answer:</strong> You train the autoencoder exclusively on normal (non-anomalous) data so it learns to reconstruct normal patterns. During inference, you measure the reconstruction error (MSE) for incoming data. Normal data will have low MSE, while anomalous data (which contains unseen patterns) will have high MSE. You set a threshold (e.g., the 99th percentile of training validation errors) to flag anomalous inputs.</li>
+</ul></p>
+
+<p><strong>Q5. How does the latent dimension hyperparameter affect autoencoder performance?</strong>  
+<ul>
+<li>  <strong>Good Answer:</strong> A latent dimension that is too small results in blurry reconstructions. A dimension that is too large allows the network to copy inputs without learning patterns.</li>
+<li>  <strong>Strong Answer:</strong> The latent dimension controls the bottleneck capacity. If the bottleneck is too narrow (underfitting), the model loses critical structural information. If it is too wide (overfitting), the network can easily learn the identity function, memorizing inputs instead of compressing features. You should tune this parameter by monitoring reconstruction loss and evaluation classification scores on the compressed embeddings.</li>
+</ul></p>
+
+<hr>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h2>Lesson 10.8: Summary</h2>
+                        <ul>
+<li>  <strong>Autoencoders compress data</strong> by feeding it through an encoder, bottleneck, and decoder, minimizing reconstruction error.</li>
+<li>  <strong>Traditional autoencoders have fragmented latent spaces</strong>, which prevents them from generating new data.</li>
+<li>  <strong>VAEs solve this by mapping inputs to probability distributions</strong> rather than static points, making the latent space continuous.</li>
+<li>  <strong>The reparameterization trick makes sampling differentiable</strong> by calculating $z = \mu + \sigma \odot \epsilon$, allowing the network to train via backpropagation.</li>
+<li>  <strong>VAEs are evaluated</strong> using reconstruction accuracy, latent space visual separation, and latent interpolation smoothness.</li>
+</ul>
+                    </div>
+                    
+          </div>
+
+          <!-- 6. Bottom Navigation Cards -->
+          <div class="bottom-navigation-cards-row">
+            
+                <a href="10.8-comparisons.html" class="bottom-nav-card glass">
+                  <span class="nav-direction">&larr; Previous Lesson</span>
+                  <span class="nav-title">10.8 Autoencoders vs VAE vs PCA Comparison</span>
+                </a>
+                
+            
+                <a href="10.10-notebook.html" class="bottom-nav-card next glass">
+                  <span class="nav-direction">Next Lesson &rarr;</span>
+                  <span class="nav-title">10.10 Notebook Practice</span>
+                </a>
+                
+          </div>
+
+          <div class="bottom-return-curriculum-row">
+            <a href="../../curriculum.html" class="btn btn-secondary">&larr; Return to Curriculum</a>
+          </div>
+
+        </div>
+
+        <!-- 7. Right Sidebar Panel (Sticky Accordion Mount) -->
+        <aside id="sidebar-container" class="lesson-right-sidebar glass"></aside>
+
+      </div>
+    </main>
+
+    <!-- Footer Injector Mount -->
+    <footer id="footer-container" class="main-footer"></footer>
+
+    <!-- Shared Static LMS Scripts -->
+    <script src="../../js/app.js"></script>
+    <script src="../../js/navigation.js"></script>
+    <script src="../../js/sidebar.js"></script>
+    <script src="../../js/progress.js"></script>
+</body>
+</html>

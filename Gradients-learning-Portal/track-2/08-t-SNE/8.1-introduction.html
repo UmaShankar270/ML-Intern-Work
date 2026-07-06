@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Introduction to Neighbor Embeddings â€” Gradients ML LMS</title>
+    
+        <!-- KaTeX CSS and JS for mathematical equations -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    <script defer src="../../js/katex.js"></script>
+
+    <!-- CSS sheets -->
+    <link rel="stylesheet" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../css/layout.css" />
+    <link rel="stylesheet" href="../../css/responsive.css" />
+    <link rel="stylesheet" href="../../css/lesson.css" />
+    <link rel="stylesheet" href="../../css/sidebar.css" />
+</head>
+<body>
+    <!-- Top Header Navigation Injector -->
+    <header id="header-container" class="main-header glass"></header>
+
+    <main class="container fade-in" style="padding-bottom: 6rem;">
+      
+      <!-- 1. Breadcrumb Navigation -->
+      <div class="breadcrumb-container">
+        <div class="lesson-breadcrumb">
+          <a href="../../index.html">Home</a> &gt; 
+          <a href="../../course-overview.html">Course Overview</a> &gt; 
+          <a href="../../curriculum.html">Curriculum</a> &gt; 
+          <span>08-t-SNE: t-Distributed Stochastic Neighbor Embedding (t-SNE)</span> &gt; 
+          <span class="active-node">Lesson 8.1</span>
+        </div>
+      </div>
+
+      <!-- 2. Two-Column Layout (Main Content + Right Sidebar) -->
+      <div class="lesson-grid-layout">
+        
+        <!-- Center-Left Content Area -->
+        <div class="lesson-content-area">
+          <div class="content-connector-line"></div>
+
+          <!-- 3. Lesson Header -->
+          <header class="lesson-template-header">
+            <div class="lesson-header-meta-row">
+              <span class="lesson-header-badge track">Dimensionality Reduction</span>
+              <span class="lesson-header-badge">08-t-SNE</span>
+              <span class="lesson-header-badge">Lesson 8.1</span>
+              <span class="lesson-header-badge diff">Intermediate</span>
+              <span class="lesson-header-badge">15 mins</span>
+            </div>
+            <h1>Introduction to Neighbor Embeddings</h1>
+          </header>
+
+          <!-- 4. Learning Objectives Card -->
+          <div class="objectives-box-card glass">
+            <h3>Lesson Objectives</h3>
+            <div class="objectives-box-grid">
+              <div class="objectives-box-col">
+                <h4>What you will learn</h4>
+                <p>Define t-SNE as a non-linear unsupervised dimensionality reduction technique and distinguish it from PCA. Explain the neighbor embedding intuition using real-world analogies (classroom seating, tourist maps). Recognize that t-SNE is strictly a visualization tool, not a feature extractor.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Prerequisites</h4>
+                <p>Basic understanding of PCA (Module 02). Familiarity with Euclidean distance, Gaussian distributions, and the concept of local vs global structure.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Expected Outcome</h4>
+                <p>Articulate why t-SNE preserves local neighborhoods over global variance. Identify scenarios where PCA fails but t-SNE succeeds (e.g., spiral manifolds, image clusters).</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. Main Lesson Content Area -->
+          <div class="markdown-content">
+            
+                    <div class="lesson-content-block">
+                        <h2>What You Will Learn</h2>
+                        <p>By the end of this module, you will be able to:
+<ul>
+<li>Explain the intuition behind t-SNE, including why it is preferred for high-dimensional visualization over linear techniques like PCA.</li>
+<li>Understand the <strong>Crowding Problem</strong>, why it happens, and how the Student t-distribution resolves it.</li>
+<li>Read and interpret the mathematical formulation of high-dimensional Gaussian conditional probabilities, symmetrized similarities, low-dimensional Cauchy joint probabilities, and the KL Divergence cost function.</li>
+<li>Walk through a complete, step-by-step worked numerical calculation showing how points are mapped from distance to neighbor-probabilities and how the t-distribution resolves space compression.</li>
+<li>Outline the steps of the t-SNE algorithm, from raw features to binary searches for perplexity-matched variances, gradient updates, and early exaggeration.</li>
+<li>Tune the core hyperparameters (perplexity, learning rate, iterations) to avoid visual artifacts like fragmented clusters or artificial groupings.</li>
+<li>Answer professional placement interview questions about t-SNE with conceptual depth and clarity.</li>
+</ul></p>
+
+<hr>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h2>Lesson 8.1: The Intuition of Neighbor Embeddings</h2>
+                        
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h3>What is t-SNE?</h3>
+                        <p><strong>t-Distributed Stochastic Neighbor Embedding (t-SNE)</strong> is an unsupervised, non-linear dimensionality reduction technique developed by Laurens van der Maaten and Geoffrey Hinton in 2008. Its primary goal is to project high-dimensional data (e.g., images with 784 pixels, or text embeddings with 300 dimensions) onto a low-dimensional map (typically 2D or 3D) so that human eyes can easily explore cluster patterns, anomalies, and structure.</p>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h3>Why is it needed?</h3>
+                        <p>Standard linear techniques like <strong>PCA (Principal Component Analysis)</strong> focus on preserving global variance and overall spread. However, PCA struggles when the underlying structure is non-linear (e.g., a spiral, or complex manifold) and is often poor at preserving small, local groupings.</p>
+
+<p>t-SNE preserves <strong>local neighborhood relationships</strong>. It ensures that points that are close (similar) in the original high-dimensional space remain close on the 2D map, and points that are far apart stay far apart.</p>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h3>Real-World Analogies</h3>
+                        <h4>1. The Classroom Seating Chart</h4>
+Imagine a classroom of 30 students. In the real world, students interact in a complex network based on mutual interests, project groups, and friendships (high-dimensional space). Now, the teacher wants to create a 2D seating chart on a flat grid of desks. 
+<ul>
+<li>A <strong>linear map (like PCA)</strong> might look at the absolute coordinates of where they live in the city and project them down, causing close friends who live far apart to be separated.</li>
+<li>A <strong>neighbor embedding (like t-SNE)</strong> prioritizes keeping friends (local neighborhoods) seated next to each other, even if it has to distort the overall geometry of the classroom to make it fit.</li>
+</ul>
+
+<h4>2. The Sprawling City Tourist Map</h4>
+Imagine you have a detailed 3D model of a hilly, winding medieval city. You need to print a flat 2D tourist brochure map. 
+<ul>
+<li>If you simply drop the 3D heights and squish the coordinates (like PCA), winding alleys will overlap, and separate neighborhoods will blend together.</li>
+<li>A smart cartographer (t-SNE) will warp distances slightly, making sure that adjacent houses stay adjacent on the map and separate neighborhoods stay distinct, even if the absolute highway distances across the city are distorted.</li>
+</ul>
+
+<div class="alert-box tip">
+                <span class="alert-icon">ðŸ’¡</span>
+                <div class="alert-content">
+                    t-SNE is strictly a <strong>visualization tool</strong>. Because it distorts global distances and does not provide a simple, reusable projection matrix (like PCA), you should <strong>never</strong> use t-SNE as a feature extractor/preprocessing step before training a downstream classifier (e.g., Logistic Regression or SVM).
+                </div>
+            </div>
+
+<hr>
+                    </div>
+                    
+          </div>
+
+          <!-- 6. Bottom Navigation Cards -->
+          <div class="bottom-navigation-cards-row">
+            
+                <a href="../../curriculum.html" class="bottom-nav-card glass">
+                  <span class="nav-direction">&larr; Return</span>
+                  <span class="nav-title">Curriculum Directory</span>
+                </a>
+                
+            
+                <a href="8.2-crowding-problem.html" class="bottom-nav-card next glass">
+                  <span class="nav-direction">Next Lesson &rarr;</span>
+                  <span class="nav-title">8.2 The Crowding Problem</span>
+                </a>
+                
+          </div>
+
+          <div class="bottom-return-curriculum-row">
+            <a href="../../curriculum.html" class="btn btn-secondary">&larr; Return to Curriculum</a>
+          </div>
+
+        </div>
+
+        <!-- 7. Right Sidebar Panel (Sticky Accordion Mount) -->
+        <aside id="sidebar-container" class="lesson-right-sidebar glass"></aside>
+
+      </div>
+    </main>
+
+    <!-- Footer Injector Mount -->
+    <footer id="footer-container" class="main-footer"></footer>
+
+    <!-- Shared Static LMS Scripts -->
+    <script src="../../js/app.js"></script>
+    <script src="../../js/navigation.js"></script>
+    <script src="../../js/sidebar.js"></script>
+    <script src="../../js/progress.js"></script>
+</body>
+</html>

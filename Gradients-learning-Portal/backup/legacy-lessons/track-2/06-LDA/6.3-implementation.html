@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LDA Derivation & Math Details — Gradients ML LMS</title>
+    
+    <!-- KaTeX CSS and JS for mathematical equations -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
+
+    <!-- CSS sheets -->
+    <link rel="stylesheet" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../css/layout.css" />
+    <link rel="stylesheet" href="../../css/responsive.css" />
+    <link rel="stylesheet" href="../../css/lesson.css" />
+    <link rel="stylesheet" href="../../css/sidebar.css" />
+</head>
+<body>
+    <!-- Top Header Navigation Injector -->
+    <header id="header-container" class="main-header glass"></header>
+
+    <main class="container fade-in" style="padding-bottom: 6rem;">
+      
+      <!-- 1. Breadcrumb Navigation -->
+      <div class="breadcrumb-container">
+        <div class="lesson-breadcrumb">
+          <a href="../../index.html">Home</a> &gt; 
+          <a href="../../course-overview.html">Course Overview</a> &gt; 
+          <a href="../../curriculum.html">Curriculum</a> &gt; 
+          <span>06-LDA: Linear Discriminant Analysis (LDA)</span> &gt; 
+          <span class="active-node">Lesson 6.3</span>
+        </div>
+      </div>
+
+      <!-- 2. Two-Column Layout (Main Content + Right Sidebar) -->
+      <div class="lesson-grid-layout">
+        
+        <!-- Center-Left Content Area -->
+        <div class="lesson-content-area">
+          <div class="content-connector-line"></div>
+
+          <!-- 3. Lesson Header -->
+          <header class="lesson-template-header">
+            <div class="lesson-header-meta-row">
+              <span class="lesson-header-badge track">Dimensionality Reduction</span>
+              <span class="lesson-header-badge">06-LDA</span>
+              <span class="lesson-header-badge">Lesson 6.3</span>
+              <span class="lesson-header-badge diff">Advanced</span>
+              <span class="lesson-header-badge">15 mins</span>
+            </div>
+            <h1>LDA Derivation & Math Details</h1>
+          </header>
+
+          <!-- 4. Learning Objectives Card -->
+          <div class="objectives-box-card glass">
+            <h3>Lesson Objectives</h3>
+            <div class="objectives-box-grid">
+              <div class="objectives-box-col">
+                <h4>What you will learn</h4>
+                <p>Master the details of LDA Derivation & Math Details to build complete technical intuition.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Prerequisites</h4>
+                <p>Completion of previous conceptual lessons in this track.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Expected Outcome</h4>
+                <p>Apply LDA Derivation & Math Details diagnostics to prevent training loops leakage or parameters decay.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. Main Lesson Content Area -->
+          <div class="markdown-content">
+            
+                    <div class="lesson-content-block">
+                        <h2>5. KEY ASSUMPTIONS</h2>
+                        <p>LDA makes strong assumptions about the data. If your data violates them, plain LDA may perform poorly.</p>
+
+<h3>Normal Distribution</h3>
+
+<p>Each class is assumed to follow a multivariate Gaussian (bell curve in multiple dimensions). If the data inside a class is multimodal (multiple separate clusters), LDA will not capture that structure well.</p>
+
+<ul>
+<li><strong>What this means in practice:</strong> Plot each feature per class. If the histograms look roughly bell-shaped, LDA is a good fit. If they look like two humps (bimodal), consider other methods.</li>
+</ul>
+
+<h3>Equal Covariance</h3>
+
+<p>All classes are assumed to have the same variance and correlation structure — i.e., each class cluster should be similarly shaped and oriented.</p>
+
+<ul>
+<li><strong>Analogy 4 — Eggs in a Carton.</strong> Imagine two classes: chicken eggs (round, small variance) and ostrich eggs (elongated, large variance). LDA assumes all classes are chicken eggs. If one class is much more spread out, LDA will struggle to find a good separation axis. There is a variant called <strong>Quadratic Discriminant Analysis (QDA)</strong> that relaxes this assumption.</li>
+</ul>
+
+<h3>Independent Observations</h3>
+
+<p>Each sample is assumed to be independent of the others. Time-series or spatially correlated data violates this. For example, stock prices on consecutive days are not independent — yesterday's price influences today's.</p>
+
+<h3>Class Separability</h3>
+
+<p>LDA assumes the classes can be separated by a linear boundary. If the true boundary is curved (e.g., concentric circles), LDA will underperform.</p>
+
+<p><strong>Practical example:</strong> Recognising handwritten digits — classes 0 and 8 have similar oval shapes and significant overlap in feature space. LDA will struggle because the classes are not linearly separable.</p>
+
+<hr>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h2>6. WHEN TO USE / WHEN NOT TO USE</h2>
+                        <table class="variable-table">
+        <thead>
+            <tr><th>Scenario</th><th>Use LDA?</th><th>Reason</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>Face recognition with labelled identities</td><td>✅ Yes</td><td>Classes (faces) are roughly Gaussian; LDA is a classic baseline</td></tr><tr><td>Medical diagnosis (e.g., tumour type from biopsy features)</td><td>✅ Yes</td><td>Few samples, many features, labelled classes, need interpretability</td></tr><tr><td>Reduce 200 dimensions to 3 for visualisation</td><td>⚠️ Maybe</td><td>Works if you have labels and want separation; PCA if you just want variance</td></tr><tr><td>Text spam classification</td><td>✅ Yes</td><td>Binary classes, high-dimensional sparse data — LDA gives interpretable directions</td></tr><tr><td>Time-series sensor data with autocorrelation</td><td>❌ No</td><td>Independent observations assumption broken</td></tr><tr><td>Classes with very different spreads (e.g., one tight, one diffuse)</td><td>❌ No</td><td>Equal covariance assumption broken</td></tr><tr><td>Data with 3 classes, reduce to 2 dimensions</td><td>✅ Yes</td><td>Can find up to C-1 = 2 directions — perfect</td></tr><tr><td>Image generation / autoencoders</td><td>❌ No</td><td>Unsupervised task; use PCA or neural methods</td></tr><tr><td>Preprocessing before training a classifier</td><td>✅ Yes</td><td>LDA as a supervised feature extractor often improves accuracy</td></tr><tr><td>Data is non-Gaussian (e.g., uniform, exponential)</td><td>❌ No</td><td>Normal distribution assumption violated</td></tr><tr><td>You need an interpretable model for a business presentation</td><td>✅ Yes</td><td>Each LDA component can be explained as a weighted combination of original features</td></tr>
+        </tbody>
+    </table>
+
+<p><strong>Analogy 5 — Organising Books in a Library.</strong> Two librarians each need to arrange 10,000 books into a smaller number of shelves (dimensionality reduction). The first librarian (PCA) stacks books purely by height — the shelves look neat, but fiction is mixed with reference books, and finding a specific novel is impossible. The second librarian (LDA) groups books by genre and then by author — the shelves may have books of varying heights, but every section contains related books. LDA is the second librarian: it sacrifices perfect uniformity in exchange for meaningful categories.</p>
+
+<hr>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h2>7. IMPLEMENTATION OVERVIEW</h2>
+                        <p>We compare two approaches: implementing LDA from scratch for learning, and using the scikit-learn library for production.</p>
+
+<h3>From-Scratch Implementation</h3>
+
+<pre class="code-editor-mock"><code>import numpy as np
+from sklearn.datasets import load_iris
+from sklearn.preprocessing import StandardScaler
+
+<p>def lda_scratch(X, y, n_components=2):
+    n_features = X.shape[1]
+    classes = np.unique(y)
+    
+    # 1. Global mean
+    global_mean = np.mean(X, axis=0)
+    
+    # 2. Within-class scatter
+    S_W = np.zeros((n_features, n_features))
+    for c in classes:
+        X_c = X[y == c]
+        mean_c = np.mean(X_c, axis=0)
+        S_W += (X_c - mean_c).T @ (X_c - mean_c)
+    
+    # 3. Between-class scatter
+    S_B = np.zeros((n_features, n_features))
+    for c in classes:
+        X_c = X[y == c]
+        mean_c = np.mean(X_c, axis=0)
+        n_c = X_c.shape[0]
+        diff = (mean_c - global_mean).reshape(-1, 1)
+        S_B += n_c * diff @ diff.T
+    
+    # 4. Solve eigenproblem
+    eigvals, eigvecs = np.linalg.eig(np.linalg.pinv(S_W) @ S_B)
+    idx = np.argsort(eigvals)[::-1]
+    eigvecs = eigvecs[:, idx]
+    
+    # 5. Project
+    W = eigvecs[:, :n_components].real
+    return X @ W, W</p>
+
+<h4>Usage</h4>
+iris = load_iris()
+X, y = iris.data, iris.target
+X_scaled = StandardScaler().fit_transform(X)
+X_lda, components = lda_scratch(X_scaled, y, n_components=2)</code></pre>
+
+<h3>scikit-learn Implementation</h3>
+
+<pre class="code-editor-mock"><code>from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
+
+<p>lda = LDA(n_components=2)
+X_lda = lda.fit_transform(X_scaled, y)  # labels required!</code></pre></p>
+
+<table class="variable-table">
+        <thead>
+            <tr><th>Aspect</th><th>From Scratch</th><th>scikit-learn</th></tr>
+        </thead>
+        <tbody>
+            <tr><td><strong>Lines of code</strong></td><td>~25</td><td>2</td></tr><tr><td><strong>Handles singular \( S_W \)?</strong></td><td>No — crashes when features > samples</td><td>Yes — uses SVD or shrinkage automatically</td></tr><tr><td><strong>Numerical stability</strong></td><td>Requires careful handling</td><td>Battle-tested across thousands of datasets</td></tr><tr><td><strong>Customisation</strong></td><td>Full control</td><td>Limited to exposed hyperparameters</td></tr><tr><td><strong>When to use</strong></td><td>Learning, research, embedded systems</td><td>Any real project, production, team collaboration</td></tr>
+        </tbody>
+    </table>
+
+<h3>When to Use Each</h3>
+
+<ul>
+<li><strong>Stick to scikit-learn</strong> for almost all real work. It automatically handles edge cases (singular \( S_W \), numerical overflow) that a from-scratch implementation would crash on.</li>
+<li><strong>Write from scratch</strong> only when learning, when you need a custom variant (e.g., regularised LDA), or when scikit-learn is not available (embedded systems, pure NumPy environments).</li>
+</ul>
+
+<hr>
+                    </div>
+                    
+          </div>
+
+          <!-- 6. Bottom Navigation Cards -->
+          <div class="bottom-navigation-cards-row">
+            
+                <a href="6.2-mathematics.html" class="bottom-nav-card glass">
+                  <span class="nav-direction">&larr; Previous Lesson</span>
+                  <span class="nav-title">6.2 Between-Class vs Within-Class Scatter</span>
+                </a>
+                
+            
+                <a href="6.4-summary.html" class="bottom-nav-card next glass">
+                  <span class="nav-direction">Next Lesson &rarr;</span>
+                  <span class="nav-title">6.4 Summary & Multiclass LDA Notebook</span>
+                </a>
+                
+          </div>
+
+          <div class="bottom-return-curriculum-row">
+            <a href="../../curriculum.html" class="btn btn-secondary">&larr; Return to Curriculum</a>
+          </div>
+
+        </div>
+
+        <!-- 7. Right Sidebar Panel (Sticky Accordion Mount) -->
+        <aside id="sidebar-container" class="lesson-right-sidebar glass"></aside>
+
+      </div>
+    </main>
+
+    <!-- Footer Injector Mount -->
+    <footer id="footer-container" class="main-footer"></footer>
+
+    <!-- Shared Static LMS Scripts -->
+    <script src="../../js/app.js"></script>
+    <script src="../../js/navigation.js"></script>
+    <script src="../../js/sidebar.js"></script>
+    <script src="../../js/progress.js"></script>
+</body>
+</html>

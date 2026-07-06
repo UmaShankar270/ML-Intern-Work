@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Similarity Distributions (Gaussian vs Student-t) â€” Gradients ML LMS</title>
+    
+        <!-- KaTeX CSS and JS for mathematical equations -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    <script defer src="../../js/katex.js"></script>
+
+    <!-- CSS sheets -->
+    <link rel="stylesheet" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../css/layout.css" />
+    <link rel="stylesheet" href="../../css/responsive.css" />
+    <link rel="stylesheet" href="../../css/lesson.css" />
+    <link rel="stylesheet" href="../../css/sidebar.css" />
+</head>
+<body>
+    <!-- Top Header Navigation Injector -->
+    <header id="header-container" class="main-header glass"></header>
+
+    <main class="container fade-in" style="padding-bottom: 6rem;">
+      
+      <!-- 1. Breadcrumb Navigation -->
+      <div class="breadcrumb-container">
+        <div class="lesson-breadcrumb">
+          <a href="../../index.html">Home</a> &gt; 
+          <a href="../../course-overview.html">Course Overview</a> &gt; 
+          <a href="../../curriculum.html">Curriculum</a> &gt; 
+          <span>08-t-SNE: t-Distributed Stochastic Neighbor Embedding (t-SNE)</span> &gt; 
+          <span class="active-node">Lesson 8.3</span>
+        </div>
+      </div>
+
+      <!-- 2. Two-Column Layout (Main Content + Right Sidebar) -->
+      <div class="lesson-grid-layout">
+        
+        <!-- Center-Left Content Area -->
+        <div class="lesson-content-area">
+          <div class="content-connector-line"></div>
+
+          <!-- 3. Lesson Header -->
+          <header class="lesson-template-header">
+            <div class="lesson-header-meta-row">
+              <span class="lesson-header-badge track">Dimensionality Reduction</span>
+              <span class="lesson-header-badge">08-t-SNE</span>
+              <span class="lesson-header-badge">Lesson 8.3</span>
+              <span class="lesson-header-badge diff">Advanced</span>
+              <span class="lesson-header-badge">15 mins</span>
+            </div>
+            <h1>Similarity Distributions (Gaussian vs Student-t)</h1>
+          </header>
+
+          <!-- 4. Learning Objectives Card -->
+          <div class="objectives-box-card glass">
+            <h3>Lesson Objectives</h3>
+            <div class="objectives-box-grid">
+              <div class="objectives-box-col">
+                <h4>What you will learn</h4>
+                <p>Read and interpret the four mathematical formulas that define t-SNE: high-D Gaussian conditional $p_{j|i}$, symmetrized joint $p_{ij}$, low-D Cauchy $q_{ij}$, and the KL Divergence cost $C$. Understand the role of bandwidth $\sigma_i$ and perplexity.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Prerequisites</h4>
+                <p>Lessons 8.1-8.2. Comfort with probability notation, Gaussian PDF, and Euclidean distance.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Expected Outcome</h4>
+                <p>Match each symbol in the variable table to its conceptual meaning. Explain why the Cauchy kernel has heavier tails than the Gaussian.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. Main Lesson Content Area -->
+          <div class="markdown-content">
+            
+                    <div class="lesson-content-block">
+                        <h2>Lesson 8.3: Mathematical Blueprints & Symmetrized Similarities</h2>
+                        
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h3>1. High-Dimensional Conditional Similarity</h3>
+                        <p>For each pair of high-dimensional points $x_i$ and $x_j$, we compute the conditional probability $p_{j|i}$, which represents the likelihood that $x_i$ would pick $x_j$ as its neighbor under a Gaussian distribution centered at $x_i$:</p>
+
+<div class="math-card glass"><div class="math-eq">p_{j|i} = \frac{\exp\left(-\frac{\lVert x_i - x_j \rVert^2}{2\sigma_i^2}\right)}{\sum_{k \neq i} \exp\left(-\frac{\lVert x_i - x_k \rVert^2}{2\sigma_i^2}\right)}, \quad p_{i|i} = 0</div></div>
+
+<ul>
+<li>$\lVert x_i - x_j \rVert^2$: The squared Euclidean distance between points $i$ and $j$.</li>
+<li>$\sigma_i$: The Gaussian bandwidth (variance) centered on $x_i$. This value is determined dynamically for each point via a binary search to match a user-defined <strong>perplexity</strong>.</li>
+</ul>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h3>2. Symmetrized Joint Probability</h3>
+                        <p>To make the similarity metric robust to outliers and simplify the gradient calculations, we define a symmetric joint probability $p_{ij}$ by averaging the conditionals and dividing by the total number of points $N$:</p>
+
+<div class="math-card glass"><div class="math-eq">p_{ij} = \frac{p_{j|i} + p_{i|j}}{2N}, \quad p_{ii} = 0</div></div>
+
+<p>This ensures that $p_{ij} = p_{ji}$ and $\sum_{i,j} p_{ij} = 1$. If a point is an outlier and far from all other points, its conditional probabilities $p_{i|j}$ will be extremely small, but its symmetrized joint probability $p_{ij}$ will still be dominated by the neighbor's perspective, ensuring it is not ignored during optimization.</p>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h3>3. Low-Dimensional Cauchy Similarity</h3>
+                        <p>In the low-dimensional space, we represent the points $x_i$ and $x_j$ as $y_i$ and $y_j$. We calculate their similarity $q_{ij}$ using a Student t-distribution with 1 degree of freedom (Cauchy distribution):</p>
+
+<div class="math-card glass"><div class="math-eq">q_{ij} = \frac{\left(1 + \lVert y_i - y_j \rVert^2\right)^{-1}}{\sum_{k \neq l} \left(1 + \lVert y_k - y_l \rVert^2\right)^{-1}}, \quad q_{ii} = 0</div></div>
+
+<ul>
+<li>$\lVert y_i - y_j \rVert^2$: The squared Euclidean distance in the low-dimensional map.</li>
+<li>The term $\left(1 + \lVert y_i - y_j \rVert^2\right)^{-1}$ is the Cauchy kernel, which has much heavier tails than the Gaussian kernel.</li>
+</ul>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h3>4. The Cost Function: Kullback-Leibler (KL) Divergence</h3>
+                        <p>t-SNE optimizes the positions of the low-dimensional points $y_i$ by minimizing the difference between the probability distribution $P$ (high-D similarity) and the probability distribution $Q$ (low-D similarity). The mismatch is measured using the <strong>KL Divergence</strong>:</p>
+
+<div class="math-card glass"><div class="math-eq">C = KL(P \parallel Q) = \sum_{i \neq j} p_{ij} \log\left(\frac{p_{ij}}{q_{ij}}\right)</div></div>
+
+<ul>
+<li>If $p_{ij}$ is large (points are close neighbors in high-D) but $q_{ij}$ is small (points are far apart in 2D), the ratio $\frac{p_{ij}}{q_{ij}}$ is large, creating a <strong>high penalty</strong>.</li>
+<li>If $p_{ij}$ is small (points are far in high-D) but $q_{ij}$ is large (points are close in 2D), the penalty is relatively small because it is multiplied by $p_{ij}$ (which is near zero).</li>
+<li><strong>Core takeaway:</strong> t-SNE prioritizes preserving <strong>local similarities</strong> (large $p_{ij}$) over global distances (small $p_{ij}$).</li>
+</ul>
+
+<table class="variable-table">
+        <thead>
+            <tr><th>Symbol</th><th>Definition</th><th>Conceptual Meaning</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>$x_i, x_j$</td><td>Input vectors in $\mathbb{R}^d$</td><td>High-dimensional data points.</td></tr><tr><td>$y_i, y_j$</td><td>Output vectors in $\mathbb{R}^2$ or $\mathbb{R}^3$</td><td>Low-dimensional mapped coordinates.</td></tr><tr><td>$\sigma_i$</td><td>Gaussian bandwidth (standard deviation)</td><td>Controls the width of the Gaussian kernel around $x_i$, adjusted according to local density.</td></tr>            <tr><td>$p_{j|i}$</td><td>Conditional probability</td><td>Probability that $x_i$ chooses $x_j$ as its neighbor in high-dimensional space.</td></tr><tr><td>$p_{ij}$</td><td>Symmetrized joint probability</td><td>Normalized similarity between $i$ and $j$ in high-dimensional space.</td></tr><tr><td>$q_{ij}$</td><td>Student-t joint probability</td><td>Normalized similarity between $i$ and $j$ in the low-dimensional map.</td></tr><tr><td>$C$</td><td>KL Divergence</td><td>The cost function representing the information loss between the high-D and low-D distributions.</td></tr>
+        </tbody>
+    </table>
+
+<hr>
+                    </div>
+                    
+          </div>
+
+          <!-- 6. Bottom Navigation Cards -->
+          <div class="bottom-navigation-cards-row">
+            
+                <a href="8.2-crowding-problem.html" class="bottom-nav-card glass">
+                  <span class="nav-direction">&larr; Previous Lesson</span>
+                  <span class="nav-title">8.2 The Crowding Problem</span>
+                </a>
+                
+            
+                <a href="8.4-kl-divergence.html" class="bottom-nav-card next glass">
+                  <span class="nav-direction">Next Lesson &rarr;</span>
+                  <span class="nav-title">8.4 KL Divergence Minimization</span>
+                </a>
+                
+          </div>
+
+          <div class="bottom-return-curriculum-row">
+            <a href="../../curriculum.html" class="btn btn-secondary">&larr; Return to Curriculum</a>
+          </div>
+
+        </div>
+
+        <!-- 7. Right Sidebar Panel (Sticky Accordion Mount) -->
+        <aside id="sidebar-container" class="lesson-right-sidebar glass"></aside>
+
+      </div>
+    </main>
+
+    <!-- Footer Injector Mount -->
+    <footer id="footer-container" class="main-footer"></footer>
+
+    <!-- Shared Static LMS Scripts -->
+    <script src="../../js/app.js"></script>
+    <script src="../../js/navigation.js"></script>
+    <script src="../../js/sidebar.js"></script>
+    <script src="../../js/progress.js"></script>
+</body>
+</html>

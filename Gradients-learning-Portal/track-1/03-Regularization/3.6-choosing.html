@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Choosing and Tuning Regularization â€” Gradients ML LMS</title>
+    
+        <!-- KaTeX CSS and JS for mathematical equations -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    <script defer src="../../js/katex.js"></script>
+
+    <!-- CSS sheets -->
+    <link rel="stylesheet" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../css/layout.css" />
+    <link rel="stylesheet" href="../../css/responsive.css" />
+    <link rel="stylesheet" href="../../css/lesson.css" />
+    <link rel="stylesheet" href="../../css/sidebar.css" />
+</head>
+<body>
+    <!-- Top Header Navigation Injector -->
+    <header id="header-container" class="main-header glass"></header>
+
+    <main class="container fade-in" style="padding-bottom: 6rem;">
+      
+      <!-- 1. Breadcrumb Navigation -->
+      <div class="breadcrumb-container">
+        <div class="lesson-breadcrumb">
+          <a href="../../index.html">Home</a> &gt; 
+          <a href="../../course-overview.html">Course Overview</a> &gt; 
+          <a href="../../curriculum.html">Curriculum</a> &gt; 
+          <span>03-Regularization: Regularization</span> &gt; 
+          <span class="active-node">Lesson 3.6</span>
+        </div>
+      </div>
+
+      <!-- 2. Two-Column Layout (Main Content + Right Sidebar) -->
+      <div class="lesson-grid-layout">
+        
+        <!-- Center-Left Content Area -->
+        <div class="lesson-content-area">
+          <div class="content-connector-line"></div>
+
+          <!-- 3. Lesson Header -->
+          <header class="lesson-template-header">
+            <div class="lesson-header-meta-row">
+              <span class="lesson-header-badge track">Machine Learning Fundamentals</span>
+              <span class="lesson-header-badge">03-Regularization</span>
+              <span class="lesson-header-badge">Lesson 3.6</span>
+              <span class="lesson-header-badge diff">Intermediate</span>
+              <span class="lesson-header-badge">15 mins</span>
+            </div>
+            <h1>Choosing and Tuning Regularization</h1>
+          </header>
+
+          <!-- 4. Learning Objectives Card -->
+          <div class="objectives-box-card glass">
+            <h3>Lesson Objectives</h3>
+            <div class="objectives-box-grid">
+              <div class="objectives-box-col">
+                <h4>What you will learn</h4>
+                <ul>
+<li>Understand why feature scaling is mandatory before regularization.</li>
+<li>Explain how the C parameter controls regularization strength in Scikit-learn.</li>
+<li>Tune regularization strength using validation performance.</li>
+</ul>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Prerequisites</h4>
+                <p>Completion of previous conceptual lessons in this track.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Expected Outcome</h4>
+                <p>Build production-ready regularization pipelines with proper scaling and hyperparameter tuning.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. Main Lesson Content Area -->
+          <div class="markdown-content">
+            
+                    <div class="lesson-content-block">
+                        <h2>Visual Comparison of Regularization Effects</h2>
+                        <p>Before choosing a regularization strategy, it helps to visualize how each approach affects model behavior. The diagrams below illustrate the differences in decision boundaries and the effect of regularization strength.</p>
+                        
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h3>1. [Diagram: Overfitting vs. Regularized Model]</h3>
+                        <pre class="output-console-mock"><code>Overfit Model (Unregularized)        Regularized Model (Simpler)
+      y                                    y
+      â”‚   o      o                         â”‚   o      o
+      â”‚  / \    / \                        â”‚  /        \
+      â”‚ o   \  /   o                       â”‚ o   o   o  \o
+      â”‚      o                             â”‚
+      â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€x                    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€x
+   High Variance, fits noise            Low Variance, generalizes</code></pre>
+<ul>
+<li><strong>Explanation:</strong> An unregularized model wraps itself around every noise point, resulting in high variance. Regularization constrains the model parameters to produce a smoother curve.</li>
+</ul>
+
+<hr>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h3>2. [Diagram: Effect of Increasing Lambda]</h3>
+                        <pre class="output-console-mock"><code>Î» = 0 (No Penalty)   â”€â”€>   Î» = 1 (Balanced)   â”€â”€>   Î» = 100 (Underfit)
+  Overfits noise           Learns trends             Flat line (All weights â‰ˆ 0)</code></pre>
+<ul>
+<li><strong>Explanation:</strong> As regularization strength $\lambda$ increases, the model weights are pushed closer to zero, decreasing variance but increasing bias. If $\lambda$ is too large, the model underfits.</li>
+</ul>
+
+<hr>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h3>3. [Diagram: L1 vs. L2 Regularization]</h3>
+                        <pre class="output-console-mock"><code>L1 (Lasso) Constraint space            L2 (Ridge) Constraint space
+                 w2                                     w2
+                 â–²                                      â–²
+                 â”‚                                   .â”€â”€â”´â”€â”€.
+             â—„â”€â”€â”€â”¼â”€â”€â”€â–º w1                           (   â”‚   )  â—„â”€â”€â”€ circular
+                 â”‚                                   `â”€â”€â”¬â”€â”€'
+                 â–¼                                      â–¼
+             (Diamond)                               (Circle)</code></pre>
+<ul>
+<li><strong>Explanation:</strong> Lasso's constraint space has sharp corners on the axes. The optimal solution is likely to hit these corners, setting some weights to exactly zero. Ridge's space is a smooth circle, shrinking weights near zero but keeping them active.</li>
+</ul>
+
+<hr>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h2>How to Choose the Right Regularization</h2>
+                        <p>Here is a simple decision framework:</p>
+<ul>
+<li><strong>Use Lasso (L1)</strong> when you suspect only a few features are truly relevant and you want automatic feature selection.</li>
+<li><strong>Use Ridge (L2)</strong> when all features contribute meaningfully and you want smooth shrinkage without sparsity.</li>
+<li><strong>Use Elastic Net</strong> when features are correlated and you need both sparsity and stability.</li>
+<li><strong>Tune $\lambda$ (or $C$)</strong> using cross-validation â€” start with a logarithmic range (e.g., $C \in [0.001, 0.01, 0.1, 1, 10, 100]$) and monitor validation accuracy.</li>
+</ul>
+
+<div class="alert-box tip">
+<span class="alert-icon">&#x26A0;&#xFE0F;</span>
+<div class="alert-content">
+<strong>Effect of Increasing Lambda:</strong> As regularization strength $\lambda$ increases, model weights are pushed closer to zero, decreasing variance but increasing bias. If $\lambda$ is too large, the model underfits (all weights near zero).
+</div>
+</div>
+
+<hr>
+                    </div>
+
+                    <div class="lesson-content-block">
+                        <h2>Lesson 3.5: Scaling & Pipeline Pitfalls</h2>
+                        <div class="alert-box tip" style="border-left-color: var(--accent-blue);">
+                <span class="alert-icon">â„¹ï¸</span>
+                <div class="alert-content">
+                    <strong>Why Feature Scaling is Mandatory:</strong>
+Because the regularization penalty sums the magnitudes of the weights, features must be scaled to the same range (e.g., using <code>StandardScaler</code>). If one feature has values in the thousands and another between 0 and 1, the model will need a larger weight for the second feature to use it, which gets penalized unfairly.
+                </div>
+            </div>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h3>Regularization Strength in Scikit-Learn:</h3>
+                        <p>In many Scikit-learn models (like `LogisticRegression`), the regularization hyperparameter is parameterized as `C`, the inverse of regularization strength:</p>
+
+<div class="math-card glass"><div class="math-eq">C \propto \frac{1}{\lambda}</div></div>
+
+<ul>
+<li><strong>Small `C` (e.g., 0.01):</strong> Strong regularization (large penalty). Weights are pushed hard toward zero.</li>
+<li><strong>Large `C` (e.g., 100):</strong> Weak regularization (small penalty). The model is free to fit the training data closely.</li>
+</ul>
+
+<hr>
+                    </div>
+                    
+          </div>
+
+          <!-- 6. Bottom Navigation Cards -->
+          <div class="bottom-navigation-cards-row">
+            
+                <a href="3.5-elastic-net.html" class="bottom-nav-card glass">
+                  <span class="nav-direction">&larr; Previous Lesson</span>
+                  <span class="nav-title">3.5 Elastic Net Optimization</span>
+                </a>
+                
+            
+                <a href="3.7-summary.html" class="bottom-nav-card next glass">
+                  <span class="nav-direction">Next Lesson &rarr;</span>
+                  <span class="nav-title">3.7 Summary & Interview Preparation</span>
+                </a>
+                
+          </div>
+
+          <div class="bottom-return-curriculum-row">
+            <a href="../../curriculum.html" class="btn btn-secondary">&larr; Return to Curriculum</a>
+          </div>
+
+        </div>
+
+        <!-- 7. Right Sidebar Panel (Sticky Accordion Mount) -->
+        <aside id="sidebar-container" class="lesson-right-sidebar glass"></aside>
+
+      </div>
+    </main>
+
+    <!-- Footer Injector Mount -->
+    <footer id="footer-container" class="main-footer"></footer>
+
+    <!-- Shared Static LMS Scripts -->
+    <script src="../../js/app.js"></script>
+    <script src="../../js/navigation.js"></script>
+    <script src="../../js/sidebar.js"></script>
+    <script src="../../js/progress.js"></script>
+</body>
+</html>

@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Undercomplete Autoencoders & PCA Link — Gradients ML LMS</title>
+    
+    <!-- KaTeX CSS and JS for mathematical equations -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
+
+    <!-- CSS sheets -->
+    <link rel="stylesheet" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../css/layout.css" />
+    <link rel="stylesheet" href="../../css/responsive.css" />
+    <link rel="stylesheet" href="../../css/lesson.css" />
+    <link rel="stylesheet" href="../../css/sidebar.css" />
+</head>
+<body>
+    <!-- Top Header Navigation Injector -->
+    <header id="header-container" class="main-header glass"></header>
+
+    <main class="container fade-in" style="padding-bottom: 6rem;">
+      
+      <!-- 1. Breadcrumb Navigation -->
+      <div class="breadcrumb-container">
+        <div class="lesson-breadcrumb">
+          <a href="../../index.html">Home</a> &gt; 
+          <a href="../../course-overview.html">Course Overview</a> &gt; 
+          <a href="../../curriculum.html">Curriculum</a> &gt; 
+          <span>10-Autoencoders-VAE: Autoencoders & VAEs</span> &gt; 
+          <span class="active-node">Lesson 10.1</span>
+        </div>
+      </div>
+
+      <!-- 2. Two-Column Layout (Main Content + Right Sidebar) -->
+      <div class="lesson-grid-layout">
+        
+        <!-- Center-Left Content Area -->
+        <div class="lesson-content-area">
+          <div class="content-connector-line"></div>
+
+          <!-- 3. Lesson Header -->
+          <header class="lesson-template-header">
+            <div class="lesson-header-meta-row">
+              <span class="lesson-header-badge track">Dimensionality Reduction</span>
+              <span class="lesson-header-badge">10-Autoencoders-VAE</span>
+              <span class="lesson-header-badge">Lesson 10.1</span>
+              <span class="lesson-header-badge diff">Intermediate</span>
+              <span class="lesson-header-badge">15 mins</span>
+            </div>
+            <h1>Undercomplete Autoencoders & PCA Link</h1>
+          </header>
+
+          <!-- 4. Learning Objectives Card -->
+          <div class="objectives-box-card glass">
+            <h3>Lesson Objectives</h3>
+            <div class="objectives-box-grid">
+              <div class="objectives-box-col">
+                <h4>What you will learn</h4>
+                <p>Master the details of Undercomplete Autoencoders & PCA Link to build complete technical intuition.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Prerequisites</h4>
+                <p>Completion of previous conceptual lessons in this track.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Expected Outcome</h4>
+                <p>Apply Undercomplete Autoencoders & PCA Link diagnostics to prevent training loops leakage or parameters decay.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. Main Lesson Content Area -->
+          <div class="markdown-content">
+            
+                    <div class="lesson-content-block">
+                        <h2>Lesson 10.1: Why Dimensionality Reduction in Deep Learning?</h2>
+                        <h3>What is it?</h3>
+In deep learning, data dimensionality reduction is the process of compressing high-dimensional input vectors into lower-dimensional representations (often called <strong>embeddings</strong> or <strong>latent codes</strong>) using non-linear neural network layers.
+
+<h3>Why is it needed?</h3>
+High-dimensional datasets (such as a $28 \times 28$ MNIST image with $784$ pixels) suffer from several issues:
+1.  <strong>The Curse of Dimensionality:</strong> In higher-dimensional spaces, distance metrics like Euclidean distance become uniform, meaning "near" and "far" look the same.
+2.  <strong>Redundancy:</strong> Nearby pixels in an image are highly correlated. Keeping all $784$ pixel values wastes parameters and computing power on redundant information.
+3.  <strong>Non-linear Relationships:</strong> Traditional methods like PCA assume data is linear. But real-world data lives on curved, non-linear manifolds. If you try to fit a straight-line projection (like PCA) to a curved manifold, you lose vital structural details.
+
+<h3>What problem does it solve?</h3>
+Neural dimensionality reduction uses activation functions (like ReLU and Sigmoid) to model <strong>curved, non-linear manifolds</strong>. It squeezes the features through a bottleneck, capturing the underlying variables (e.g., the stroke thickness, curvature, and rotation of a handwritten number) while discarding noise.
+
+<pre class="output-console-mock"><code>Linear vs. Non-Linear Dimensionality Reduction:
+  PCA (Linear):          Projects high-D space onto flat 2D planes.
+  Autoencoder (Manifold): Unrolls curved high-D sheets into flat 2D layouts.</code></pre>
+
+<hr>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h2>Lesson 10.2: What is an Autoencoder?</h2>
+                        <h3>What is it?</h3>
+An <strong>autoencoder</strong> is an unsupervised neural network designed to copy its input to its output. To prevent it from simply memorizing the input, the network is forced through a narrow middle layer—the <strong>bottleneck</strong>—which compresses the data.
+
+<p>[Diagram: Autoencoder Architecture]
+`Input (784-D) ──> [Encoder Layers] ──> Bottleneck (32-D Latent Space) ──> [Decoder Layers] ──> Reconstruction (784-D)`</p>
+
+<h3>The Three Pillars of an Autoencoder</h3>
+1.  <strong>The Encoder:</strong> Squeezes the input vector $x$ into a lower-dimensional latent representation $z$. It acts as the "compressor."
+2.  <strong>The Bottleneck (Latent Space):</strong> The narrowest layer in the network. The dimension of this layer ($k$) is a hyperparameter you choose. This is where the compressed features live.
+3.  <strong>The Decoder:</strong> Reconstructs the original input from the latent code $z$, outputting $\hat{x}$. It acts as the "decompressor."
+
+<div class="alert-box tip">
+                <span class="alert-icon">💡</span>
+                <div class="alert-content">
+                    <strong>Daily-Life Analogy (Summarizing a Story):</strong>
+Imagine Person A reads a 10-page story and must summarize it in one sentence (Encoding). Person B reads only that one-sentence summary and must write a full story from it (Decoding). If Person B's story is highly similar to the original, the summary successfully captured the most critical plot points.
+                </div>
+            </div>
+
+<hr>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h2>Lesson 10.3: Autoencoder Math & Worked Example</h2>
+                        <p>Let's look at the mathematical formulations behind traditional autoencoders.</p>
+
+<h3>1. The Encoder Equation</h3>
+<div class="math-card glass"><div class="math-eq">z = f_\phi(x) = a(W_1 x + b_1)</div></div>
+<ul>
+<li>  $x \in \mathbb{R}^d$: The high-dimensional input vector (e.g., $d = 784$ pixels).</li>
+<li>  $z \in \mathbb{R}^k$: The latent bottleneck vector ($k \ll d$).</li>
+<li>  $W_1, b_1$: The weights and biases of the encoder network parameterized by $\phi$.</li>
+<li>  $a$: A non-linear activation function (such as ReLU).</li>
+</ul>
+
+<h3>2. The Decoder Equation</h3>
+<div class="math-card glass"><div class="math-eq">\hat{x} = g_\theta(z) = \sigma(W_2 z + b_2)</div></div>
+<ul>
+<li>  $\hat{x} \in \mathbb{R}^d$: The reconstructed output vector.</li>
+<li>  $W_2, b_2$: The weights and biases of the decoder network parameterized by $\theta$.</li>
+<li>  $\sigma$: The final activation function (e.g., Sigmoid to ensure reconstructed pixel values fall between $0$ and $1$).</li>
+</ul>
+
+<h3>3. Reconstruction Loss (Mean Squared Error)</h3>
+<div class="math-card glass"><div class="math-eq">L_{recon}(\phi, \theta) = \frac{1}{N} \sum_{i=1}^{N} \|x^{(i)} - \hat{x}^{(i)}\|^2</div></div>
+This loss measures the squared difference between the original input $x$ and the reconstruction $\hat{x}$. The network updates its weights using backpropagation to minimize this error.
+
+<hr>
+
+<h3>Worked Numerical Example (Autoencoder Forward Pass)</h3>
+
+<p>Let's calculate a forward pass through a simple Autoencoder step-by-step.</p>
+
+<h4>1. Setup</h4>
+<ul>
+<li>  <strong>Input Vector:</strong> $x = [0.8, 0.2]^T$ (a 2-dimensional feature space).</li>
+<li>  <strong>Encoder weights & bias:</strong></li>
+</ul>
+    <div class="math-card glass"><div class="math-eq">W_1 = \begin{bmatrix} 0.5 \\ -0.5 \end{bmatrix}, \quad b_1 = [0.1]</div></div>
+<ul>
+<li>  <strong>Decoder weights & bias:</strong></li>
+</ul>
+    <div class="math-card glass"><div class="math-eq">W_2 = \begin{bmatrix} 1.0 & -1.0 \end{bmatrix}, \quad b_2 = [0.0, 0.0]^T</div></div>
+<ul>
+<li>  <strong>Activations:</strong> We assume identity activations for simplicity.</li>
+</ul>
+
+<h4>2. Encoding step</h4>
+Calculate the latent bottleneck representation $z$:
+<div class="math-card glass"><div class="math-eq">z = W_1^T x + b_1 = \left( 0.5 \times 0.8 + (-0.5) \times 0.2 \right) + 0.1</div></div>
+<div class="math-card glass"><div class="math-eq">z = (0.4 - 0.1) + 0.1 = 0.4</div></div>
+The 2D input is compressed to a 1D value ($z = 0.4$).
+
+<h4>3. Decoding step</h4>
+Reconstruct the input:
+<div class="math-card glass"><div class="math-eq">\hat{x} = z W_2 + b_2 = 0.4 \times [1.0, -1.0] + [0.0, 0.0] = [0.4, -0.4]^T</div></div>
+
+<h4>4. Loss Computation</h4>
+Calculate the Mean Squared Error (MSE) loss:
+<div class="math-card glass"><div class="math-eq">L_{recon} = \|x - \hat{x}\|^2 = (0.8 - 0.4)^2 + (0.2 - (-0.4))^2</div></div>
+<div class="math-card glass"><div class="math-eq">L_{recon} = (0.4)^2 + (0.6)^2 = 0.16 + 0.36 = 0.52</div></div>
+This loss value tells the optimizer how far off the reconstruction was, guiding gradient updates to adjust $W_1$, $b_1$, $W_2$, and $b_2$.
+
+<hr>
+                    </div>
+                    
+          </div>
+
+          <!-- 6. Bottom Navigation Cards -->
+          <div class="bottom-navigation-cards-row">
+            
+                <a href="../../curriculum.html" class="bottom-nav-card glass">
+                  <span class="nav-direction">&larr; Return</span>
+                  <span class="nav-title">Curriculum Directory</span>
+                </a>
+                
+            
+                <a href="10.2-probabilistic.html" class="bottom-nav-card next glass">
+                  <span class="nav-direction">Next Lesson &rarr;</span>
+                  <span class="nav-title">10.2 Variational Autoencoders & Latent Space</span>
+                </a>
+                
+          </div>
+
+          <div class="bottom-return-curriculum-row">
+            <a href="../../curriculum.html" class="btn btn-secondary">&larr; Return to Curriculum</a>
+          </div>
+
+        </div>
+
+        <!-- 7. Right Sidebar Panel (Sticky Accordion Mount) -->
+        <aside id="sidebar-container" class="lesson-right-sidebar glass"></aside>
+
+      </div>
+    </main>
+
+    <!-- Footer Injector Mount -->
+    <footer id="footer-container" class="main-footer"></footer>
+
+    <!-- Shared Static LMS Scripts -->
+    <script src="../../js/app.js"></script>
+    <script src="../../js/navigation.js"></script>
+    <script src="../../js/sidebar.js"></script>
+    <script src="../../js/progress.js"></script>
+</body>
+</html>

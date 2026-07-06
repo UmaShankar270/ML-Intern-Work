@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module Practice Notebook — Gradients ML LMS</title>
+    
+    <!-- KaTeX CSS and JS for mathematical equations -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
+
+    <!-- CSS sheets -->
+    <link rel="stylesheet" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../css/layout.css" />
+    <link rel="stylesheet" href="../../css/responsive.css" />
+    <link rel="stylesheet" href="../../css/lesson.css" />
+    <link rel="stylesheet" href="../../css/sidebar.css" />
+</head>
+<body>
+    <!-- Top Header Navigation Injector -->
+    <header id="header-container" class="main-header glass"></header>
+
+    <main class="container fade-in" style="padding-bottom: 6rem;">
+      
+      <!-- 1. Breadcrumb Navigation -->
+      <div class="breadcrumb-container">
+        <div class="lesson-breadcrumb">
+          <a href="../../index.html">Home</a> &gt; 
+          <a href="../../course-overview.html">Course Overview</a> &gt; 
+          <a href="../../curriculum.html">Curriculum</a> &gt; 
+          <span>01-What_is_ML: Introduction to Machine Learning</span> &gt; 
+          <span class="active-node">Lesson 1.7</span>
+        </div>
+      </div>
+
+      <!-- 2. Two-Column Layout (Main Content + Right Sidebar) -->
+      <div class="lesson-grid-layout">
+        
+        <!-- Center-Left Content Area -->
+        <div class="lesson-content-area">
+          <div class="content-connector-line"></div>
+
+          <!-- 3. Lesson Header -->
+          <header class="lesson-template-header">
+            <div class="lesson-header-meta-row">
+              <span class="lesson-header-badge track">Machine Learning Fundamentals</span>
+              <span class="lesson-header-badge">01-What_is_ML</span>
+              <span class="lesson-header-badge">Lesson 1.7</span>
+              <span class="lesson-header-badge diff">Beginner</span>
+              <span class="lesson-header-badge">20 mins</span>
+            </div>
+            <h1>Module Practice Notebook</h1>
+          </header>
+
+          <!-- 4. Learning Objectives Card -->
+          <div class="objectives-box-card glass">
+            <h3>Lesson Objectives</h3>
+            <div class="objectives-box-grid">
+              <div class="objectives-box-col">
+                <h4>What you will learn</h4>
+                <p>Master the details of Module Practice Notebook to build complete technical intuition.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Prerequisites</h4>
+                <p>Completion of previous conceptual lessons in this track.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Expected Outcome</h4>
+                <p>Apply Module Practice Notebook diagnostics to prevent training loops leakage or parameters decay.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. Main Lesson Content Area -->
+          <div class="markdown-content">
+            
+                    <div class="lesson-content-block">
+                        <h2>Jupyter Notebook Practice Lab</h2>
+                        <p class="hero-lead">Run, modify, and analyze python execution outputs. Verify mathematical claims against dataset projections.</p>
+                        <div class="notebook-markdown"><p># Machine Learning Fundamentals: Hands-on Implementation</p>
+
+<blockquote><strong>"Connecting theoretical principles to a practical Python workflow."</strong></blockquote>
+
+<p>Welcome to the practical lab notebook for <strong>Introduction to Machine Learning</strong>. In this notebook, we will implement a complete, production-ready machine learning classification pipeline. We will build intuition, preprocess data, train a linear model, evaluate metrics, and experiment with hyperparameters.</p>
+
+<hr></div>
+<div class="notebook-markdown"><h2>1. Setup & Workspace Preparation</h2>
+
+<h3>WHY?</h3>
+Before writing any machine learning logic, we must establish a reproducible environment. This includes importing specialized tools for linear algebra, data structures, data visualization, and model estimation. Fixing the random state ensures that data splits are deterministic, allowing team members to replicate exact outputs.
+
+<h3>HOW?</h3>
+We load standard libraries:
+1. <strong>NumPy</strong> for fast matrix operations and vector mathematics.
+2. <strong>Pandas</strong> to inspect and filter data tables.
+3. <strong>Matplotlib</strong> & <strong>Seaborn</strong> to plot relationships.
+4. <strong>Scikit-learn</strong> utilities for data splits and model validation metrics.</div>
+
+            <div class="notebook-block glass">
+                <div class="notebook-header">
+                    <span class="file-name">Python Code Block</span>
+                </div>
+                <div class="notebook-body">
+                    <div class="code-cell">
+                        <div class="cell-label">In [1]:</div>
+                        <pre class="code-editor-mock"><code># Set up mathematical and tabular workspaces
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Load standard datasets, linear classification estimators, and metrics
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+
+# Setting random seed guarantees that split indices remain identical across executions
+np.random.seed(42)
+
+# Enable plot rendering inline within the notebook interface
+%matplotlib inline</code></pre>
+                    </div>
+                    
+                </div>
+            </div>
+            
+<div class="notebook-markdown"><h2>2. Dataset Loading & Exploration</h2>
+
+<h3>WHY?</h3>
+To build a model, we must first understand the structural layout of the dataset. Inspecting dimensions, data types, and statistics helps us identify missing entries, potential outliers, and target class balance before model fitting.
+
+<h3>HOW?</h3>
+We load the <strong>Iris Flower Dataset</strong> (a benchmark 3-class target dataset containing 150 instances of flowers with measurements for sepal and petal length and width). We convert it into a Pandas DataFrame to inspect data types and statistics.</div>
+
+            <div class="notebook-block glass">
+                <div class="notebook-header">
+                    <span class="file-name">Python Code Block</span>
+                </div>
+                <div class="notebook-body">
+                    <div class="code-cell">
+                        <div class="cell-label">In [2]:</div>
+                        <pre class="code-editor-mock"><code># Load iris dataset into a structured pandas dataframe
+iris = load_iris(as_frame=True)
+df = iris.frame
+
+# Output first five records to verify tabular structure
+print('--- FIRST 5 ROWS ---')
+print(df.head())
+
+# Output column types and verify missing value counts
+print('\n--- SCHEMAS &amp; NULLS ---')
+df.info()
+
+# Print statistical characteristics (mean, variance, ranges)
+print('\n--- STATISTICAL SUMMARY ---')
+print(df.describe())</code></pre>
+                    </div>
+                    
+                </div>
+            </div>
+            
+<div class="notebook-markdown"><h2>3. Data Preprocessing</h2>
+
+<h3>WHY?</h3>
+Raw features must be cleaned and isolated before feeding them to optimization loops. Models expect separate inputs: a <strong>Feature Matrix ($X$)</strong> containing predictive features, and a <strong>Target Vector ($y$)</strong> containing the actual classes. Identifying missing entries and duplicates ensures that models do not learn from corrupted or repeated inputs.
+
+<h3>HOW?</h3>
+We check the DataFrame for missing values and duplicate rows. We then separate the target label from the features, creating matrix $X$ and vector $y$.</div>
+
+            <div class="notebook-block glass">
+                <div class="notebook-header">
+                    <span class="file-name">Python Code Block</span>
+                </div>
+                <div class="notebook-body">
+                    <div class="code-cell">
+                        <div class="cell-label">In [3]:</div>
+                        <pre class="code-editor-mock"><code># Audit data quality by checking for null coordinates
+missing_values = df.isnull().sum()
+print('Null counts per column:\n', missing_values)
+
+# Check for duplicate observations in the dataset
+duplicates = df.duplicated().sum()
+print('Duplicate rows:', duplicates)
+
+# Isolate features (capital X matrix) from output classes (lowercase y vector)
+X = df.drop('target', axis=1)
+y = df['target']
+
+# Verify target dimensions match
+print('X Shape (Feature Matrix):', X.shape)
+print('y Shape (Target Vector):', y.shape)</code></pre>
+                    </div>
+                    
+                </div>
+            </div>
+            
+<div class="notebook-markdown"><h2>4. Mathematical Intuition: Computing Loss in NumPy</h2>
+
+<h3>WHY?</h3>
+Machine Learning algorithms learn by optimizing parameters to minimize a loss function. Before using high-level libraries, writing a simple loss function manually in NumPy builds mathematical intuition for how error signals are calculated.
+
+<h3>HOW?</h3>
+We define a simple mock linear problem: $y = 2x$. We define the Mean Squared Error (MSE) loss formula in Python, compute predictions on a mock input vector, and evaluate the loss.</div>
+
+            <div class="notebook-block glass">
+                <div class="notebook-header">
+                    <span class="file-name">Python Code Block</span>
+                </div>
+                <div class="notebook-body">
+                    <div class="code-cell">
+                        <div class="cell-label">In [4]:</div>
+                        <pre class="code-editor-mock"><code># Set up mock linear values to verify loss calculations
+x_mock = np.array([1, 2, 3, 4])
+y_true = np.array([2, 4, 6, 8])
+
+# Define mock linear prediction function acting as our f(x)
+def mock_predict(x):
+    return 2 * x
+
+# Compute Mean Squared Error: average of squared differences between actual and predicted
+def compute_mse(actual, predicted):
+    return np.mean((actual - predicted) ** 2)
+
+# Evaluate predictions and compute final loss value
+predictions = mock_predict(x_mock)
+loss_val = compute_mse(y_true, predictions)
+
+print('Predictions (f(x)):', predictions)
+print('True Targets (y):', y_true)
+print('Calculated Loss (MSE):', loss_val)</code></pre>
+                    </div>
+                    
+                </div>
+            </div>
+            
+<div class="notebook-markdown"><h2>5. Model Training & Evaluation (Scikit-Learn)</h2>
+
+<h3>WHY?</h3>
+To evaluate how well a model generalizes to new data, we must split our dataset into separate training and testing sets. Training the model on the training set minimizes empirical risk, while evaluating on the test set measures performance on unseen data, helping us diagnose potential overfitting.
+
+<h3>HOW?</h3>
+We split our data ($80\%$ training, $20\%$ testing). We fit a <strong>Logistic Regression</strong> classifier on the training set, generate predictions on the test set, and evaluate the model using accuracy, a classification report, and a confusion matrix.</div>
+
+            <div class="notebook-block glass">
+                <div class="notebook-header">
+                    <span class="file-name">Python Code Block</span>
+                </div>
+                <div class="notebook-body">
+                    <div class="code-cell">
+                        <div class="cell-label">In [5]:</div>
+                        <pre class="code-editor-mock"><code># Split observations into separate training (80%) and testing (20%) datasets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Initialize and train Logistic Regression model on the training split
+clf = LogisticRegression(max_iter=200)
+clf.fit(X_train, y_train)
+
+# Generate predictions on the unseen test split
+y_pred = clf.predict(X_test)
+
+# Evaluate model performance metrics
+acc = accuracy_score(y_test, y_pred)
+cm = confusion_matrix(y_test, y_pred)
+report = classification_report(y_test, y_pred, target_names=iris.target_names)
+
+print('Test Accuracy:', acc)
+print('\nClassification Report:\n', report)
+print('Confusion Matrix:\n', cm)</code></pre>
+                    </div>
+                    
+                </div>
+            </div>
+            
+<div class="notebook-markdown"><h2>6. Data Visualization</h2>
+
+<h3>WHY?</h3>
+Visualizations help us identify patterns and relationships within the features, such as feature correlation or cluster separation, showing how easily the target classes can be distinguished.
+
+<h3>HOW?</h3>
+We use Seaborn and Matplotlib to plot target label distribution and visualize a scatter plot comparing sepal length and petal length.</div>
+
+            <div class="notebook-block glass">
+                <div class="notebook-header">
+                    <span class="file-name">Python Code Block</span>
+                </div>
+                <div class="notebook-body">
+                    <div class="code-cell">
+                        <div class="cell-label">In [6]:</div>
+                        <pre class="code-editor-mock"><code># Set up figure canvas for side-by-side plots
+plt.figure(figsize=(12, 5))
+
+# Plot target class distribution to audit balance
+plt.subplot(1, 2, 1)
+sns.countplot(x=y, hue=y, legend=False, palette='viridis')
+plt.xticks(ticks=[0, 1, 2], labels=iris.target_names)
+plt.title('Target Class Distribution')
+plt.xlabel('Species')
+plt.ylabel('Count')
+
+# Visualize cluster separation comparing sepal vs. petal length
+plt.subplot(1, 2, 2)
+sns.scatterplot(data=df, x='sepal length (cm)', y='petal length (cm)', hue='target', palette='viridis')
+plt.title('Sepal vs Petal Length Cluster Separation')
+plt.xlabel('Sepal Length (cm)')
+plt.ylabel('Petal Length (cm)')
+plt.legend(title='Species', labels=iris.target_names.tolist())
+
+plt.tight_layout()
+plt.show()</code></pre>
+                    </div>
+                    
+                </div>
+            </div>
+            
+<div class="notebook-markdown"><h2>7. Hyperparameter Experimentation</h2>
+
+<h3>WHY?</h3>
+A model's performance depends heavily on its configuration parameters (hyperparameters), such as the size of the validation split or optimizer epoch limits. Iterating through different settings helps us find the optimal configuration for accuracy and generalization.
+
+<h3>HOW?</h3>
+We loop through various train-test split sizes ($20\%$, $30\%$) and maximum iteration limits ($100$, $200$), training and evaluating a model for each combination.</div>
+
+            <div class="notebook-block glass">
+                <div class="notebook-header">
+                    <span class="file-name">Python Code Block</span>
+                </div>
+                <div class="notebook-body">
+                    <div class="code-cell">
+                        <div class="cell-label">In [7]:</div>
+                        <pre class="code-editor-mock"><code># Loop over configurations of test splits and training iteration epochs
+for size in (0.2, 0.3):
+    X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=size, random_state=42)
+    for iterations in (100, 200):
+        # Initialize model with current hyperparameter iteration settings
+        clf_exp = LogisticRegression(max_iter=iterations, random_state=42)
+        clf_exp.fit(X_tr, y_tr)
+        preds = clf_exp.predict(X_te)
+        accuracy = accuracy_score(y_te, preds)
+        print(f'test_size={size:.1f}, max_iter={iterations}: accuracy = {accuracy:.4f}')</code></pre>
+                    </div>
+                    
+                </div>
+            </div>
+            
+<div class="notebook-markdown"><hr>
+
+<h2>8. Summary & Quick Revision Guide</h2>
+
+<h3>Key Takeaways</h3>
+<ul>
+<li>  <strong>Traditional vs. ML</strong>: Traditional programming processes rules and inputs to yield output. Machine Learning processes inputs and outputs to infer rules.</li>
+<li>  <strong>Types of ML</strong>: Supervised (regression/classification with labeled data), Unsupervised (clustering/dimensionality reduction with unlabeled data), and Reinforcement (agent learning from environmental rewards).</li>
+<li>  <strong>ERM Framework</strong>: We optimize training loss (using differentiable objectives like MSE or BCE) as a proxy for true risk.</li>
+<li>  <strong>Differentiability</strong>: Loss functions must be differentiable for optimization algorithms like Gradient Descent to calculate gradients and update model parameters.</li>
+</ul>
+
+<h3>Common Mistakes</h3>
+<ul>
+<li>  <strong>Data Leakage</strong>: Preprocessing the entire dataset (e.g., calculating scaling stats) before splitting into train and test sets.</li>
+<li>  <strong>Evaluating with Accuracy alone</strong>: Relying on accuracy for highly imbalanced datasets. Use F1-score, precision, or recall instead.</li>
+<li>  <strong>Overfitting</strong>: Training overly complex models on small datasets, causing them to memorize noise rather than generalize.</li>
+</ul>
+
+<h3>Top Interview Questions</h3>
+1.  <strong>What is the difference between supervised and unsupervised learning?</strong>  
+    *Answer*: Supervised learning requires labeled targets. Unsupervised learning identifies patterns in unlabeled features.
+2.  <strong>Why can't raw accuracy be used as a loss function during model training?</strong>  
+    *Answer*: Accuracy is a non-differentiable step function. Its derivative is zero or undefined everywhere, providing no gradient signal to update parameters.
+3.  <strong>What is overfitting and how do you identify it?</strong>  
+    *Answer*: Overfitting occurs when a model memorizes training noise and fails to generalize. It is diagnosed by high training accuracy but low test accuracy.
+4.  <strong>What are common strategies to prevent overfitting?</strong>  
+    *Answer*: Apply regularization, collect more training data, simplify model architecture, use cross-validation, or apply early stopping.</div>
+                    </div>
+                    
+          </div>
+
+          <!-- 6. Bottom Navigation Cards -->
+          <div class="bottom-navigation-cards-row">
+            
+                <a href="1.6-summary.html" class="bottom-nav-card glass">
+                  <span class="nav-direction">&larr; Previous Lesson</span>
+                  <span class="nav-title">1.6 Module Summary & Quiz</span>
+                </a>
+                
+            
+                <a href="../../curriculum.html" class="bottom-nav-card next glass">
+                  <span class="nav-direction">Finish Module &rarr;</span>
+                  <span class="nav-title">Back to Curriculum</span>
+                </a>
+                
+          </div>
+
+          <div class="bottom-return-curriculum-row">
+            <a href="../../curriculum.html" class="btn btn-secondary">&larr; Return to Curriculum</a>
+          </div>
+
+        </div>
+
+        <!-- 7. Right Sidebar Panel (Sticky Accordion Mount) -->
+        <aside id="sidebar-container" class="lesson-right-sidebar glass"></aside>
+
+      </div>
+    </main>
+
+    <!-- Footer Injector Mount -->
+    <footer id="footer-container" class="main-footer"></footer>
+
+    <!-- Shared Static LMS Scripts -->
+    <script src="../../js/app.js"></script>
+    <script src="../../js/navigation.js"></script>
+    <script src="../../js/sidebar.js"></script>
+    <script src="../../js/progress.js"></script>
+</body>
+</html>

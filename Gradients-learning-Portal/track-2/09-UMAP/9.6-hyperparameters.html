@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UMAP Hyperparameters: Neighbors & Min-dist â€” Gradients ML LMS</title>
+    
+        <!-- KaTeX CSS and JS for mathematical equations -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    <script defer src="../../js/katex.js"></script>
+
+    <!-- CSS sheets -->
+    <link rel="stylesheet" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../css/layout.css" />
+    <link rel="stylesheet" href="../../css/responsive.css" />
+    <link rel="stylesheet" href="../../css/lesson.css" />
+    <link rel="stylesheet" href="../../css/sidebar.css" />
+</head>
+<body>
+    <!-- Top Header Navigation Injector -->
+    <header id="header-container" class="main-header glass"></header>
+
+    <main class="container fade-in" style="padding-bottom: 6rem;">
+      
+      <!-- 1. Breadcrumb Navigation -->
+      <div class="breadcrumb-container">
+        <div class="lesson-breadcrumb">
+          <a href="../../index.html">Home</a> &gt; 
+          <a href="../../course-overview.html">Course Overview</a> &gt; 
+          <a href="../../curriculum.html">Curriculum</a> &gt; 
+          <span>09-UMAP: Uniform Manifold Approximation & Projection (UMAP)</span> &gt; 
+          <span class="active-node">Lesson 9.6</span>
+        </div>
+      </div>
+
+      <!-- 2. Two-Column Layout (Main Content + Right Sidebar) -->
+      <div class="lesson-grid-layout">
+        
+        <!-- Center-Left Content Area -->
+        <div class="lesson-content-area">
+          <div class="content-connector-line"></div>
+
+          <!-- 3. Lesson Header -->
+          <header class="lesson-template-header">
+            <div class="lesson-header-meta-row">
+              <span class="lesson-header-badge track">Dimensionality Reduction</span>
+              <span class="lesson-header-badge">09-UMAP</span>
+              <span class="lesson-header-badge">Lesson 9.6</span>
+              <span class="lesson-header-badge diff">Advanced</span>
+              <span class="lesson-header-badge">15 mins</span>
+            </div>
+            <h1>UMAP Hyperparameters: Neighbors & Min-dist</h1>
+          </header>
+
+          <!-- 4. Learning Objectives Card -->
+          <div class="objectives-box-card glass">
+            <h3>Lesson Objectives</h3>
+            <div class="objectives-box-grid">
+              <div class="objectives-box-col">
+                <h4>What you will learn</h4>
+                <p>Understand how <code>n_neighbors</code> controls local vs global balance and how <code>min_dist</code> controls cluster density in UMAP projections.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Prerequisites</h4>
+                <p>Lesson 9.5 on UMAP's algorithm workflow; familiarity with k-nearest neighbors.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Expected Outcome</h4>
+                <p>Select appropriate <code>n_neighbors</code> and <code>min_dist</code> values for a given dataset based on desired local vs global focus.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. Main Lesson Content Area -->
+          <div class="markdown-content">
+            
+                    <div class="lesson-content-block">
+                        <h2>9.5 Critical Hyperparameter Tuning</h2>
+                        <p>UMAP's output depends heavily on two key hyperparameters:</p>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h3>1. `n_neighbors` (Local vs. Global Balance)</h3>
+                        <ul>
+<li>  <strong>What it does:</strong> Sets the size of the local neighborhood search window.</li>
+<li>  <strong>Tuning Effects:</strong></li>
+<li>  <strong>Low values (e.g., 2 to 10):</strong> Focuses on local structure. The map will fragment into small, fine-grained micro-clusters.</li>
+<li>  <strong>High values (e.g., 30 to 100+):</strong> Focuses on global structure. The algorithm merges small groups to highlight the overall layout of the data manifold.</li>
+</ul>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h3>2. `min_dist` (Cluster Density Control)</h3>
+                        <ul>
+<li>  <strong>What it does:</strong> Sets the minimum allowed distance between points in the 2D output.</li>
+<li>  <strong>Tuning Effects:</strong></li>
+<li>  <strong>Low values (e.g., 0.0 to 0.05):</strong> Points pack tightly together. Excellent for downstream clustering (e.g., feeding coordinates to K-Means or DBSCAN).</li>
+<li>  <strong>High values (e.g., 0.2 to 0.8):</strong> Points spread out. Useful for visualizing continuous manifold transitions (e.g., cell development trajectories).</li>
+</ul>
+
+<hr>
+                    </div>
+                    
+          </div>
+
+          <!-- 6. Bottom Navigation Cards -->
+          <div class="bottom-navigation-cards-row">
+            
+                <a href="9.5-layout-optimization.html" class="bottom-nav-card glass">
+                  <span class="nav-direction">&larr; Previous Lesson</span>
+                  <span class="nav-title">9.5 Layout Optimization & SGD</span>
+                </a>
+                
+            
+                <a href="9.7-comparisons.html" class="bottom-nav-card next glass">
+                  <span class="nav-direction">Next Lesson &rarr;</span>
+                  <span class="nav-title">9.7 Comparison: PCA vs t-SNE vs UMAP</span>
+                </a>
+                
+          </div>
+
+          <div class="bottom-return-curriculum-row">
+            <a href="../../curriculum.html" class="btn btn-secondary">&larr; Return to Curriculum</a>
+          </div>
+
+        </div>
+
+        <!-- 7. Right Sidebar Panel (Sticky Accordion Mount) -->
+        <aside id="sidebar-container" class="lesson-right-sidebar glass"></aside>
+
+      </div>
+    </main>
+
+    <!-- Footer Injector Mount -->
+    <footer id="footer-container" class="main-footer"></footer>
+
+    <!-- Shared Static LMS Scripts -->
+    <script src="../../js/app.js"></script>
+    <script src="../../js/navigation.js"></script>
+    <script src="../../js/sidebar.js"></script>
+    <script src="../../js/progress.js"></script>
+</body>
+</html>

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Introduction to Complexity Control â€” Gradients ML LMS</title>
+    
+        <!-- KaTeX CSS and JS for mathematical equations -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    <script defer src="../../js/katex.js"></script>
+
+    <!-- CSS sheets -->
+    <link rel="stylesheet" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../css/layout.css" />
+    <link rel="stylesheet" href="../../css/responsive.css" />
+    <link rel="stylesheet" href="../../css/lesson.css" />
+    <link rel="stylesheet" href="../../css/sidebar.css" />
+</head>
+<body>
+    <!-- Top Header Navigation Injector -->
+    <header id="header-container" class="main-header glass"></header>
+
+    <main class="container fade-in" style="padding-bottom: 6rem;">
+      
+      <!-- 1. Breadcrumb Navigation -->
+      <div class="breadcrumb-container">
+        <div class="lesson-breadcrumb">
+          <a href="../../index.html">Home</a> &gt; 
+          <a href="../../course-overview.html">Course Overview</a> &gt; 
+          <a href="../../curriculum.html">Curriculum</a> &gt; 
+          <span>03-Regularization: Regularization</span> &gt; 
+          <span class="active-node">Lesson 3.1</span>
+        </div>
+      </div>
+
+      <!-- 2. Two-Column Layout (Main Content + Right Sidebar) -->
+      <div class="lesson-grid-layout">
+        
+        <!-- Center-Left Content Area -->
+        <div class="lesson-content-area">
+          <div class="content-connector-line"></div>
+
+          <!-- 3. Lesson Header -->
+          <header class="lesson-template-header">
+            <div class="lesson-header-meta-row">
+              <span class="lesson-header-badge track">Machine Learning Fundamentals</span>
+              <span class="lesson-header-badge">03-Regularization</span>
+              <span class="lesson-header-badge">Lesson 3.1</span>
+              <span class="lesson-header-badge diff">Beginner</span>
+              <span class="lesson-header-badge">10 mins</span>
+            </div>
+            <h1>Introduction to Complexity Control</h1>
+          </header>
+
+          <!-- 4. Learning Objectives Card -->
+          <div class="objectives-box-card glass">
+            <h3>Lesson Objectives</h3>
+            <div class="objectives-box-grid">
+              <div class="objectives-box-col">
+                <h4>What you will learn</h4>
+                <ul>
+<li>Understand the problem of overfitting in machine learning models.</li>
+<li>Build intuition for regularization using analogies (memorizing student, spice tax).</li>
+<li>Recognize when a model has memorized noise instead of learning general patterns.</li>
+</ul>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Prerequisites</h4>
+                <p>Completion of previous conceptual lessons in this track.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Expected Outcome</h4>
+                <p>Identify overfitting scenarios and explain why complexity control is essential for building generalizable models.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. Main Lesson Content Area -->
+          <div class="markdown-content">
+            
+                    <div class="lesson-content-block">
+                        <h2>Module Overview & Structure</h2>
+                        <p>Welcome to the core curriculum for <strong>Module 03: Regularization</strong>. This module covers how regularization constrains model complexity to solve the overfitting problem. You will learn the mechanics behind Lasso (L1), Ridge (L2), Elastic Net, and evaluate their effects on parameters and model performance.</p>
+
+<hr>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <blockquote><strong>"Teaching a model to stay humble even when the training data is tempting it to fit noise."</strong></blockquote>
+
+<p>Regularization is one of the most important concepts in machine learning. It is the difference between a model that memorizes the training data and a model that actually learns generalizable patterns. This lesson introduces the core intuition behind regularization through relatable analogies.</p>
+                    </div>
+
+                    <div class="lesson-content-block">
+                        <h2>The Analogy of the Memorizing Student</h2>
+                        <p>Consider a student preparing for an exam by memorizing the exact phrasing of every practice question. The student will score 100% on those specific questions, but will fail the real exam if the questions are slightly rephrased. The student has overfit. We need the student to learn the general concepts, not memorize the records.</p>
+
+<p>This is precisely what happens when a machine learning model overfits: it achieves near-perfect performance on the training data but performs poorly on new, unseen data because it has memorized noise and coincidences rather than learning the underlying signal.</p>
+                    </div>
+
+                    <div class="lesson-content-block">
+                        <h2>The Analogy of the "Spice Tax"</h2>
+                        <p>Imagine a chef competing in a culinary contest. The judges tell the chef: <em>"Use as many spices as you want, but every extra spice you add costs you penalty points."</em></p>
+
+<ul>
+<li>Without this rule, the chef might throw in 20 different spices to make the dish taste perfect to one specific judge. However, that dish would taste overwhelming to anyone else.</li>
+<li>Under the "spice tax," the chef is forced to use only the essential ingredients that genuinely improve the flavor. The result is a simpler dish that appeals to a wider audience.</li>
+</ul>
+
+<p><strong>Regularization is that spice tax for machine learning.</strong> It adds a penalty on large or numerous model weights, forcing the model to rely only on the most important features and produce simpler, more generalizable decision boundaries.</p>
+
+<div class="alert-box tip">
+<span class="alert-icon">&#x1F4A1;</span>
+<div class="alert-content">
+<strong>Key Insight:</strong> Just as a spice tax forces a chef to simplify a dish, regularization forces a model to simplify its decision boundary. Both lead to results that generalize better to new situations.
+</div>
+</div>
+
+<hr>
+                    </div>
+                    
+          </div>
+
+          <!-- 6. Bottom Navigation Cards -->
+          <div class="bottom-navigation-cards-row">
+            
+                <a href="../../curriculum.html" class="bottom-nav-card glass">
+                  <span class="nav-direction">&larr; Return</span>
+                  <span class="nav-title">Curriculum Directory</span>
+                </a>
+                
+            
+                <a href="3.2-why-regularization.html" class="bottom-nav-card next glass">
+                  <span class="nav-direction">Next Lesson &rarr;</span>
+                  <span class="nav-title">3.2 Why Regularization is Needed</span>
+                </a>
+                
+          </div>
+
+          <div class="bottom-return-curriculum-row">
+            <a href="../../curriculum.html" class="btn btn-secondary">&larr; Return to Curriculum</a>
+          </div>
+
+        </div>
+
+        <!-- 7. Right Sidebar Panel (Sticky Accordion Mount) -->
+        <aside id="sidebar-container" class="lesson-right-sidebar glass"></aside>
+
+      </div>
+    </main>
+
+    <!-- Footer Injector Mount -->
+    <footer id="footer-container" class="main-footer"></footer>
+
+    <!-- Shared Static LMS Scripts -->
+    <script src="../../js/app.js"></script>
+    <script src="../../js/navigation.js"></script>
+    <script src="../../js/sidebar.js"></script>
+    <script src="../../js/progress.js"></script>
+</body>
+</html>

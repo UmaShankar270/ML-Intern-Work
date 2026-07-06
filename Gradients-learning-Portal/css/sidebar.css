@@ -1,0 +1,329 @@
+/* --- Split Page Layout Container --- */
+.lesson-layout-container {
+  display: flex;
+  height: calc(100vh - var(--navbar-height));
+  overflow: hidden;
+  position: relative;
+}
+
+/* --- 3-Column Lesson Grid Layout (Now Full Width) --- */
+.lesson-grid-layout {
+  display: flex;
+  height: calc(100vh - var(--navbar-height));
+  overflow: hidden;
+  position: relative;
+  max-width: 100%;
+}
+.lesson-grid-layout .lesson-content-area {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--bg-main);
+  order: 2;
+}
+.lesson-grid-layout .lesson-sidebar,
+.lesson-grid-layout #sidebar-container {
+  order: 1;
+}
+.lesson-grid-layout .lesson-utility-panel,
+.lesson-grid-layout #utility-container {
+  order: 3;
+}
+
+/* --- Dynamic Sidebar Panel --- */
+.lesson-sidebar,
+.lesson-right-sidebar {
+  width: var(--sidebar-width);
+  flex-shrink: 0;
+  border-right: 1px solid var(--border-light);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--bg-sidebar);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sidebar-header {
+  padding: 1.25rem 1.25rem 1rem;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.back-link {
+  display: inline-block;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+  font-family: var(--font-heading);
+}
+
+.back-link:hover {
+  color: var(--text-primary);
+}
+
+.sidebar-header h3 {
+  font-size: 0.95rem;
+  line-height: 1.3;
+  margin-bottom: 1rem;
+}
+
+.track-progress-container {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-light);
+  padding: 0.75rem;
+  border-radius: var(--border-radius-sm);
+}
+
+.progress-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-family: var(--font-heading);
+  margin-bottom: 0.4rem;
+}
+
+.progress-info .pct {
+  color: var(--accent-cyan);
+  font-weight: 700;
+}
+
+.progress-bar-bg {
+  height: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 0.4rem;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: var(--grad-cyan-blue);
+  width: 0%; /* Dynamic */
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.progress-fraction {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
+/* --- Scrollable accordion container --- */
+.sidebar-scrollable {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0.5rem 0;
+  scrollbar-width: thin;
+}
+
+.modules-accordion {
+  display: flex;
+  flex-direction: column;
+}
+
+.accordion-item {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.accordion-header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.85rem 1.25rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  color: var(--text-primary);
+  transition: var(--transition-fast);
+}
+
+.accordion-header:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.module-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.module-index {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  color: var(--accent-blue);
+  font-family: var(--font-heading);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+.module-name {
+  font-size: 0.82rem;
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+.accordion-icon {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  transition: transform 0.25s ease;
+}
+
+.accordion-item.active .accordion-icon {
+  transform: rotate(90deg);
+}
+
+.accordion-content {
+  display: none;
+  background: rgba(0, 0, 0, 0.15);
+}
+
+.accordion-item.active .accordion-content {
+  display: block;
+}
+
+/* --- Lesson lists inside Accordions --- */
+.lesson-list {
+  list-style: none;
+  padding: 0.5rem 0;
+}
+
+.lesson-item {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.45rem 1.25rem 0.45rem 1.5rem;
+  transition: var(--transition-fast);
+  position: relative;
+}
+
+.lesson-item:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.lesson-item.current {
+  background: rgba(59, 130, 246, 0.1);
+  border-left: 3px solid var(--accent-blue);
+  position: relative;
+}
+.lesson-item.current::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 20px;
+  background: var(--grad-cyan-blue);
+  border-radius: 3px 0 0 3px;
+  opacity: 0.6;
+}
+
+.completion-checkbox {
+  width: 18px;
+  height: 18px;
+  border: 1px solid var(--text-muted);
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  color: transparent;
+  user-select: none;
+  background: transparent;
+  transition: var(--transition-fast);
+}
+
+.completion-checkbox.checked {
+  background: var(--accent-green);
+  border-color: var(--accent-green);
+  color: #fff;
+}
+
+.completion-checkbox:hover {
+  border-color: var(--accent-cyan);
+}
+
+.lesson-link {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  flex: 1;
+}
+
+.lesson-number {
+  font-size: 0.7rem;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  letter-spacing: 0.02em;
+}
+
+.lesson-item.current .lesson-number {
+  color: var(--accent-blue);
+}
+
+.lesson-title {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  font-weight: 400;
+  line-height: 1.35;
+}
+
+.lesson-item.current .lesson-title {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+/* --- Sidebar Search layout --- */
+.sidebar-search-box {
+  padding: 0 1.25rem 0.75rem 1.25rem;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.5rem 0.85rem;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border-light);
+  border-radius: 6px;
+  color: var(--text-primary);
+  font-size: 0.85rem;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--border-focus);
+}
+
+/* --- Subtopics List (Table of Contents) --- */
+.subtopic-list {
+  list-style: none;
+  padding: 0.25rem 0 0.5rem 2rem;
+  margin: 0;
+  border-left: 1px dashed var(--border-light);
+  margin-left: 2.75rem;
+}
+
+.subtopic-item {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  padding: 0.2rem 0;
+  cursor: default;
+  position: relative;
+}
+
+.subtopic-item::before {
+  content: "─";
+  position: absolute;
+  left: -0.85rem;
+  color: var(--border-light);
+}
+
+.subtopic-item:hover {
+  color: var(--text-secondary);
+}

@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notebook Practice â€” Gradients ML LMS</title>
+    
+        <!-- KaTeX CSS and JS for mathematical equations -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    <script defer src="../../js/katex.js"></script>
+
+    <!-- CSS sheets -->
+    <link rel="stylesheet" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../css/layout.css" />
+    <link rel="stylesheet" href="../../css/responsive.css" />
+    <link rel="stylesheet" href="../../css/lesson.css" />
+    <link rel="stylesheet" href="../../css/sidebar.css" />
+</head>
+<body>
+    <!-- Top Header Navigation Injector -->
+    <header id="header-container" class="main-header glass"></header>
+
+    <main class="container fade-in" style="padding-bottom: 6rem;">
+      
+      <!-- 1. Breadcrumb Navigation -->
+      <div class="breadcrumb-container">
+        <div class="lesson-breadcrumb">
+          <a href="../../index.html">Home</a> &gt; 
+          <a href="../../course-overview.html">Course Overview</a> &gt; 
+          <a href="../../curriculum.html">Curriculum</a> &gt; 
+          <span>07-PCA: Principal Component Analysis (PCA)</span> &gt; 
+          <span class="active-node">Lesson 7.8</span>
+        </div>
+      </div>
+
+      <!-- 2. Two-Column Layout (Main Content + Right Sidebar) -->
+      <div class="lesson-grid-layout">
+        
+        <!-- Center-Left Content Area -->
+        <div class="lesson-content-area">
+          <div class="content-connector-line"></div>
+
+          <!-- 3. Lesson Header -->
+          <header class="lesson-template-header">
+            <div class="lesson-header-meta-row">
+              <span class="lesson-header-badge track">Dimensionality Reduction</span>
+              <span class="lesson-header-badge">07-PCA</span>
+              <span class="lesson-header-badge">Lesson 7.8</span>
+              <span class="lesson-header-badge diff">Advanced</span>
+              <span class="lesson-header-badge">25 mins</span>
+            </div>
+            <h1>Notebook Practice</h1>
+          </header>
+
+          <!-- 4. Learning Objectives Card -->
+          <div class="objectives-box-card glass">
+            <h3>Lesson Objectives</h3>
+            <div class="objectives-box-grid">
+              <div class="objectives-box-col">
+                <h4>What you will learn</h4>
+                <p>Implement PCA from scratch using NumPy, apply Scikit-learn's PCA on the Wine dataset, visualize scree plots, and tune component count with cross-validation.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Prerequisites</h4>
+                <p>Python proficiency with NumPy, Pandas, Matplotlib, and Scikit-learn basics.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Expected Outcome</h4>
+                <p>Build a complete PCA pipeline, interpret explained variance ratios, and optimize dimensionality for downstream classification performance.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. Main Lesson Content Area -->
+          <div class="markdown-content">
+            
+                    <div class="lesson-content-block">
+                        <h2>Jupyter Notebook Practice Lab</h2>
+                        <p class="hero-lead">Run, modify, and analyze python execution outputs. Verify mathematical claims against dataset projections.</p>
+                        <div class="notebook-markdown"><h2>Principal Component Analysis (PCA) â€” From Theory to Practice</h2>
+
+<p>This notebook is the practical, code-driven counterpart to the <strong>Principal Component Analysis (PCA)</strong> module.</p>
+
+<h3>What This Notebook Covers</h3>
+This notebook is the practical, code-driven counterpart to the <strong>Principal Component Analysis (PCA) README</strong>. We will explore how high-dimensional numeric datasets can be compressed into a set of orthogonal directions of maximum variance. You will learn to perform mean centering, compute covariance matrices, solve the eigen-decomposition problem manually using NumPy linear algebra tools, and apply production-grade PCA pipelines using Scikit-learn.
+
+<h2>What You Will Accomplish</h2>
+<ul>
+<li>Describe the curse of dimensionality and the threat of model overfitting in high-dimensional spaces.</li>
+<li>Scale high-dimensional inputs to protect variance-based estimators from range mismatch bias.</li>
+<li>Compute the covariance matrix of centered features manually using matrix dot products ($X^T X / (n-1)$).</li>
+<li>Perform eigen-decomposition on the covariance matrix using NumPy's `np.linalg.eig` and rank principal components by descending eigenvalues.</li>
+<li>Apply Scikit-learn's `PCA` Singular Value Decomposition (SVD) engine to compress 13 chemical features of wine to 2 dimensions for cluster plotting.</li>
+<li>Build Scikit-learn `Pipeline` chains containing scaling, PCA, and classification models to tune component counts using 5-fold cross-validation.</li>
+</ul>
+
+<h2>Before You Start (Prerequisites)</h2>
+<ul>
+<li>Comfort manipulating Python loops, dictionary maps, and NumPy array slices.</li>
+<li>Familiarity with basic linear algebra concepts (vectors, dot products, matrix multiplication `@`).</li>
+<li>Zero prior dimensionality reduction experience is assumed.</li>
+</ul>
+
+<h2>About the Dataset</h2>
+We use the benchmark <strong>Wine Recognition dataset</strong>, containing 178 instances of Italian wines grown in the same region but derived from three different cultivars: *class_0*, *class_1*, and *class_2*. For every wine sample, we have 13 chemical constituents (features):
+<ul>
+<li>Alcohol, Malic acid, Ash, Alcalinity of ash, Magnesium, Total phenols, Flavanoids, Nonflavanoid phenols, Proanthocyanins, Color intensity, Hue, OD280/OD315 of diluted wines, Proline.</li>
+</ul>
+
+<p>We load it directly using `sklearn.datasets.load_wine`.
+<hr></p></div>
+<div class="notebook-markdown"><h2>1. Setup & Workspace Preparation</h2>
+
+<h3>WHY?</h3>
+Setting up imports at the start of our session avoids path errors and fixes seeds to ensure all stochastic SVD calculations or random shuffles are reproducible.
+
+<h3>HOW?</h3>
+We import NumPy, Pandas, Matplotlib, Seaborn, and the necessary Scikit-learn validation models, then set seaborn style configurations.</div>
+
+            <div class="notebook-block glass">
+                <div class="notebook-header">
+                    <span class="file-name">Python Code Block</span>
+                </div>
+                <div class="notebook-body">
+                    <div class="code-cell">
+                        <div class="cell-label">In [1]:</div>
+                        <pre class="code-editor-mock"><code># Import NumPy for manual matrix operations and covariance arithmetic
+import numpy as np
+
+# Import Pandas to display dataframes and summary tables
+import pandas as pd
+
+# Import Matplotlib and Seaborn for plotting performance charts
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Import Wine dataset tools and models from sklearn
+from sklearn.datasets import load_wine
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+from sklearn.pipeline import Pipeline
+from sklearn.model_selection import cross_val_score
+from sklearn.linear_model import LogisticRegression
+
+# Set seaborn style for clean grids
+sns.set_theme(style="whitegrid")
+plt.rcParams["figure.figsize"] = (10, 6)
+
+# Fix numpy seed for reproducibility
+np.random.seed(42)
+
+print("All libraries imported and seed fixed to 42.")</code></pre>
+                    </div>
+                    
+                </div>
+            </div>
+            
+<div class="notebook-markdown"><h2>2. Dataset Loading & Exploration</h2>
+
+<h3>WHY?</h3>
+Checking feature scales and correlations before compression is essential to understand the shape of our data cloud and verify if standardization is required.
+
+<h3>HOW?</h3>
+We load the Wine dataset, wrap it in a Pandas DataFrame, and print descriptive statistics.</div>
+
+            <div class="notebook-block glass">
+                <div class="notebook-header">
+                    <span class="file-name">Python Code Block</span>
+                </div>
+                <div class="notebook-body">
+                    <div class="code-cell">
+                        <div class="cell-label">In [2]:</div>
+                        <pre class="code-editor-mock"><code># Load wine dataset dictionary from sklearn
+wine = load_wine()
+
+# Convert to a pandas DataFrame
+df = pd.DataFrame(data=wine.data, columns=wine.feature_names)
+
+# Append target codes (0, 1, 2) and target names
+df['target'] = wine.target
+df['target_name'] = df['target'].map({i: name for i, name in enumerate(wine.target_names)})
+
+print("â•" * 60)
+print(f"Dataset Shape : {df.shape[0]} samples Ã— {df.shape[1] - 2} features")
+print(f"Features      : {wine.feature_names.tolist()[:5]}... (13 total)")
+print(f"Target Classes: {wine.target_names.tolist()}")
+print(f"Samples/Class : {dict(df['target_name'].value_counts())}")
+print("â•" * 60)
+
+print("\nFirst 3 rows:")
+display(df.head(3))
+
+print("\nStructural information:")
+df.info()
+
+print("\nStatistical Summary (Observe feature range differences):")
+display(df.describe().iloc[:, :5])</code></pre>
+                    </div>
+                    
+                </div>
+            </div>
+            
+<div class="notebook-markdown"><h2>3. Preprocessing and Data Verification</h2>
+
+<h3>WHY?</h3>
+PCA projects data along axes of maximum variance, meaning features with larger numeric scales (e.g. Proline, with values over 1000) will dominate the components over features with smaller scales (e.g. Nonflavanoid phenols, around 0.3) purely because of their range. Standard scaling features to zero mean and unit variance is mandatory.
+
+<h3>HOW?</h3>
+We check for nulls or duplicates, separate the features ($X$) from target labels ($y$), and apply `StandardScaler` to $X$.</div>
+
+            <div class="notebook-block glass">
+                <div class="notebook-header">
+                    <span class="file-name">Python Code Block</span>
+                </div>
+                <div class="notebook-body">
+                    <div class="code-cell">
+                        <div class="cell-label">In [3]:</div>
+                        <pre class="code-editor-mock"><code># Step 3a: Verify data quality
+print(f"Total missing values: {df.isnull().sum().sum()}")
+print(f"Duplicate rows found: {df.duplicated().sum()}")
+
+# Step 3b: Separate Features (X) and Labels (y)
+X = df[wine.feature_names].values
+y = df['target'].values
+
+print(f"\nFeature matrix X shape : {X.shape} (samples Ã— features)")
+print(f"Target vector y shape  : {y.shape} (samples)")
+
+# Step 3c: Standardize features (mean=0, std=1)
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+print(f"\nScaled mean (first 5 features): {X_scaled.mean(axis=0)[:5].round(4)}")
+print(f"Scaled std  (first 5 features): {X_scaled.std(axis=0)[:5].round(4)}")</code></pre>
+                    </div>
+                    
+                </div>
+            </div>
+            
+<div class="notebook-markdown"><h2>4. Part 2: Manual PCA Implementation (From Scratch using NumPy)</h2>
+
+<h3>WHY?</h3>
+Building PCA manually from scratch using pure NumPy matrix operations helps you understand the underlying mathematics: mean centering, covariance calculation, eigen-decomposition, and projection.
+
+<h3>HOW?</h3>
+We implement the core mathematical steps:
+1. Center the data by subtracting the feature means.
+2. Compute the covariance matrix using the formula $C = \frac{1}{n-1} \tilde{X}^T \tilde{X}$.
+3. Solve for eigenvalues and eigenvectors using `np.linalg.eig`.
+4. Sort eigenvalues descending and project the data onto the top eigenvectors.</div>
+
+            <div class="notebook-block glass">
+                <div class="notebook-header">
+                    <span class="file-name">Python Code Block</span>
+                </div>
+                <div class="notebook-body">
+                    <div class="code-cell">
+                        <div class="cell-label">In [4]:</div>
+                        <pre class="code-editor-mock"><code>def mean_center(data):
+    # Shift features to center around the origin
+    feature_means = np.mean(data, axis=0)
+    centered_data = data - feature_means
+    return centered_data, feature_means
+
+def compute_covariance_matrix(centered_data):
+    # Cov = (X^T @ X) / (n - 1)
+    # rowvar=False tells NumPy columns are features, rows are samples
+    covariance_matrix = np.cov(centered_data, rowvar=False)
+    return covariance_matrix
+
+def eigen_decompose(covariance_matrix):
+    # Calculate eigenvalues and eigenvectors
+    eigenvalues, eigenvectors = np.linalg.eig(covariance_matrix)
+    
+    # Keep real components to handle floating point noise
+    eigenvalues = np.real(eigenvalues)
+    eigenvectors = np.real(eigenvectors)
+    
+    # Sort indices by eigenvalue descending
+    sorted_indices = np.argsort(eigenvalues)[::-1]
+    sorted_eigenvalues = eigenvalues[sorted_indices]
+    sorted_eigenvectors = eigenvectors[:, sorted_indices]
+    
+    return sorted_eigenvalues, sorted_eigenvectors
+
+def project_data(centered_data, sorted_eigenvectors, n_components):
+    # Slice the top k eigenvectors (columns) and multiply by centered data
+    top_eigenvectors = sorted_eigenvectors[:, :n_components]
+    projected_data = centered_data @ top_eigenvectors
+    return projected_data
+
+def pca_from_scratch(data, n_components):
+    # Wrap all manual PCA steps into a single pipeline
+    centered_data, _ = mean_center(data)
+    covariance_matrix = compute_covariance_matrix(centered_data)
+    sorted_eigenvalues, sorted_eigenvectors = eigen_decompose(covariance_matrix)
+    projected_data = project_data(centered_data, sorted_eigenvectors, n_components)
+    return projected_data, sorted_eigenvalues, sorted_eigenvectors
+
+# Run manual PCA to reduce 13 dimensions to 2
+X_pca_scratch, eigvals_scratch, eigvecs_scratch = pca_from_scratch(X_scaled, n_components=2)
+
+print("Manual PCA complete.")
+print(f"Projected data shape: {X_pca_scratch.shape}")</code></pre>
+                    </div>
+                    
+                </div>
+            </div>
+            
+<div class="notebook-markdown"><h2>5. Interpreting the From-Scratch PCA Output</h2>
+
+<h3>WHY?</h3>
+We must calculate the <strong>Explained Variance Ratio</strong> to evaluate how much information (variance) was preserved in the 2D projection and check for any information loss.
+
+<h3>HOW?</h3>
+We divide each eigenvalue by the sum of all eigenvalues to obtain the individual variance ratios, and print the first 5 rows of our manual 2D projections.</div>
+
+            <div class="notebook-block glass">
+                <div class="notebook-header">
+                    <span class="file-name">Python Code Block</span>
+                </div>
+                <div class="notebook-body">
+                    <div class="code-cell">
+                        <div class="cell-label">In [5]:</div>
+                        <pre class="code-editor-mock"><code>print("All eigenvalues (sorted descending):")
+print(np.round(eigvals_scratch, 3))
+
+# Compute variance ratios
+total_variance_scratch = np.sum(eigvals_scratch)
+explained_variance_ratio_scratch = eigvals_scratch / total_variance_scratch
+
+print("\nExplained variance ratio per component (all 13):")
+print(np.round(explained_variance_ratio_scratch, 4))
+
+pc1_pct = explained_variance_ratio_scratch[0] * 100
+pc2_pct = explained_variance_ratio_scratch[1] * 100
+total_pct = sum(explained_variance_ratio_scratch[:2]) * 100
+
+print(f"\nExplained variance ratio captured by our 2 selected components:")
+print(f"  PC1: {pc1_pct:.2f}%")
+print(f"  PC2: {pc2_pct:.2f}%")
+print(f"  Total (PC1 + PC2): {total_pct:.2f}%")
+
+print("\nFirst 5 rows of manual PC1, PC2 projections:")
+print(np.round(X_pca_scratch[:5], 3))</code></pre>
+                    </div>
+                    
+                </div>
+            </div>
+            
+<div class="notebook-markdown"><h2>6. Part 3: PCA Using Scikit-learn</h2>
+
+<h3>WHY?</h3>
+While manual PCA builds understanding, Scikit-learn's optimized `PCA` class is preferred in production because it uses Singular Value Decomposition (SVD), which is faster and numerically stable.
+
+<h3>HOW?</h3>
+We import `PCA` from `sklearn.decomposition`, set `n_components=2`, fit and transform standard scaled features, and compare results.</div>
+
+            <div class="notebook-block glass">
+                <div class="notebook-header">
+                    <span class="file-name">Python Code Block</span>
+                </div>
+                <div class="notebook-body">
+                    <div class="code-cell">
+                        <div class="cell-label">In [6]:</div>
+                        <pre class="code-editor-mock"><code># Initialize and fit the Scikit-learn PCA estimator
+# Note: PCA is unsupervised, so fit does NOT require target labels y
+pca_sklearn = PCA(n_components=2, random_state=42)
+X_pca_sklearn = pca_sklearn.fit_transform(X_scaled)
+
+print("Original scaled shape:", X_scaled.shape)
+print("Transformed shape    :", X_pca_sklearn.shape)
+
+print("\nExplained variance ratio (sklearn):")
+print(np.round(pca_sklearn.explained_variance_ratio_, 4))
+
+print(f"Total variance explained (sklearn): {pca_sklearn.explained_variance_ratio_.sum()*100:.2f}%")
+
+print("\nShape of components_ matrix:", pca_sklearn.components_.shape)
+print("Principal component vectors (first 2 components as linear combinations of 13 features):")
+print(np.round(pca_sklearn.components_, 3))</code></pre>
+                    </div>
+                    
+                </div>
+            </div>
+            
+<div class="notebook-markdown"><h2>7. Step 3: Visualizing PCA Results</h2>
+
+<h3>WHY?</h3>
+Dimensionality reduction simplifies the classification task. Visualizing the 2D projection helps evaluate whether the classes have been separated cleanly.
+
+<h3>HOW?</h3>
+We plot two charts side-by-side: a bar chart showing the explained variance ratio of all 13 components, and a scatter plot of the two primary principal components colored by wine variety.</div>
+
+            <div class="notebook-block glass">
+                <div class="notebook-header">
+                    <span class="file-name">Python Code Block</span>
+                </div>
+                <div class="notebook-body">
+                    <div class="code-cell">
+                        <div class="cell-label">In [7]:</div>
+                        <pre class="code-editor-mock"><code>fig, axes = plt.subplots(1, 2, figsize=(16, 6))
+
+# Left: Scree Plot showing explained variance ratio
+full_pca = PCA(random_state=42).fit(X_scaled)
+components_range = np.arange(1, 14)
+
+axes[0].bar(components_range, full_pca.explained_variance_ratio_, alpha=0.7, color='#2196F3', label='Individual Variance')
+axes[0].step(components_range, np.cumsum(full_pca.explained_variance_ratio_), where='mid', color='#FF9800', label='Cumulative Variance')
+axes[0].set_title('Scree Plot: Explained Variance by Component', fontsize=13, fontweight='bold')
+axes[0].set_xlabel('Principal Component Index', fontsize=11)
+axes[0].set_ylabel('Variance Ratio', fontsize=11)
+axes[0].set_xticks(components_range)
+axes[0].legend(loc='best')
+
+# Right: 2D Projection Scatter Plot colored by target class
+colors = ['#2196F3', '#FF9800', '#4CAF50']
+classes = np.unique(y)
+
+for idx, c in enumerate(classes):
+    axes[1].scatter(
+        X_pca_sklearn[y == c, 0],
+        X_pca_sklearn[y == c, 1],
+        label=f"{wine.target_names[c]}",
+        color=colors[idx],
+        alpha=0.8,
+        edgecolors='black',
+        s=60
+    )
+
+axes[1].set_title('Wine Clusters in PCA 2D Projected Space', fontsize=13, fontweight='bold')
+axes[1].set_xlabel('Principal Component 1 (PC1)', fontsize=11)
+axes[1].set_ylabel('Principal Component 2 (PC2)', fontsize=11)
+axes[1].legend(title='Wine Cultivars')
+
+plt.suptitle('Principal Component Analysis (PCA) Diagnostic Dashboard', fontsize=15, fontweight='bold', y=1.01)
+plt.tight_layout()
+plt.show()</code></pre>
+                    </div>
+                    
+                </div>
+            </div>
+            
+<div class="notebook-markdown"><h2>8. Hyperparameter Sweeps: Comparing Different n_components Values</h2>
+
+<h3>WHY?</h3>
+Choosing the target dimension count ($k$) involves a trade-off. We run a comparison sweep to observe the diminishing returns of adding more components.</div>
+
+            <div class="notebook-block glass">
+                <div class="notebook-header">
+                    <span class="file-name">Python Code Block</span>
+                </div>
+                <div class="notebook-body">
+                    <div class="code-cell">
+                        <div class="cell-label">In [8]:</div>
+                        <pre class="code-editor-mock"><code>component_options = [2, 3, 5]
+comparison_records = []
+
+for k in component_options:
+    pca_k = PCA(n_components=k, random_state=42)
+    pca_k.fit(X_scaled)
+    total_explained = pca_k.explained_variance_ratio_.sum()
+    comparison_records.append({
+        "n_components": k,
+        "explained_variance_ratio_per_component": np.round(pca_k.explained_variance_ratio_, 4).tolist(),
+        "total_explained_variance (%)": round(total_explained * 100, 2),
+    })
+
+comparison_df = pd.DataFrame(comparison_records)
+print("â•" * 75)
+print("                    DIMENSION COMPRESSION PERFORMANCE")
+print("â•" * 75)
+display(comparison_df.set_index('n_components'))
+print("â•" * 75)</code></pre>
+                    </div>
+                    
+                </div>
+            </div>
+            
+<div class="notebook-markdown"><h2>9. Cross-Validation: Is Higher Explained Variance Always Better?</h2>
+
+<h3>WHY?</h3>
+Explained variance measures information retention, but it does not guarantee downstream model performance. We tune `n_components` using cross-validation to find the optimal value for classification accuracy.
+
+<h3>HOW?</h3>
+We chain `StandardScaler`, `PCA`, and `LogisticRegression` into a Scikit-learn `Pipeline`, fit the pipeline inside a 5-fold cross-validation loop, and evaluate accuracy for $k = [2, 3, 5, 8, 13]$.</div>
+
+            <div class="notebook-block glass">
+                <div class="notebook-header">
+                    <span class="file-name">Python Code Block</span>
+                </div>
+                <div class="notebook-body">
+                    <div class="code-cell">
+                        <div class="cell-label">In [9]:</div>
+                        <pre class="code-editor-mock"><code>component_options_cv = [2, 3, 5, 8, 13]
+cv_results = []
+
+for k in component_options_cv:
+    # Chain scaling, PCA projection, and model training in a pipeline
+    # This fits StandardScaler on the training fold only to prevent leakage
+    pipeline = Pipeline([
+        ("scaler", StandardScaler()),
+        ("pca", PCA(n_components=k, random_state=42)),
+        ("classifier", LogisticRegression(max_iter=1000, random_state=42)),
+    ])
+    
+    # Run 5-fold cross validation
+    scores = cross_val_score(pipeline, X, y, cv=5, scoring="accuracy")
+    
+    cv_results.append({
+        "n_components": k,
+        "mean_cv_accuracy": round(scores.mean(), 4),
+        "std_cv_accuracy": round(scores.std(), 4),
+    })
+
+cv_results_df = pd.DataFrame(cv_results)
+print("â•" * 65)
+print("            CROSS-VALIDATED DOWNSTREAM CLASSIFICATION")
+print("â•" * 65)
+display(cv_results_df.set_index('n_components'))
+print("â•" * 65)
+
+best_row = cv_results_df.loc[cv_results_df["mean_cv_accuracy"].idxmax()]
+print(f"\nBest n_components: {int(best_row['n_components'])} (Mean CV accuracy = {best_row['mean_cv_accuracy']*100:.2f}%)")</code></pre>
+                    </div>
+                    
+                </div>
+            </div>
+            
+<div class="notebook-markdown"><h2>Part 10: Placement & Interview Q&A</h2>
+
+<p><strong>Q1. What is PCA?</strong>  
+<strong>Answer:</strong> PCA is an unsupervised dimensionality reduction technique that transforms correlated features into a smaller set of uncorrelated variables called principal components. These components are ordered by the amount of variance they capture from the original data.</p>
+
+<p><strong>Q2. Why standardize before PCA?</strong>  
+<strong>Answer:</strong> Variance is scale-dependent. Without standardization, features with larger numeric scales (e.g., Proline) will dominate the components purely due to their range, rather than their actual information content.</p>
+
+<p><strong>Q3. Why eigenvectors?</strong>  
+<strong>Answer:</strong> The eigenvectors of the covariance matrix point in the directions of maximum spread in the data cloud, and their eigenvalues quantify how much variance lies along each axis.</p>
+
+<p><strong>Q4. Difference between PCA and feature selection?</strong>  
+<strong>Answer:</strong> Feature selection keeps a subset of the original features as-is without changing them, preserving their interpretability. PCA projects the original features into a new, lower-dimensional space, creating synthetic features that are linear combinations of the original ones.</p>
+
+<p><strong>Q5. PCA vs t-SNE?</strong>  
+<strong>Answer:</strong> PCA is a linear technique that preserves global variance and is commonly used as a preprocessing/compression step. t-SNE is a non-linear technique designed to preserve local neighborhoods for visualization; it is stochastic, non-invertible, and not suitable for general preprocessing before modeling.</p>
+
+<hr></div>
+<div class="notebook-markdown"><h2>Key Takeaways</h2>
+
+<ul>
+<li><strong>Dimensionality reduction simplifies modeling.</strong> Reducing the feature count (from 13 dimensions to 2â€“5 components) speeds up downstream training and reduces the risk of model overfitting.</li>
+<li><strong>Variance acts as a proxy for information.</strong> PCA identifies orthogonal projection axes that maximize spread, preserving the core structure of the dataset.</li>
+<li><strong>Standard scaling is mandatory.</strong> PCA is sensitive to feature scaling. Scaling features to unit variance ensures all measurements contribute equally to the projection axes.</li>
+<li><strong>Tuning components requires cross-validation.</strong> While Scree plots show how much variance is retained, cross-validation measures actual downstream model accuracy, helping you select the optimal component count.</li>
+</ul></div>
+                    </div>
+                    
+          </div>
+
+          <!-- 6. Bottom Navigation Cards -->
+          <div class="bottom-navigation-cards-row">
+            
+                <a href="7.7-summary.html" class="bottom-nav-card glass">
+                  <span class="nav-direction">&larr; Previous Lesson</span>
+                  <span class="nav-title">7.7 Summary & Interview Preparation</span>
+                </a>
+                
+            
+                <a href="../../curriculum.html" class="bottom-nav-card next glass">
+                  <span class="nav-direction">Finish Module &rarr;</span>
+                  <span class="nav-title">Back to Curriculum</span>
+                </a>
+                
+          </div>
+
+          <div class="bottom-return-curriculum-row">
+            <a href="../../curriculum.html" class="btn btn-secondary">&larr; Return to Curriculum</a>
+          </div>
+
+        </div>
+
+        <!-- 7. Right Sidebar Panel (Sticky Accordion Mount) -->
+        <aside id="sidebar-container" class="lesson-right-sidebar glass"></aside>
+
+      </div>
+    </main>
+
+    <!-- Footer Injector Mount -->
+    <footer id="footer-container" class="main-footer"></footer>
+
+    <!-- Shared Static LMS Scripts -->
+    <script src="../../js/app.js"></script>
+    <script src="../../js/navigation.js"></script>
+    <script src="../../js/sidebar.js"></script>
+    <script src="../../js/progress.js"></script>
+</body>
+</html>

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why Machine Learning? — Gradients ML LMS</title>
+    
+    <!-- KaTeX CSS and JS for mathematical equations -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
+
+    <!-- CSS sheets -->
+    <link rel="stylesheet" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../css/layout.css" />
+    <link rel="stylesheet" href="../../css/responsive.css" />
+    <link rel="stylesheet" href="../../css/lesson.css" />
+    <link rel="stylesheet" href="../../css/sidebar.css" />
+</head>
+<body>
+    <!-- Top Header Navigation Injector -->
+    <header id="header-container" class="main-header glass"></header>
+
+    <main class="container fade-in" style="padding-bottom: 6rem;">
+      
+      <!-- 1. Breadcrumb Navigation -->
+      <div class="breadcrumb-container">
+        <div class="lesson-breadcrumb">
+          <a href="../../index.html">Home</a> &gt; 
+          <a href="../../course-overview.html">Course Overview</a> &gt; 
+          <a href="../../curriculum.html">Curriculum</a> &gt; 
+          <span>01-What_is_ML: Introduction to Machine Learning</span> &gt; 
+          <span class="active-node">Lesson 1.2</span>
+        </div>
+      </div>
+
+      <!-- 2. Two-Column Layout (Main Content + Right Sidebar) -->
+      <div class="lesson-grid-layout">
+        
+        <!-- Center-Left Content Area -->
+        <div class="lesson-content-area">
+          <div class="content-connector-line"></div>
+
+          <!-- 3. Lesson Header -->
+          <header class="lesson-template-header">
+            <div class="lesson-header-meta-row">
+              <span class="lesson-header-badge track">Machine Learning Fundamentals</span>
+              <span class="lesson-header-badge">01-What_is_ML</span>
+              <span class="lesson-header-badge">Lesson 1.2</span>
+              <span class="lesson-header-badge diff">Beginner</span>
+              <span class="lesson-header-badge">12 mins</span>
+            </div>
+            <h1>Why Machine Learning?</h1>
+          </header>
+
+          <!-- 4. Learning Objectives Card -->
+          <div class="objectives-box-card glass">
+            <h3>Lesson Objectives</h3>
+            <div class="objectives-box-grid">
+              <div class="objectives-box-col">
+                <h4>What you will learn</h4>
+                <p>Master the details of Why Machine Learning? to build complete technical intuition.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Prerequisites</h4>
+                <p>Completion of previous conceptual lessons in this track.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Expected Outcome</h4>
+                <p>Apply Why Machine Learning? diagnostics to prevent training loops leakage or parameters decay.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. Main Lesson Content Area -->
+          <div class="markdown-content">
+            
+                    <div class="lesson-content-block">
+                        <h2>Lesson 1.1: The Paradigm Shift (Traditional Programming vs. ML)</h2>
+                        <h3>1. What Is the Problem?</h3>
+In classical computer science, we solve problems by writing explicit rules. For example, to calculate tax brackets or process shopping cart discounts, a developer writes nested conditions (`if/else` rules). However, this rule-based approach fails when:
+1. <strong>The Rules Are Too Complex to Document:</strong> Writing manual logic to recognize a hand-drawn digit or distinguish voices is virtually impossible because the number of edge cases is infinite.
+2. <strong>The Problem Scales Dynamically:</strong> Personalizing recommendations for millions of active shoppers cannot be handled by a group of engineers writing rules.
+3. <strong>The Data Shifts Over Time:</strong> Security systems filtering email spam face adversaries who continuously change spam keywords, making static rule files obsolete instantly.
+
+<hr>
+
+<h3>2. The Solution: What is Machine Learning?</h3>
+Instead of hand-coding rules, we collect examples of the inputs and correct outputs, and let an optimization algorithm discover the rules for us.
+
+<div class="alert-box tip">
+                <span class="alert-icon">💡</span>
+                <div class="alert-content">
+                    <strong>Formal Definition (Tom Mitchell, 1997):</strong>
+*"A computer program is said to learn from <strong>Experience E</strong> with respect to some class of <strong>Tasks T</strong> and <strong>Performance measure P</strong>, if its performance at tasks in T, as measured by P, improves with experience E."*
+                </div>
+            </div>
+
+<h4>Translating the Formal Definition:</h4>
+<ul>
+<li><strong>The Task (T):</strong> The specific goal the system needs to achieve (e.g., classifying a tumor as benign or malignant).</li>
+<li><strong>The Experience (E):</strong> The historical database of observations (e.g., past patient scans and clinical records).</li>
+<li><strong>The Performance Measure (P):</strong> The quantitative metric indicating quality (e.g., the classification accuracy percentage on unseen cases).</li>
+</ul>
+
+<hr>
+
+<h3>3. Visual Comparison & Core Mechanics</h3>
+
+<pre class="output-console-mock"><code>Traditional Programming:
+Data + Rules -------------> [ Executable Code ] -------------> Output
+
+<p>Machine Learning:
+Data + Output ------------> [ Training Algorithm ] ------------> Rules (Model)</code></pre></p>
+
+<table class="variable-table">
+        <thead>
+            <tr><th>Dimension</th><th>Traditional Programming</th><th>Machine Learning</th></tr>
+        </thead>
+        <tbody>
+            <tr><td><strong>Source of Logic</strong></td><td>Defined explicitly by developers.</td><td>Discovered automatically by training loops.</td></tr><tr><td><strong>Adaptability</strong></td><td>Requires manual code rewrites when patterns change.</td><td>Adapts through retraining on new sample points.</td></tr><tr><td><strong>Primary Use Cases</strong></td><td>Deterministic systems (tax calculators, bank transactions).</td><td>Probabilistic systems (image classifiers, recommendation systems).</td></tr>
+        </tbody>
+    </table>
+
+<hr>
+
+<h3>4. When to Deploy ML (Decision Guide)</h3>
+
+<h4>✅ When to Use Machine Learning:</h4>
+<ul>
+<li>The rules are too complex for humans to write (speech-to-text, autonomous driving).</li>
+<li>A large dataset containing genuine predictive signals is available.</li>
+<li>The system must scale personalized decisions dynamically (search engines).</li>
+</ul>
+
+<h4>❌ When NOT to Use Machine Learning:</h4>
+<ul>
+<li>The logic is deterministic and simple (e.g., checking if a user age value is negative).</li>
+<li>The cost of a prediction failure is catastrophic (e.g., high-risk medical diagnoses without human supervision).</li>
+<li>High interpretability is mandatory, and black-box models are restricted by law.</li>
+</ul>
+
+<hr>
+                    </div>
+                    
+          </div>
+
+          <!-- 6. Bottom Navigation Cards -->
+          <div class="bottom-navigation-cards-row">
+            
+                <a href="1.1-philosophy.html" class="bottom-nav-card glass">
+                  <span class="nav-direction">&larr; Previous Lesson</span>
+                  <span class="nav-title">1.1 Core Philosophy</span>
+                </a>
+                
+            
+                <a href="1.3-taxonomy.html" class="bottom-nav-card next glass">
+                  <span class="nav-direction">Next Lesson &rarr;</span>
+                  <span class="nav-title">1.3 Taxonomy of ML</span>
+                </a>
+                
+          </div>
+
+          <div class="bottom-return-curriculum-row">
+            <a href="../../curriculum.html" class="btn btn-secondary">&larr; Return to Curriculum</a>
+          </div>
+
+        </div>
+
+        <!-- 7. Right Sidebar Panel (Sticky Accordion Mount) -->
+        <aside id="sidebar-container" class="lesson-right-sidebar glass"></aside>
+
+      </div>
+    </main>
+
+    <!-- Footer Injector Mount -->
+    <footer id="footer-container" class="main-footer"></footer>
+
+    <!-- Shared Static LMS Scripts -->
+    <script src="../../js/app.js"></script>
+    <script src="../../js/navigation.js"></script>
+    <script src="../../js/sidebar.js"></script>
+    <script src="../../js/progress.js"></script>
+</body>
+</html>

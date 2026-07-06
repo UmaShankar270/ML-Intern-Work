@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pipelines and Best Practices â€” Gradients ML LMS</title>
+    
+        <!-- KaTeX CSS and JS for mathematical equations -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    <script defer src="../../js/katex.js"></script>
+
+    <!-- CSS sheets -->
+    <link rel="stylesheet" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../css/layout.css" />
+    <link rel="stylesheet" href="../../css/responsive.css" />
+    <link rel="stylesheet" href="../../css/lesson.css" />
+    <link rel="stylesheet" href="../../css/sidebar.css" />
+</head>
+<body>
+    <!-- Top Header Navigation Injector -->
+    <header id="header-container" class="main-header glass"></header>
+
+    <main class="container fade-in" style="padding-bottom: 6rem;">
+      
+      <!-- 1. Breadcrumb Navigation -->
+      <div class="breadcrumb-container">
+        <div class="lesson-breadcrumb">
+          <a href="../../index.html">Home</a> &gt; 
+          <a href="../../course-overview.html">Course Overview</a> &gt; 
+          <a href="../../curriculum.html">Curriculum</a> &gt; 
+          <span>04-Feature_Engineering: Feature Engineering</span> &gt; 
+          <span class="active-node">Lesson 4.6</span>
+        </div>
+      </div>
+
+      <!-- 2. Two-Column Layout (Main Content + Right Sidebar) -->
+      <div class="lesson-grid-layout">
+        
+        <!-- Center-Left Content Area -->
+        <div class="lesson-content-area">
+          <div class="content-connector-line"></div>
+
+          <!-- 3. Lesson Header -->
+          <header class="lesson-template-header">
+            <div class="lesson-header-meta-row">
+              <span class="lesson-header-badge track">Machine Learning Fundamentals</span>
+              <span class="lesson-header-badge">04-Feature_Engineering</span>
+              <span class="lesson-header-badge">Lesson 4.6</span>
+              <span class="lesson-header-badge diff">Intermediate</span>
+              <span class="lesson-header-badge">12 mins</span>
+            </div>
+            <h1>Pipelines and Best Practices</h1>
+          </header>
+
+          <!-- 4. Learning Objectives Card -->
+          <div class="objectives-box-card glass">
+            <h3>Lesson Objectives</h3>
+            <div class="objectives-box-grid">
+              <div class="objectives-box-col">
+                <h4>What you will learn</h4>
+                <p>Understand the data leakage risk when preprocessing before train/test splits and how Scikit-learn Pipelines prevent it by encapsulating the full transformation chain.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Prerequisites</h4>
+                <p>Understanding of scaling, polynomial features, and train/test splits; completion of Lessons 4.3â€“4.4.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Expected Outcome</h4>
+                <p>Build a leak-proof Pipeline that chains StandardScaler, PolynomialFeatures, and LogisticRegression, and explain how pipeline.fit() vs pipeline.predict() maintain proper data isolation.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. Main Lesson Content Area -->
+          <div class="markdown-content">
+            
+                    <div class="lesson-content-block">
+                        <h2>Lesson 4.5: Scikit-learn Pipeline Best Practices</h2>
+                        <div class="alert-box tip" style="border-left-color: var(--accent-purple);">
+                <span class="alert-icon">âš ï¸</span>
+                <div class="alert-content">
+                    <strong>Data Leakage Risk:</strong>
+If you fit a scaler on the entire dataset before splitting it into train/test sets, your training process leaks statistics (mean and standard deviation) from the test set. This leads to overly optimistic validation scores and model failure in production.
+                </div>
+            </div>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h3>Chaining Pipeline Steps:</h3>
+                        <p>We resolve this by using a Scikit-learn `Pipeline` to encapsulate the entire sequence:</p>
+
+<pre class="output-console-mock"><code>[Raw X] â”€â”€> [ StandardScaler ] â”€â”€> [ PolynomialFeatures ] â”€â”€> [ LogisticRegression ] â”€â”€> [y_pred]</code></pre>
+
+<p>When calling `pipeline.fit(X_train, y_train)`, the scaler fits *only* on the training data. During testing, `pipeline.predict(X_test)` applies these fitted parameters without recalculating them on test data.</p>
+
+<hr>
+                    </div>
+                    
+          </div>
+
+          <!-- 6. Bottom Navigation Cards -->
+          <div class="bottom-navigation-cards-row">
+            
+                <a href="4.5-selection.html" class="bottom-nav-card glass">
+                  <span class="nav-direction">&larr; Previous Lesson</span>
+                  <span class="nav-title">4.5 Feature Selection Methods</span>
+                </a>
+                
+            
+                <a href="4.7-summary.html" class="bottom-nav-card next glass">
+                  <span class="nav-direction">Next Lesson &rarr;</span>
+                  <span class="nav-title">4.7 Summary & Interview Preparation</span>
+                </a>
+                
+          </div>
+
+          <div class="bottom-return-curriculum-row">
+            <a href="../../curriculum.html" class="btn btn-secondary">&larr; Return to Curriculum</a>
+          </div>
+
+        </div>
+
+        <!-- 7. Right Sidebar Panel (Sticky Accordion Mount) -->
+        <aside id="sidebar-container" class="lesson-right-sidebar glass"></aside>
+
+      </div>
+    </main>
+
+    <!-- Footer Injector Mount -->
+    <footer id="footer-container" class="main-footer"></footer>
+
+    <!-- Shared Static LMS Scripts -->
+    <script src="../../js/app.js"></script>
+    <script src="../../js/navigation.js"></script>
+    <script src="../../js/sidebar.js"></script>
+    <script src="../../js/progress.js"></script>
+</body>
+</html>

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stratified K-Fold Splits â€” Gradients ML LMS</title>
+    
+        <!-- KaTeX CSS and JS for mathematical equations -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    <script defer src="../../js/katex.js"></script>
+
+    <!-- CSS sheets -->
+    <link rel="stylesheet" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../css/layout.css" />
+    <link rel="stylesheet" href="../../css/responsive.css" />
+    <link rel="stylesheet" href="../../css/lesson.css" />
+    <link rel="stylesheet" href="../../css/sidebar.css" />
+</head>
+<body>
+    <!-- Top Header Navigation Injector -->
+    <header id="header-container" class="main-header glass"></header>
+
+    <main class="container fade-in" style="padding-bottom: 6rem;">
+      
+      <!-- 1. Breadcrumb Navigation -->
+      <div class="breadcrumb-container">
+        <div class="lesson-breadcrumb">
+          <a href="../../index.html">Home</a> &gt; 
+          <a href="../../course-overview.html">Course Overview</a> &gt; 
+          <a href="../../curriculum.html">Curriculum</a> &gt; 
+          <span>05-Cross_validation_Strategies: Cross-Validation Strategies</span> &gt; 
+          <span class="active-node">Lesson 5.3</span>
+        </div>
+      </div>
+
+      <!-- 2. Two-Column Layout (Main Content + Right Sidebar) -->
+      <div class="lesson-grid-layout">
+        
+        <!-- Center-Left Content Area -->
+        <div class="lesson-content-area">
+          <div class="content-connector-line"></div>
+
+          <!-- 3. Lesson Header -->
+          <header class="lesson-template-header">
+            <div class="lesson-header-meta-row">
+              <span class="lesson-header-badge track">Machine Learning Fundamentals</span>
+              <span class="lesson-header-badge">05-Cross_validation_Strategies</span>
+              <span class="lesson-header-badge">Lesson 5.3</span>
+              <span class="lesson-header-badge diff">Intermediate</span>
+              <span class="lesson-header-badge">12 mins</span>
+            </div>
+            <h1>Stratified K-Fold Splits</h1>
+          </header>
+
+          <!-- 4. Learning Objectives Card -->
+          <div class="objectives-box-card glass">
+            <h3>Lesson Objectives</h3>
+            <div class="objectives-box-grid">
+              <div class="objectives-box-col">
+                <h4>What you will learn</h4>
+                <p>Understand how Stratified K-Fold preserves class proportions across folds. Learn when to use it for imbalanced datasets.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Prerequisites</h4>
+                <p>Lesson 5.2 â€” standard K-Fold cross-validation mechanics.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Expected Outcome</h4>
+                <p>Identify imbalanced classification scenarios and select Stratified K-Fold to ensure representative minority-class evaluation.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. Main Lesson Content Area -->
+          <div class="markdown-content">
+            
+                    <div class="lesson-content-block">
+                        <h3>2. Stratified K-Fold</h3>
+                        <ul>
+<li><strong>What it is:</strong> A variation of K-Fold where each fold preserves the class proportions of the entire dataset.</li>
+<li><strong>When to use:</strong> Essential for <strong>imbalanced datasets</strong> (e.g., fraud detection with 99% negative and 1% positive cases), ensuring every fold has representative cases of the minority class.</li>
+</ul>
+
+<hr>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h3>Why Stratification Matters</h3>
+                        <p>In standard K-Fold, each fold is created by randomly partitioning data. When classes are imbalanced, random splits may produce folds that contain <strong>zero samples of the minority class</strong>. A model evaluated on such a fold would show misleadingly high accuracy (by predicting the majority class for every sample), hiding its inability to detect the minority class.</p>
+                        
+                        <div class="alert-box tip">
+                            <strong>Fraud Detection Example:</strong> With 99% legitimate transactions and 1% fraudulent, a 5-fold random split could leave some folds with 0 fraud cases. Stratified K-Fold guarantees each fold has ~1% fraud samples, giving a realistic picture of model performance on the minority class.
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h3>Visual Diagram: Stratified K-Fold</h3>
+                        <pre class="output-console-mock"><code>Dataset (150 samples, 3 classes, 50 each)
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ â—â—â—â—â—â—‹â—‹â—‹â—‹â—‹â– â– â– â– â–   (balanced class labels)   â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+
+Stratified 3-Fold Split:
+                     
+Fold 1: Train           â”‚ Val
+â—â—â—â—â—‹â—‹â—‹â—‹â– â– â– â–   (120)    â”‚ â—â—â—‹â–   (30)
+                         
+Fold 2: Train           â”‚ Val
+â—â—â—â—â—‹â—‹â—‹â—‹â– â– â– â–   (120)    â”‚ â—â—â—‹â–   (30)
+                         
+Fold 3: Train           â”‚ Val
+â—â—â—â—â—‹â—‹â—‹â—‹â– â– â– â–   (120)    â”‚ â—â—â—‹â–   (30)
+
+Each fold maintains the 33/33/33% class ratio.</code></pre>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h3>When to Use Stratified K-Fold</h3>
+                        <ul>
+                            <li><strong>Classification with imbalanced classes:</strong> Fraud detection, medical diagnosis, rare-event prediction.</li>
+                            <li><strong>Multi-class problems:</strong> Ensures every class appears in every fold.</li>
+                            <li><strong>Small datasets:</strong> Even minor imbalances are amplified with fewer samples.</li>
+                        </ul>
+                        <div class="alert-box tip">
+                            <strong>Note:</strong> Stratification is not meaningful for regression tasks since the target is continuous. For regression, use standard K-Fold or shuffle-split strategies.
+                        </div>
+                    </div>
+                    
+          </div>
+
+          <!-- 6. Bottom Navigation Cards -->
+          <div class="bottom-navigation-cards-row">
+            
+                <a href="5.2-kfold.html" class="bottom-nav-card glass">
+                  <span class="nav-direction">&larr; Previous Lesson</span>
+                  <span class="nav-title">5.2 K-Fold Cross Validation</span>
+                </a>
+                
+            
+                <a href="5.4-variations.html" class="bottom-nav-card next glass">
+                  <span class="nav-direction">Next Lesson &rarr;</span>
+                  <span class="nav-title">5.4 LOOCV and Shuffle Split Variations</span>
+                </a>
+                
+          </div>
+
+          <div class="bottom-return-curriculum-row">
+            <a href="../../curriculum.html" class="btn btn-secondary">&larr; Return to Curriculum</a>
+          </div>
+
+        </div>
+
+        <!-- 7. Right Sidebar Panel (Sticky Accordion Mount) -->
+        <aside id="sidebar-container" class="lesson-right-sidebar glass"></aside>
+
+      </div>
+    </main>
+
+    <!-- Footer Injector Mount -->
+    <footer id="footer-container" class="main-footer"></footer>
+
+    <!-- Shared Static LMS Scripts -->
+    <script src="../../js/app.js"></script>
+    <script src="../../js/navigation.js"></script>
+    <script src="../../js/sidebar.js"></script>
+    <script src="../../js/progress.js"></script>
+</body>
+</html>

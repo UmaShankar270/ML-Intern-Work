@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Introduction to Unsupervised Compression â€” Gradients ML LMS</title>
+    
+        <!-- KaTeX CSS and JS for mathematical equations -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    <script defer src="../../js/katex.js"></script>
+
+    <!-- CSS sheets -->
+    <link rel="stylesheet" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../css/layout.css" />
+    <link rel="stylesheet" href="../../css/responsive.css" />
+    <link rel="stylesheet" href="../../css/lesson.css" />
+    <link rel="stylesheet" href="../../css/sidebar.css" />
+</head>
+<body>
+    <!-- Top Header Navigation Injector -->
+    <header id="header-container" class="main-header glass"></header>
+
+    <main class="container fade-in" style="padding-bottom: 6rem;">
+      
+      <!-- 1. Breadcrumb Navigation -->
+      <div class="breadcrumb-container">
+        <div class="lesson-breadcrumb">
+          <a href="../../index.html">Home</a> &gt; 
+          <a href="../../course-overview.html">Course Overview</a> &gt; 
+          <a href="../../curriculum.html">Curriculum</a> &gt; 
+          <span>07-PCA: Principal Component Analysis (PCA)</span> &gt; 
+          <span class="active-node">Lesson 7.1</span>
+        </div>
+      </div>
+
+      <!-- 2. Two-Column Layout (Main Content + Right Sidebar) -->
+      <div class="lesson-grid-layout">
+        
+        <!-- Center-Left Content Area -->
+        <div class="lesson-content-area">
+          <div class="content-connector-line"></div>
+
+          <!-- 3. Lesson Header -->
+          <header class="lesson-template-header">
+            <div class="lesson-header-meta-row">
+              <span class="lesson-header-badge track">Dimensionality Reduction</span>
+              <span class="lesson-header-badge">07-PCA</span>
+              <span class="lesson-header-badge">Lesson 7.1</span>
+              <span class="lesson-header-badge diff">Intermediate</span>
+              <span class="lesson-header-badge">12 mins</span>
+            </div>
+            <h1>Introduction to Unsupervised Compression</h1>
+          </header>
+
+          <!-- 4. Learning Objectives Card -->
+          <div class="objectives-box-card glass">
+            <h3>Lesson Objectives</h3>
+            <div class="objectives-box-grid">
+              <div class="objectives-box-col">
+                <h4>What you will learn</h4>
+                <p>Understand the intuition behind dimensionality reduction, why it is needed, and how PCA's core concept of variance maximization works through real-world analogies.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Prerequisites</h4>
+                <p>Basic understanding of features and dimensions in datasets.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Expected Outcome</h4>
+                <p>Explain PCA's role as an unsupervised linear feature extraction technique and identify the four key issues that motivate dimensionality reduction.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. Main Lesson Content Area -->
+          <div class="markdown-content">
+            
+                    <div class="lesson-content-block">
+                        <h2>Lesson 7.1: The Intuition of Dimensionality Reduction</h2>
+                        
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h3>What is Dimensionality Reduction?</h3>
+                        <p>Dimensionality reduction is the process of compressing a dataset containing many columns (dimensions) into a smaller, more manageable set of columns while preserving as much of the underlying information as possible.</p>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h3>Why is it Needed?</h3>
+                        <p>Modern datasets are often high-dimensional. For example, genomics datasets track thousands of gene expression levels, and image processing tasks represent each pixel as a feature. This abundance of features leads to several critical issues:</p>
+                        <ul>
+                            <li><strong>Overfitting:</strong> High-dimensional models have too many degrees of freedom and easily memorize training noise.</li>
+                            <li><strong>Computational Bottlenecks:</strong> Training time and memory footprints scale exponentially with feature count.</li>
+                            <li><strong>Visualization Limits:</strong> Humans can only visualize data in 2D or 3D. Higher dimensions are impossible to plot directly.</li>
+                            <li><strong>Curse of Dimensionality:</strong> As dimensions increase, data points become extremely sparse in the high-dimensional space, rendering distance metrics (like Euclidean distance) less meaningful.</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h3>PCA's Core Concept</h3>
+                        <p>Principal Component Analysis (PCA) is an <strong>unsupervised linear feature extraction</strong> technique. It identifies the directions of maximum variance in the high-dimensional space and projects the data onto these directions, creating a set of new, uncorrelated features called <strong>principal components</strong>.</p>
+
+<pre class="output-console-mock"><code>[Diagram: High-Dimensional Data Cloud]
+         |      .   .   .
+         |    .   .  .
+         |  .   .  .
+         +-------------------
+         
+[Diagram: PCA Projection Axis Selection]
+         |      .   .   .  &lt;-- Project points onto this best-fit axis
+         |    /   .  .
+         |  /   .  .
+         +-------------------</code></pre>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h3>Real-World Analogies</h3>
+                        <h4>Analogy 1: Textbook Summarization</h4>
+Imagine you have a 500-page chemistry textbook. You need to write a 10-page study guide. You do not randomly select 10 pages and throw away the rest (that would be <strong>Feature Selection</strong>). Instead, you read the textbook and write summary paragraphs that capture the core concepts (this is <strong>Feature Extraction</strong>). You lose the minor details, but you preserve the main signal in a compressed format.
+
+<h4>Analogy 2: 3D Sculpture Photography</h4>
+Imagine a complex 3D sculpture in a museum. You want to capture its shape on a flat 2D photograph. If you take a picture from a random angle, the shadows might overlap and obscure the details. PCA is the process of finding the mathematically "optimal camera angle" that displays the greatest spread (variance) of the sculpture, capturing its structure in 2D with minimal overlap.
+
+<hr>
+                    </div>
+                    
+          </div>
+
+          <!-- 6. Bottom Navigation Cards -->
+          <div class="bottom-navigation-cards-row">
+            
+                <a href="../../curriculum.html" class="bottom-nav-card glass">
+                  <span class="nav-direction">&larr; Return</span>
+                  <span class="nav-title">Curriculum Directory</span>
+                </a>
+                
+            
+                <a href="7.2-variance-vs-reconstruction.html" class="bottom-nav-card next glass">
+                  <span class="nav-direction">Next Lesson &rarr;</span>
+                  <span class="nav-title">7.2 Variance Maximization vs Reconstruction Error</span>
+                </a>
+                
+          </div>
+
+          <div class="bottom-return-curriculum-row">
+            <a href="../../curriculum.html" class="btn btn-secondary">&larr; Return to Curriculum</a>
+          </div>
+
+        </div>
+
+        <!-- 7. Right Sidebar Panel (Sticky Accordion Mount) -->
+        <aside id="sidebar-container" class="lesson-right-sidebar glass"></aside>
+
+      </div>
+    </main>
+
+    <!-- Footer Injector Mount -->
+    <footer id="footer-container" class="main-footer"></footer>
+
+    <!-- Shared Static LMS Scripts -->
+    <script src="../../js/app.js"></script>
+    <script src="../../js/navigation.js"></script>
+    <script src="../../js/sidebar.js"></script>
+    <script src="../../js/progress.js"></script>
+</body>
+</html>

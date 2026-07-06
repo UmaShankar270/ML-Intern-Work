@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LOOCV and Shuffle Split Variations â€” Gradients ML LMS</title>
+    
+        <!-- KaTeX CSS and JS for mathematical equations -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    <script defer src="../../js/katex.js"></script>
+
+    <!-- CSS sheets -->
+    <link rel="stylesheet" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../css/layout.css" />
+    <link rel="stylesheet" href="../../css/responsive.css" />
+    <link rel="stylesheet" href="../../css/lesson.css" />
+    <link rel="stylesheet" href="../../css/sidebar.css" />
+</head>
+<body>
+    <!-- Top Header Navigation Injector -->
+    <header id="header-container" class="main-header glass"></header>
+
+    <main class="container fade-in" style="padding-bottom: 6rem;">
+      
+      <!-- 1. Breadcrumb Navigation -->
+      <div class="breadcrumb-container">
+        <div class="lesson-breadcrumb">
+          <a href="../../index.html">Home</a> &gt; 
+          <a href="../../course-overview.html">Course Overview</a> &gt; 
+          <a href="../../curriculum.html">Curriculum</a> &gt; 
+          <span>05-Cross_validation_Strategies: Cross-Validation Strategies</span> &gt; 
+          <span class="active-node">Lesson 5.4</span>
+        </div>
+      </div>
+
+      <!-- 2. Two-Column Layout (Main Content + Right Sidebar) -->
+      <div class="lesson-grid-layout">
+        
+        <!-- Center-Left Content Area -->
+        <div class="lesson-content-area">
+          <div class="content-connector-line"></div>
+
+          <!-- 3. Lesson Header -->
+          <header class="lesson-template-header">
+            <div class="lesson-header-meta-row">
+              <span class="lesson-header-badge track">Machine Learning Fundamentals</span>
+              <span class="lesson-header-badge">05-Cross_validation_Strategies</span>
+              <span class="lesson-header-badge">Lesson 5.4</span>
+              <span class="lesson-header-badge diff">Intermediate</span>
+              <span class="lesson-header-badge">15 mins</span>
+            </div>
+            <h1>LOOCV and Shuffle Split Variations</h1>
+          </header>
+
+          <!-- 4. Learning Objectives Card -->
+          <div class="objectives-box-card glass">
+            <h3>Lesson Objectives</h3>
+            <div class="objectives-box-grid">
+              <div class="objectives-box-col">
+                <h4>What you will learn</h4>
+                <p>Compare K-Fold, Stratified K-Fold, LOOCV, and Time Series CV strategies. Understand trade-offs and best-use scenarios.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Prerequisites</h4>
+                <p>Lessons 5.1â€“5.3 â€” understanding of K-Fold and Stratified K-Fold.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Expected Outcome</h4>
+                <p>Choose the appropriate cross-validation strategy based on dataset size, class balance, and data type (sequential vs independent).</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. Main Lesson Content Area -->
+          <div class="markdown-content">
+            
+                    <div class="lesson-content-block">
+                        <h3>3. Leave-One-Out Cross-Validation (LOOCV)</h3>
+                        <ul>
+<li><strong>What it is:</strong> An extreme case of K-Fold where $K = n$ (the number of data points). The model is trained $n$ times, validating on a single sample each time.</li>
+<li><strong>When to use:</strong> Useful for very small datasets where training data cannot be spared. It is computationally expensive for large datasets.</li>
+</ul>
+
+<hr>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h3>4. Time Series Cross-Validation</h3>
+                        <ul>
+<li><strong>What it is:</strong> Folds are split sequentially without shuffling to respect chronological order. The training set grows forward in time, validating only on future data points.</li>
+<li><strong>When to use:</strong> For sequential data (e.g., stock prices or weather metrics) to prevent future data from leaking into past predictions.</li>
+</ul>
+
+<hr>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h3>5. Strategy Comparisons</h3>
+                        <table class="variable-table">
+        <thead>
+            <tr><th>Strategy</th><th>Advantages</th><th>Limitations</th><th>Best Suited For</th></tr>
+        </thead>
+        <tbody>
+            <tr><td><strong>Hold-Out</strong></td><td>Extremely fast; requires only one model training step.</td><td>High validation variance; sensitive to data shuffling.</td><td>Large datasets where splits are representative.</td></tr><tr><td><strong>K-Fold</strong></td><td>Low variance; every data point is used for validation once.</td><td>$K$ times more expensive computationally.</td><td>Balanced, medium-sized datasets.</td></tr><tr><td><strong>Stratified K-Fold</strong></td><td>Preserves class distributions across folds.</td><td>$K$ times more expensive computationally.</td><td>Imbalanced datasets.</td></tr><tr><td><strong>LOOCV</strong></td><td>Maximizes training data per fold; deterministic.</td><td>High computational cost; high variance in fold scores.</td><td>Small datasets ($n < 100$).</td></tr><tr><td><strong>Time Series Split</strong></td><td>Prevents future data leakage.</td><td>Requires chronological sorting; cannot use random shuffling.</td><td>Sequential, time-dependent data.</td></tr>
+        </tbody>
+    </table>
+
+<hr>
+                    </div>
+                    
+          </div>
+
+          <!-- 6. Bottom Navigation Cards -->
+          <div class="bottom-navigation-cards-row">
+            
+                <a href="5.3-stratified.html" class="bottom-nav-card glass">
+                  <span class="nav-direction">&larr; Previous Lesson</span>
+                  <span class="nav-title">5.3 Stratified K-Fold Splits</span>
+                </a>
+                
+            
+                <a href="5.5-leakage.html" class="bottom-nav-card next glass">
+                  <span class="nav-direction">Next Lesson &rarr;</span>
+                  <span class="nav-title">5.5 Data Leakage Pitfalls & Solutions</span>
+                </a>
+                
+          </div>
+
+          <div class="bottom-return-curriculum-row">
+            <a href="../../curriculum.html" class="btn btn-secondary">&larr; Return to Curriculum</a>
+          </div>
+
+        </div>
+
+        <!-- 7. Right Sidebar Panel (Sticky Accordion Mount) -->
+        <aside id="sidebar-container" class="lesson-right-sidebar glass"></aside>
+
+      </div>
+    </main>
+
+    <!-- Footer Injector Mount -->
+    <footer id="footer-container" class="main-footer"></footer>
+
+    <!-- Shared Static LMS Scripts -->
+    <script src="../../js/app.js"></script>
+    <script src="../../js/navigation.js"></script>
+    <script src="../../js/sidebar.js"></script>
+    <script src="../../js/progress.js"></script>
+</body>
+</html>

@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supervised DR & Fisher's Criterion — Gradients ML LMS</title>
+    
+    <!-- KaTeX CSS and JS for mathematical equations -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
+
+    <!-- CSS sheets -->
+    <link rel="stylesheet" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../css/layout.css" />
+    <link rel="stylesheet" href="../../css/responsive.css" />
+    <link rel="stylesheet" href="../../css/lesson.css" />
+    <link rel="stylesheet" href="../../css/sidebar.css" />
+</head>
+<body>
+    <!-- Top Header Navigation Injector -->
+    <header id="header-container" class="main-header glass"></header>
+
+    <main class="container fade-in" style="padding-bottom: 6rem;">
+      
+      <!-- 1. Breadcrumb Navigation -->
+      <div class="breadcrumb-container">
+        <div class="lesson-breadcrumb">
+          <a href="../../index.html">Home</a> &gt; 
+          <a href="../../course-overview.html">Course Overview</a> &gt; 
+          <a href="../../curriculum.html">Curriculum</a> &gt; 
+          <span>06-LDA: Linear Discriminant Analysis (LDA)</span> &gt; 
+          <span class="active-node">Lesson 6.1</span>
+        </div>
+      </div>
+
+      <!-- 2. Two-Column Layout (Main Content + Right Sidebar) -->
+      <div class="lesson-grid-layout">
+        
+        <!-- Center-Left Content Area -->
+        <div class="lesson-content-area">
+          <div class="content-connector-line"></div>
+
+          <!-- 3. Lesson Header -->
+          <header class="lesson-template-header">
+            <div class="lesson-header-meta-row">
+              <span class="lesson-header-badge track">Dimensionality Reduction</span>
+              <span class="lesson-header-badge">06-LDA</span>
+              <span class="lesson-header-badge">Lesson 6.1</span>
+              <span class="lesson-header-badge diff">Intermediate</span>
+              <span class="lesson-header-badge">15 mins</span>
+            </div>
+            <h1>Supervised DR & Fisher's Criterion</h1>
+          </header>
+
+          <!-- 4. Learning Objectives Card -->
+          <div class="objectives-box-card glass">
+            <h3>Lesson Objectives</h3>
+            <div class="objectives-box-grid">
+              <div class="objectives-box-col">
+                <h4>What you will learn</h4>
+                <p>Master the details of Supervised DR & Fisher's Criterion to build complete technical intuition.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Prerequisites</h4>
+                <p>Completion of previous conceptual lessons in this track.</p>
+              </div>
+              <div class="objectives-box-col">
+                <h4>Expected Outcome</h4>
+                <p>Apply Supervised DR & Fisher's Criterion diagnostics to prevent training loops leakage or parameters decay.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. Main Lesson Content Area -->
+          <div class="markdown-content">
+            
+                    <div class="lesson-content-block">
+                        <h2>2. WHAT IS LDA?</h2>
+                        <h3>What LDA Is</h3>
+
+<p>Linear Discriminant Analysis (LDA) is a supervised dimensionality-reduction algorithm. It takes data where each point already has a category label (e.g., "spam" or "not spam") and finds new axes that satisfy two competing goals: push different categories as far apart as possible, while keeping points from the same category as close together as possible.</p>
+
+<h3>Why It Was Invented</h3>
+
+<p>Ronald Fisher introduced LDA in 1936 to solve a classification problem: given measurements of iris flowers (petal length, sepal width, etc.), find a linear combination of those measurements that best separates the three species. His key observation was that not all variation in data is useful. The differences *between* species help you classify; the variation *within* a species (e.g., some irises are just bigger than others) is irrelevant clutter. LDA was designed to keep the first and discard the second.</p>
+
+<h3>Difference Between PCA and LDA</h3>
+
+<table class="variable-table">
+        <thead>
+            <tr><th>Concept</th><th>PCA</th><th>LDA</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>Uses labels?</td><td>No (unsupervised)</td><td>Yes (supervised)</td></tr><tr><td>Goal</td><td>Preserve total variance</td><td>Maximise class separation</td></tr><tr><td>What it sees</td><td>All points, ignoring groups</td><td>Points + their group labels</td></tr><tr><td>Best for</td><td>Compression, noise removal</td><td>Classification preprocessing</td></tr>
+        </tbody>
+    </table>
+
+<p>Think of PCA as a photographer taking a wide-angle shot of a crowd — it captures everyone. LDA is a director who first asks "who's in which team?" and then positions the camera to make the teams look as far apart as possible.</p>
+
+<h3>Why Labels Matter</h3>
+
+<p>Without labels, PCA treats every data point equally.</p>
+
+<p><strong>Practical example — Cancer screening:</strong> You have 1000 blood test results (each with 50 biomarkers) from healthy patients and cancer patients. Without labels, PCA would find the biomarkers that vary the most across all 1000 samples — which could be harmless things like cholesterol levels. With labels, LDA finds the biomarkers that *differ between* healthy and cancer patients — exactly what a doctor needs. LDA uses the labels to figure out which directions help distinguish one group from another. This is the fundamental difference: <strong>PCA cares about variance; LDA cares about separability</strong>.</p>
+
+<h3>Real-World Analogy</h3>
+
+<p><strong>Analogy 1 — Spot the Difference Game.</strong> Imagine two nearly identical pictures side by side. A beginner (PCA) looks at the whole picture and notices the bright colours everywhere. An expert (LDA) knows there are differences in five specific spots and ignores everything else. LDA is the expert: it focuses only on what changes between the two pictures.</p>
+
+<hr>
+                    </div>
+                    
+                    <div class="lesson-content-block">
+                        <h2>3. MATHEMATICAL FORMULATION</h2>
+                        <p>We need four quantities before we can write the LDA objective. Let's define them.</p>
+
+<h3>Notation</h3>
+
+<table class="variable-table">
+        <thead>
+            <tr><th>Symbol</th><th>Meaning</th><th>Example</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>\( C \)</td><td>Number of classes (categories)</td><td>3 (dog, cat, bird)</td></tr><tr><td>\( N \)</td><td>Total number of samples</td><td>1000 images</td></tr><tr><td>\( N_i \)</td><td>Number of samples in class \( i \)</td><td>300 dogs</td></tr><tr><td>\( x_j^{(i)} \)</td><td>The \( j \)-th sample belonging to class \( i \)</td><td>A feature vector for one dog image</td></tr><tr><td>\( \mu_i \)</td><td><strong>Class mean</strong> — average of all samples in class \( i \)</td><td>The "average dog"</td></tr><tr><td>\( \mu \)</td><td><strong>Global mean</strong> — average of all \( N \) samples</td><td>The "average of everything"</td></tr><tr><td>\( d \)</td><td>Original number of features (dimensions)</td><td>256 pixels</td></tr><tr><td>\( k \)</td><td>Target number of dimensions after reduction</td><td>2 (for plotting)</td></tr>
+        </tbody>
+    </table>
+
+<h3>Class Mean \( \mu_i \)</h3>
+
+<p>\[
+\mu_i = \frac{1}{N_i} \sum_{j=1}^{N_i} x_j^{(i)}
+\]</p>
+
+<p>Take all the dogs, add their pixel values together, divide by the number of dogs. The result is a single "average dog" vector. That is the class mean for the dog class.</p>
+
+<ul>
+<li><strong>Practical significance:</strong> The class mean is the centre of a class. LDA tries to pull these centres apart.</li>
+</ul>
+
+<h3>Global Mean \( \mu \)</h3>
+
+<p>\[
+\mu = \frac{1}{N} \sum_{i=1}^{C} \sum_{j=1}^{N_i} x_j^{(i)}
+\]</p>
+
+<p>The average of every single data point regardless of class.</p>
+
+<ul>
+<li><strong>Practical significance:</strong> The global mean is the origin from which we measure how far each class centre has drifted.</li>
+</ul>
+
+<h3>Within-Class Scatter Matrix \( S_W \)</h3>
+
+<p>\[
+S_W = \sum_{i=1}^{C} \sum_{j=1}^{N_i} (x_j^{(i)} - \mu_i)(x_j^{(i)} - \mu_i)^T
+\]</p>
+
+<p>Measure how far each dog is from the average dog, do the same for cats and birds, and sum everything up.</p>
+
+<ul>
+<li>\( (x_j^{(i)} - \mu_i) \): deviation of a single sample from its own class centre.</li>
+<li>The product \( (x - \mu)(x - \mu)^T \) is a <strong>covariance-like matrix</strong> that captures spread in all directions.</li>
+<li><strong>Practical significance:</strong> \( S_W \) quantifies the "messiness" inside classes. LDA wants this to be small — tight clusters.</li>
+</ul>
+
+<h3>Between-Class Scatter Matrix \( S_B \)</h3>
+
+<p>\[
+S_B = \sum_{i=1}^{C} N_i (\mu_i - \mu)(\mu_i - \mu)^T
+\]</p>
+
+<p>Measure how far each class centre is from the global centre, weighted by class size.</p>
+
+<ul>
+<li>\( (\mu_i - \mu) \): deviation of a class centre from the global centre.</li>
+<li>Multiplied by \( N_i \) so larger classes have more influence.</li>
+<li><strong>Practical significance:</strong> \( S_B \) quantifies how far apart the groups are. LDA wants this to be large — well-separated classes.</li>
+</ul>
+
+<h3>Optimisation Objective</h3>
+
+<p>\[
+\max_{W} \frac{\det(W^T S_B W)}{\det(W^T S_W W)}
+\]</p>
+
+<ul>
+<li>\( \det \) means <strong>determinant</strong> — a single number that summarises the "volume" of a matrix. Think of it as a score for how spread out the data is in all directions at once.</li>
+<li>\( W \) is a matrix whose columns are the projection directions (new axes) we are solving for.</li>
+<li>The numerator \( \det(W^T S_B W) \) scores between-class separation <strong>after projection</strong>.</li>
+<li>The denominator \( \det(W^T S_W W) \) scores within-class spread <strong>after projection</strong>.</li>
+<li>We want the numerator large (classes far apart) and the denominator small (each class tight).</li>
+<li><strong>Practical significance:</strong> This is LDA's compass. Every direction \( W \) is scored by how much it separates classes divided by how much it scatters them. The top-\( k \) directions with the highest scores become our new axes.</li>
+</ul>
+
+<h3>Projection Equation</h3>
+
+<p>\[
+Y = X W
+\]</p>
+
+<ul>
+<li>\( X \): original data matrix (shape \( N \times d \)).</li>
+<li>\( W \): projection matrix from LDA (shape \( d \times k \)).</li>
+<li>\( Y \): reduced data (shape \( N \times k \)).</li>
+<li><strong>Practical significance:</strong> Multiply your data by the LDA directions and you get a lower-dimensional representation that is optimised for class separation.</li>
+</ul>
+
+<hr>
+                    </div>
+                    
+          </div>
+
+          <!-- 6. Bottom Navigation Cards -->
+          <div class="bottom-navigation-cards-row">
+            
+                <a href="../../curriculum.html" class="bottom-nav-card glass">
+                  <span class="nav-direction">&larr; Return</span>
+                  <span class="nav-title">Curriculum Directory</span>
+                </a>
+                
+            
+                <a href="6.2-mathematics.html" class="bottom-nav-card next glass">
+                  <span class="nav-direction">Next Lesson &rarr;</span>
+                  <span class="nav-title">6.2 Between-Class vs Within-Class Scatter</span>
+                </a>
+                
+          </div>
+
+          <div class="bottom-return-curriculum-row">
+            <a href="../../curriculum.html" class="btn btn-secondary">&larr; Return to Curriculum</a>
+          </div>
+
+        </div>
+
+        <!-- 7. Right Sidebar Panel (Sticky Accordion Mount) -->
+        <aside id="sidebar-container" class="lesson-right-sidebar glass"></aside>
+
+      </div>
+    </main>
+
+    <!-- Footer Injector Mount -->
+    <footer id="footer-container" class="main-footer"></footer>
+
+    <!-- Shared Static LMS Scripts -->
+    <script src="../../js/app.js"></script>
+    <script src="../../js/navigation.js"></script>
+    <script src="../../js/sidebar.js"></script>
+    <script src="../../js/progress.js"></script>
+</body>
+</html>
